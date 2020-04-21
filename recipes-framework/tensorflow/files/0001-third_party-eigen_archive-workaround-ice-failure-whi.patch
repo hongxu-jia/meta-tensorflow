@@ -50,12 +50,28 @@ index 0000000000..d6c06b61e6
 +Refer: https://github.com/tensorflow/tensorflow/issues/25323
 +
 +Upstream-Status: Inappropriate [wr-installer specific]
++enable spilling workaround on architectures with SSE/AVX
++Upstream-Status: Backport [https://gitlab.com/libeigen/eigen/-/commit/0d906378385a9f94f612528523ba2ad9a6d1e265]
 +
 +Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
 +---
++ Eigen/src/Core/products/GeneralBlockPanelKernel.h    | 2 +-
 + unsupported/Eigen/CXX11/src/Tensor/TensorReduction.h | 4 +++-
-+ 1 file changed, 3 insertions(+), 1 deletion(-)
++ 2 files changed, 2 insertions(+), 4 deletions(-)
 +
++diff --git a/Eigen/src/Core/products/GeneralBlockPanelKernel.h b/Eigen/src/Core/products/GeneralBlockPanelKernel.h
++index 61521e2..b1e98b6 100644
++--- a/Eigen/src/Core/products/GeneralBlockPanelKernel.h
+++++ b/Eigen/src/Core/products/GeneralBlockPanelKernel.h
++@@ -1391,7 +1391,7 @@ void gebp_kernel<LhsScalar,RhsScalar,Index,DataMapper,mr,nr,ConjugateLhs,Conjuga
++              
++           // NOTE: the begin/end asm comments below work around bug 935!
++           // but they are not enough for gcc>=6 without FMA (bug 1637)
++-          #if EIGEN_GNUC_AT_LEAST(6,0)
+++          #if EIGEN_GNUC_AT_LEAST(6,0) && defined(EIGEN_VECTORIZE_SSE) 
++             #define EIGEN_GEBP_2PX4_SPILLING_WORKAROUND __asm__  ("" : [a0] "+rm" (A0),[a1] "+rm" (A1));
++           #else
++             #define EIGEN_GEBP_2PX4_SPILLING_WORKAROUND
 +diff --git a/unsupported/Eigen/CXX11/src/Tensor/TensorReduction.h b/unsupported/Eigen/CXX11/src/Tensor/TensorReduction.h
 +index bda1147..e2d7113 100644
 +--- a/unsupported/Eigen/CXX11/src/Tensor/TensorReduction.h
