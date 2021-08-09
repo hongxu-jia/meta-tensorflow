@@ -17,7 +17,7 @@ $ . <ts-project>/oe-core/oe-init-build-env <build>
 # Build qemux86-64 which runqemu supports kvm.
 $ echo 'MACHINE = "qemux86-64"' >> conf/local.conf
 
-$ echo 'IMAGE_INSTALL_append = " tensorflow"' >> conf/local.conf
+$ echo 'IMAGE_INSTALL:append = " tensorflow"' >> conf/local.conf
 
 Edit conf/bblayers.conf to include other layers
 BBLAYERS ?= " \

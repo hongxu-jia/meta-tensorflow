@@ -1,7 +1,7 @@
 DEPENDS += "bazel-native \
            openjdk-8-native \
           "
-DEPENDS_append_class-target = " python3"
+DEPENDS:append:class-target = " python3"
 
 inherit bazel-base
 
@@ -118,7 +118,7 @@ EOF
 
 }
 
-bazel_do_configure_append_class-target () {
+bazel_do_configure:append:class-target () {
     cat >> "${S}/bazelrc" <<-EOF
 # FLAGS begin
 ${@bazel_get_target_flags(d)}
