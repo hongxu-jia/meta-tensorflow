@@ -3,10 +3,10 @@ learning programming."
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=01e86893010a1b87e69a213faa753ebd"
 
-SRC_URI = "git://github.com/tensorflow/estimator.git;branch=r2.4 \
+SRC_URI = "git://github.com/tensorflow/estimator.git;branch=r2.6 \
            file://0001-customize-for-yocto.patch \
           "
-SRCREV = "c3e7f2b5bbcc35185ef71797955a28cadce28f60"
+SRCREV = "9a6c1260bbb468a013e39cf7d6f5af369cf2db2b"
 S = "${WORKDIR}/git"
 
 inherit python3native bazel
@@ -25,6 +25,7 @@ DEPENDS += " \
     python3-astunparse-native \
     flatbuffers-native \
     tensorflow-native \
+    keras-native \
 "
 
 do_compile () {
