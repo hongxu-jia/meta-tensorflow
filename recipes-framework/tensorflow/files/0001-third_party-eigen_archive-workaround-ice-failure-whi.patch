@@ -1,6 +1,6 @@
-From 1fab0804691439297a4f776303f28aea65d8551c Mon Sep 17 00:00:00 2001
+From a484de5781981b75f15a7ad2188829ca293785d5 Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@windriver.com>
-Date: Mon, 28 Dec 2020 16:31:40 +0800
+Date: Tue, 17 Aug 2021 15:40:21 +0800
 Subject: [PATCH] third_party/eigen_archive:workaround ice failure while
  building from source with gcc 7.3.1
 
@@ -14,46 +14,22 @@ Upstream-Status: Inappropriate [wr-installer specific]
 
 Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
 ---
- third_party/eigen3/gpu_packet_math.patch | 129 ++++++++++++++++++-----
- 1 file changed, 102 insertions(+), 27 deletions(-)
+ ...ailure-while-building-from-source-wi.patch | 69 +++++++++++++++++++
+ third_party/eigen3/workspace.bzl              |  4 ++
+ 2 files changed, 73 insertions(+)
+ create mode 100644 third_party/eigen3/0001-workaround-ice-failure-while-building-from-source-wi.patch
 
-diff --git a/third_party/eigen3/gpu_packet_math.patch b/third_party/eigen3/gpu_packet_math.patch
-index c0f466c24d3..ee873459292 100644
---- a/third_party/eigen3/gpu_packet_math.patch
-+++ b/third_party/eigen3/gpu_packet_math.patch
-@@ -1,32 +1,31 @@
--diff -ru a/Eigen/src/Geometry/arch/Geometry_SSE.h b/Eigen/src/Geometry/arch/Geometry_SSE.h
----- a/Eigen/src/Geometry/arch/Geometry_SSE.h
--+++ b/Eigen/src/Geometry/arch/Geometry_SSE.h
--@@ -33,13 +33,14 @@
--     Packet4f b = be.template packet<BAlignment,Packet4f>(0);
--     Packet4f s1 = pmul(vec4f_swizzle1(a,1,2,0,2),vec4f_swizzle1(b,2,0,1,2));
--     Packet4f s2 = pmul(vec4f_swizzle1(a,3,3,3,1),vec4f_swizzle1(b,0,1,2,1));
---    pstoret<float,Packet4f,ResAlignment>(
---              &res.x(),
---              padd(psub(pmul(a,vec4f_swizzle1(b,3,3,3,3)),
---                                    pmul(vec4f_swizzle1(a,2,0,1,0),
---                                               vec4f_swizzle1(b,1,2,0,0))),
---                         pxor(mask,padd(s1,s2))));
---    
--+    pstoret<float, Packet4f, ResAlignment>(
--+        &res.x(),
--+        padd<Packet4f>(
--+            psub<Packet4f>(pmul<Packet4f>(a, vec4f_swizzle1(b, 3, 3, 3, 3)),
--+                           pmul<Packet4f>(vec4f_swizzle1(a, 2, 0, 1, 0),
--+                                          vec4f_swizzle1(b, 1, 2, 0, 0))),
--+            pxor<Packet4f>(mask, padd(s1, s2))));
--+
--     return res;
--   }
-- };
--diff -ru a/Eigen/src/Core/GenericPacketMath.h b/Eigen/src/Core/GenericPacketMath.h
-+From f037b16a0fbcd8f4dc0b5a817e1c34ec58578ae0 Mon Sep 17 00:00:00 2001
+diff --git a/third_party/eigen3/0001-workaround-ice-failure-while-building-from-source-wi.patch b/third_party/eigen3/0001-workaround-ice-failure-while-building-from-source-wi.patch
+new file mode 100644
+index 00000000000..2b71d92c14a
+--- /dev/null
++++ b/third_party/eigen3/0001-workaround-ice-failure-while-building-from-source-wi.patch
+@@ -0,0 +1,69 @@
++From 5e3d1fca74780964103c4fd69d38f85766ed6d59 Mon Sep 17 00:00:00 2001
 +From: Hongxu Jia <hongxu.jia@windriver.com>
-+Date: Tue, 8 Dec 2020 17:32:22 +0800
-+Subject: [PATCH] 1. gpu_packet_math
-+
-+2. workaround ice failure while building from source with gcc 7.3.1
++Date: Tue, 17 Aug 2021 00:35:55 -0700
++Subject: [PATCH] workaround ice failure while building from source with gcc
++ 7.3.1
 +
 +The root cause is gcc ice issue:
 +https://gcc.gnu.org/bugzilla/show_bug.cgi?id=89752
@@ -65,53 +41,12 @@ index c0f466c24d3..ee873459292 100644
 +
 +Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
 +---
-+ Eigen/src/Core/GenericPacketMath.h            | 46 ++++++++-----------
-+ Eigen/src/Geometry/arch/Geometry_SSE.h        | 15 +++---
-+ .../Eigen/CXX11/src/Tensor/TensorImagePatch.h |  3 +-
-+ .../Eigen/CXX11/src/Tensor/TensorReduction.h  | 10 ++--
-+ 4 files changed, 37 insertions(+), 37 deletions(-)
++ unsupported/Eigen/CXX11/src/Tensor/TensorImagePatch.h | 3 ++-
++ unsupported/Eigen/CXX11/src/Tensor/TensorReduction.h  | 9 ++++++---
++ 2 files changed, 8 insertions(+), 4 deletions(-)
 +
-+diff --git a/Eigen/src/Core/GenericPacketMath.h b/Eigen/src/Core/GenericPacketMath.h
-+index fad9453..d8bbc76 100644
- --- a/Eigen/src/Core/GenericPacketMath.h
- +++ b/Eigen/src/Core/GenericPacketMath.h
--@@ -255,49 +255,43 @@
-+@@ -255,49 +255,43 @@ EIGEN_DEVICE_FUNC inline std::complex<RealScalar> ptrue(const std::complex<RealS
-    return std::complex<RealScalar>(b, b);
-  }
-  
-@@ -96,3 +95,79 @@ diff -ru a/Eigen/src/Core/GenericPacketMath.h b/Eigen/src/Core/GenericPacketMath
-  }
-  
-  /** \internal \returns the bitwise and of \a a and not \a b */
-+diff --git a/Eigen/src/Geometry/arch/Geometry_SSE.h b/Eigen/src/Geometry/arch/Geometry_SSE.h
-+index 108cc9f..43677f4 100644
-+--- a/Eigen/src/Geometry/arch/Geometry_SSE.h
-++++ b/Eigen/src/Geometry/arch/Geometry_SSE.h
-+@@ -33,13 +33,14 @@ struct quat_product<Architecture::SSE, Derived, OtherDerived, float>
-+     Packet4f b = be.template packet<BAlignment,Packet4f>(0);
-+     Packet4f s1 = pmul(vec4f_swizzle1(a,1,2,0,2),vec4f_swizzle1(b,2,0,1,2));
-+     Packet4f s2 = pmul(vec4f_swizzle1(a,3,3,3,1),vec4f_swizzle1(b,0,1,2,1));
-+-    pstoret<float,Packet4f,ResAlignment>(
-+-              &res.x(),
-+-              padd(psub(pmul(a,vec4f_swizzle1(b,3,3,3,3)),
-+-                                    pmul(vec4f_swizzle1(a,2,0,1,0),
-+-                                               vec4f_swizzle1(b,1,2,0,0))),
-+-                         pxor(mask,padd(s1,s2))));
-+-    
-++    pstoret<float, Packet4f, ResAlignment>(
-++        &res.x(),
-++        padd<Packet4f>(
-++            psub<Packet4f>(pmul<Packet4f>(a, vec4f_swizzle1(b, 3, 3, 3, 3)),
-++                           pmul<Packet4f>(vec4f_swizzle1(a, 2, 0, 1, 0),
-++                                          vec4f_swizzle1(b, 1, 2, 0, 0))),
-++            pxor<Packet4f>(mask, padd(s1, s2))));
-++
-+     return res;
-+   }
-+ };
 +diff --git a/unsupported/Eigen/CXX11/src/Tensor/TensorImagePatch.h b/unsupported/Eigen/CXX11/src/Tensor/TensorImagePatch.h
-+index 49d1004..b160105 100644
++index dd51850..b49d877 100644
 +--- a/unsupported/Eigen/CXX11/src/Tensor/TensorImagePatch.h
 ++++ b/unsupported/Eigen/CXX11/src/Tensor/TensorImagePatch.h
 +@@ -543,7 +543,8 @@ struct TensorEvaluator<const TensorImagePatchOp<Rows, Cols, ArgType>, Device>
@@ -125,10 +60,10 @@ index c0f466c24d3..ee873459292 100644
 +     PacketReturnType rslt = internal::pload<PacketReturnType>(values);
 +     return rslt;
 +diff --git a/unsupported/Eigen/CXX11/src/Tensor/TensorReduction.h b/unsupported/Eigen/CXX11/src/Tensor/TensorReduction.h
-+index 0a65591..6145467 100644
++index 583f462..023acc2 100644
 +--- a/unsupported/Eigen/CXX11/src/Tensor/TensorReduction.h
 ++++ b/unsupported/Eigen/CXX11/src/Tensor/TensorReduction.h
-+@@ -815,8 +815,10 @@ struct TensorReductionEvaluatorBase<const TensorReductionOp<Op, Dims, ArgType, M
++@@ -798,8 +798,9 @@ struct TensorReductionEvaluatorBase<const TensorReductionOp<Op, Dims, ArgType, M
 +       const Index firstIndex = firstInput(index);
 +       for (Index i = 0; i < PacketSize; ++i) {
 +         Op reducer(m_reducer);
@@ -136,11 +71,10 @@ index c0f466c24d3..ee873459292 100644
 ++        Self::CoeffReturnType a = internal::InnerMostDimReducer<Self, Op>::reduce(*this, firstIndex + i * num_values_to_reduce,
 +                                                                     num_values_to_reduce, reducer);
 ++        values[i] = a;
-++
 +       }
 +     } else if (PreservingInnerMostDims) {
 +       const Index firstIndex = firstInput(index);
-+@@ -829,12 +831,14 @@ struct TensorReductionEvaluatorBase<const TensorReductionOp<Op, Dims, ArgType, M
++@@ -812,12 +813,14 @@ struct TensorReductionEvaluatorBase<const TensorReductionOp<Op, Dims, ArgType, M
 +         return reducer.finalizePacket(accum);
 +       } else {
 +         for (int i = 0; i < PacketSize; ++i) {
@@ -158,8 +92,30 @@ index c0f466c24d3..ee873459292 100644
 +     }
 +     PacketReturnType rslt = internal::pload<PacketReturnType>(values);
 +-- 
-+2.18.2
++2.30.2
 +
+diff --git a/third_party/eigen3/workspace.bzl b/third_party/eigen3/workspace.bzl
+index 736b61adc30..3ac8e16ad5a 100644
+--- a/third_party/eigen3/workspace.bzl
++++ b/third_party/eigen3/workspace.bzl
+@@ -2,6 +2,9 @@
+ 
+ load("//third_party:repo.bzl", "tf_http_archive")
+ 
++def clean_dep(dep):
++    return str(Label(dep))
++
+ def repo():
+     """Imports Eigen."""
+ 
+@@ -12,6 +15,7 @@ def repo():
+     tf_http_archive(
+         name = "eigen_archive",
+         build_file = "//third_party/eigen3:eigen_archive.BUILD",
++        patch_file = clean_dep("//third_party/eigen3:0001-workaround-ice-failure-while-building-from-source-wi.patch"),
+         sha256 = EIGEN_SHA256,
+         strip_prefix = "eigen-{commit}".format(commit = EIGEN_COMMIT),
+         urls = [
 -- 
-2.18.2
+2.27.0
 

@@ -1,0 +1,32 @@
+From 2ed57c5b1dd702ca8eb87a4f1e5ae5db0daf56a3 Mon Sep 17 00:00:00 2001
+From: Hongxu Jia <hongxu.jia@windriver.com>
+Date: Thu, 19 Aug 2021 10:16:33 +0800
+Subject: [PATCH] fix default Bazel toolchain not work
+
+Since upstream commit [b5b84039a77 Add TensorFlow Runtime as a
+dependency to TensorFlow] applied, the default host bazel toolchain
+not initialize, do not call rules_cc_toolchains could fix the issue
+
+Upstream-Status: Inappropriate [oe specific]
+
+Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+---
+ tensorflow/workspace0.bzl | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/tensorflow/workspace0.bzl b/tensorflow/workspace0.bzl
+index 3adad3fb8c4..ca2848c87df 100644
+--- a/tensorflow/workspace0.bzl
++++ b/tensorflow/workspace0.bzl
+@@ -102,8 +102,6 @@ def workspace():
+         ],
+     )
+ 
+-    rules_cc_toolchains()
+-
+     # Use `swift_rules_dependencies` to fetch the toolchains. With the
+     # `git_repository` rules above, the following call will skip redefining them.
+     swift_rules_dependencies()
+-- 
+2.27.0
+

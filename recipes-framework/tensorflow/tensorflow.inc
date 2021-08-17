@@ -1,17 +1,15 @@
 DESCRIPTION = "TensorFlow C/C++ Libraries"
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://LICENSE;md5=64a34301f8e355f57ec992c2af3e5157"
+LIC_FILES_CHKSUM = "file://LICENSE;md5=c7e17cca1ef4230861fb7868e96c387e"
 
 DEPENDS = "bazel-native protobuf-native util-linux-native protobuf"
-SRCREV = "582c8d236cb079023657287c318ff26adb239002"
-SRC_URI = "git://github.com/tensorflow/tensorflow.git;branch=r2.4 \
+SRCREV = "919f693420e35d00c8d0a42100837ae3718f7927"
+SRC_URI = "git://github.com/tensorflow/tensorflow.git;branch=r2.6 \
            file://0001-support-musl.patch \
            file://0001-use-local-bazel-to-workaround-bazel-paralle-issue.patch \
            file://0001-third_party-eigen_archive-workaround-ice-failure-whi.patch \
            file://0001-drop-bazel_toolchains_repositories-to-support-offlin.patch \
            file://0001-drop-v2-config.patch \
-           file://0001-fix-numeric_limits-is-not-a-member-of-std.patch \
-           file://0001-ruy-fix-numeric_limits-is-not-a-member-of-std.patch \
           "
 
 S = "${WORKDIR}/git"

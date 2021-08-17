@@ -1,6 +1,6 @@
-From d4d9365e0731afcfbc3a07bb97a689bf7da81151 Mon Sep 17 00:00:00 2001
+From df2fc39e4ff2dcb5d795d5f924e36d8014eb905b Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@windriver.com>
-Date: Wed, 9 Dec 2020 09:41:10 +0800
+Date: Tue, 17 Aug 2021 15:54:25 +0800
 Subject: [PATCH] add yocto toolchain to support cross compiling
 
 Upstream-Status: Inappropriate [oe specific]
@@ -9,33 +9,29 @@ Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
 ---
  WORKSPACE                   | 6 ++++++
  tensorflow/BUILD            | 9 +++++++++
- tensorflow/workspace.bzl    | 8 ++++++++
+ tensorflow/workspace2.bzl   | 8 ++++++++
  third_party/aws/BUILD.bazel | 3 +++
- third_party/repo.bzl        | 1 +
- 5 files changed, 27 insertions(+)
+ 4 files changed, 26 insertions(+)
 
 diff --git a/WORKSPACE b/WORKSPACE
-index 9db1d9b80eb..6aa952642f2 100644
+index 1286ef9ac03..3ed96c1052d 100644
 --- a/WORKSPACE
 +++ b/WORKSPACE
-@@ -12,6 +12,12 @@ http_archive(
-     ],
- )
+@@ -21,3 +21,9 @@ tf_workspace1()
+ load("@//tensorflow:workspace0.bzl", "tf_workspace0")
  
+ tf_workspace0()
++
 +new_local_repository(
 +    name = "yocto_compiler",
 +    path = "%%WORKDIR%%",
 +    build_file = "//:BUILD.yocto_compiler",
 +)
-+
- # Load tf_repositories() before loading dependencies for other repository so
- # that dependencies like com_google_protobuf won't be overridden.
- load("//tensorflow:workspace.bzl", "tf_repositories")
 diff --git a/tensorflow/BUILD b/tensorflow/BUILD
-index 56b33a493fc..85e172afa03 100644
+index 04dcc5d82f3..b8b81fa1791 100644
 --- a/tensorflow/BUILD
 +++ b/tensorflow/BUILD
-@@ -125,6 +125,15 @@ config_setting(
+@@ -191,6 +191,15 @@ config_setting(
      visibility = ["//visibility:public"],
  )
  
@@ -50,27 +46,27 @@ index 56b33a493fc..85e172afa03 100644
 +
  config_setting(
      name = "android_arm",
-     values = {
-diff --git a/tensorflow/workspace.bzl b/tensorflow/workspace.bzl
-index a6ea0094dde..f6c47187c54 100755
---- a/tensorflow/workspace.bzl
-+++ b/tensorflow/workspace.bzl
-@@ -10,6 +10,7 @@ load("//third_party/systemlibs:syslibs_configure.bzl", "syslibs_configure")
- load("//third_party/toolchains/remote:configure.bzl", "remote_execution_configure")
- load("//third_party/toolchains/clang6:repo.bzl", "clang6_configure")
- load("//third_party/toolchains/cpus/arm:arm_compiler_configure.bzl", "arm_compiler_configure")
+     flag_values = if_google(
+diff --git a/tensorflow/workspace2.bzl b/tensorflow/workspace2.bzl
+index 3e66023a149..c9f89f47dfa 100644
+--- a/tensorflow/workspace2.bzl
++++ b/tensorflow/workspace2.bzl
+@@ -10,6 +10,7 @@ load("//third_party/git:git_configure.bzl", "git_configure")
+ load("//third_party/py:python_configure.bzl", "python_configure")
+ load("//third_party/systemlibs:syslibs_configure.bzl", "syslibs_configure")
+ load("@tf_toolchains//toolchains/cpus/arm:arm_compiler_configure.bzl", "arm_compiler_configure")
 +load("//third_party/toolchains/yocto:yocto_compiler_configure.bzl", "yocto_compiler_configure")
- load("//third_party/toolchains/embedded/arm-linux:arm_linux_toolchain_configure.bzl", "arm_linux_toolchain_configure")
+ load("@tf_toolchains//toolchains/embedded/arm-linux:arm_linux_toolchain_configure.bzl", "arm_linux_toolchain_configure")
  load("//third_party:repo.bzl", "tf_http_archive")
  load("//third_party/clang_toolchain:cc_configure_clang.bzl", "cc_download_clang_toolchain")
-@@ -116,6 +117,13 @@ def tf_repositories(path_prefix = "", tf_repo_name = ""):
+@@ -108,6 +109,13 @@ def _tf_toolchains():
          remote_config_repo_aarch64 = "../aarch64_compiler",
      )
  
 +    # Point //external/local_config_yocto_compiler to //external/yocto_compiler
 +    yocto_compiler_configure(
 +        name = "local_config_yocto_compiler",
-+        build_file = clean_dep("//third_party/toolchains/yocto:BUILD"),
++        build_file = "//third_party/toolchains/yocto:BUILD",
 +        remote_config_repo = "../yocto_compiler",
 +    )
 +
@@ -91,18 +87,6 @@ index d9e40703caa..e1058edaba4 100644
          "//conditions:default": [],
      }) + select({
          "//conditions:default": glob([
-diff --git a/third_party/repo.bzl b/third_party/repo.bzl
-index ef729b5223d..39ec07eb328 100644
---- a/third_party/repo.bzl
-+++ b/third_party/repo.bzl
-@@ -16,6 +16,7 @@
- 
- _SINGLE_URL_WHITELIST = depset([
-     "arm_compiler",
-+    "yocto_compiler",
- ])
- 
- def _is_windows(ctx):
 -- 
-2.18.2
+2.27.0
 

@@ -7,6 +7,8 @@ SRC_URI += " \
            file://0001-label_image.lite-tweak-default-model-location.patch \
            file://0001-CheckFeatureOrDie-use-warning-to-avoid-die.patch \
            file://0001-support-32-bit-x64-and-arm-for-yocto.patch \
+           file://0001-Revert-set-distinct_host_configuration-false-by-defa.patch \
+           file://0001-fix-default-Bazel-toolchain-not-work.patch \
            file://BUILD.in \
            file://BUILD.yocto_compiler \
            file://cc_config.bzl.tpl \
@@ -41,6 +43,7 @@ RDEPENDS:${PN} += " \
     flatbuffers-python3 \
     tensorboard \
     tensorflow-estimator \
+    keras \
 "
 
 export PYTHON_BIN_PATH="${PYTHON}"
