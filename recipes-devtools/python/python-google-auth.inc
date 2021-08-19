@@ -9,8 +9,8 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=86d3f3a95c324c9479bd8986968f4327"
 
 inherit pypi
 
-SRC_URI[md5sum] = "d1f8a9284283b8db69e84c41b36db501"
-SRC_URI[sha256sum] = "0b0e026b412a0ad096e753907559e4bdb180d9ba9f68dd9036164db4fdc4ad2e"
+SRC_URI[md5sum] = "2d7fb4328377b94603823e3f029a3e1d"
+SRC_URI[sha256sum] = "9e00c76e1bc7b1a7fe80472f1347f3802e4caa1fa53ba1f11b7af3772b484a82"
 
 RDEPENDS:${PN} += " \
     python3-cachetools \
