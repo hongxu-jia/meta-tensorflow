@@ -1,0 +1,28 @@
+From 308b0a9de3a0899be9218fab7a47cd4d5bc5df40 Mon Sep 17 00:00:00 2001
+From: Hongxu Jia <hongxu.jia@windriver.com>
+Date: Wed, 18 Aug 2021 20:03:46 -0700
+Subject: [PATCH] customize for yocto
+
+Upstream-Status: Inappropriate [oe specific]
+
+Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+---
+ keras/tools/pip_package/build_pip_package.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/keras/tools/pip_package/build_pip_package.sh b/keras/tools/pip_package/build_pip_package.sh
+index 42400a50..5f7ab8fa 100755
+--- a/keras/tools/pip_package/build_pip_package.sh
++++ b/keras/tools/pip_package/build_pip_package.sh
+@@ -39,7 +39,7 @@ function prepare_src() {
+ 
+   # Verifies all expected files are in pip.
+   # Creates init files in all directory in pip.
+-  python keras/tools/pip_package/create_pip_helper.py --pip-root "${TMPDIR}/keras/" --bazel-root "./keras"
++  nativepython3 keras/tools/pip_package/create_pip_helper.py --pip-root "${TMPDIR}/keras/" --bazel-root "./keras"
+ }
+ 
+ function build_wheel() {
+-- 
+2.30.2
+
