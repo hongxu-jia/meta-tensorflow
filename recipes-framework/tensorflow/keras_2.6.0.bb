@@ -49,6 +49,6 @@ do_install () {
 
 }
 
-FILES_${PN} += "${libdir}/*"
+FILES:${PN} += "${libdir}/*"
 
 BBCLASSEXTEND = "native"
