@@ -1,0 +1,730 @@
+From c5d93bd58590fea71266d66501e2b8bb839c7f94 Mon Sep 17 00:00:00 2001
+From: Mihai Maruseac <mihaimaruseac@google.com>
+Date: Tue, 27 Jul 2021 18:40:39 -0700
+Subject: [PATCH] fix TF Lite example segmentation fault
+
+Revert the following two commits could fix the issue
+
+  5321f295120 Fix build
+  a5ceb2445d3 Prevent a division by 0 in average ops
+
+Upstream-Status: Inappropriate [oe specific]
+
+Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+---
+ .../internal/averagepool_quantized_test.cc    |  14 +-
+ .../internal/optimized/integer_ops/pooling.h  |  13 +-
+ .../internal/optimized/legacy_optimized_ops.h |  46 +++--
+ .../internal/optimized/optimized_ops.h        |  22 +--
+ .../internal/reference/integer_ops/pooling.h  |   8 +-
+ .../internal/reference/legacy_reference_ops.h |  46 +++--
+ .../lite/kernels/internal/reference/pooling.h |   8 +-
+ tensorflow/lite/kernels/pooling.cc            | 160 +++++++++---------
+ 8 files changed, 140 insertions(+), 177 deletions(-)
+
+diff --git a/tensorflow/lite/kernels/internal/averagepool_quantized_test.cc b/tensorflow/lite/kernels/internal/averagepool_quantized_test.cc
+index fea343ae6b8..cbc863645b7 100644
+--- a/tensorflow/lite/kernels/internal/averagepool_quantized_test.cc
++++ b/tensorflow/lite/kernels/internal/averagepool_quantized_test.cc
+@@ -40,14 +40,12 @@ void RunOneAveragePoolTest(const PoolParams& params,
+   std::vector<int8> optimized_averagePool_output(buffer_size);
+   std::vector<int8> reference_averagePool_output(buffer_size);
+ 
+-  bool reference_success = reference_integer_ops::AveragePool(
+-      params, input_shape, input_data, output_shape,
+-      reference_averagePool_output.data());
+-  bool optimized_success = optimized_integer_ops::AveragePool(
+-      params, input_shape, input_data, output_shape,
+-      optimized_averagePool_output.data());
+-  EXPECT_TRUE(reference_success);
+-  EXPECT_TRUE(optimized_success);
++  reference_integer_ops::AveragePool(params, input_shape, input_data,
++                                     output_shape,
++                                     reference_averagePool_output.data());
++  optimized_integer_ops::AveragePool(params, input_shape, input_data,
++                                     output_shape,
++                                     optimized_averagePool_output.data());
+ 
+   for (int i = 0; i < buffer_size; i++) {
+     EXPECT_TRUE(reference_averagePool_output[i] ==
+diff --git a/tensorflow/lite/kernels/internal/optimized/integer_ops/pooling.h b/tensorflow/lite/kernels/internal/optimized/integer_ops/pooling.h
+index dfe8bd9b545..f2696500ab9 100644
+--- a/tensorflow/lite/kernels/internal/optimized/integer_ops/pooling.h
++++ b/tensorflow/lite/kernels/internal/optimized/integer_ops/pooling.h
+@@ -145,7 +145,7 @@ inline void MaxPool(const PoolParams& params, const RuntimeShape& input_shape,
+   }
+ }
+ 
+-inline bool AveragePool16(const PoolParams& params,
++inline void AveragePool16(const PoolParams& params,
+                           const RuntimeShape& input_shape,
+                           const int8* input_data,
+                           const RuntimeShape& output_shape, int8* output_data) {
+@@ -194,7 +194,6 @@ inline bool AveragePool16(const PoolParams& params,
+               std::min(params.filter_height, input_height - in_y_origin);
+           const int filter_count =
+               (filter_x_end - filter_x_start) * (filter_y_end - filter_y_start);
+-          if (filter_count == 0) return false;
+           memset(acc, 0, tranche_depth * sizeof(acc[0]));
+           const int8* input_ptr =
+               input_data + depth_base +
+@@ -282,18 +281,16 @@ inline bool AveragePool16(const PoolParams& params,
+       }
+     }
+   }
+-  return true;
+ }
+ 
+-inline bool AveragePool(const PoolParams& params,
++inline void AveragePool(const PoolParams& params,
+                         const RuntimeShape& input_shape, const int8* input_data,
+                         const RuntimeShape& output_shape, int8* output_data) {
+   if (params.filter_height * params.filter_width > 16 * 16) {
+-    return reference_integer_ops::AveragePool(params, input_shape, input_data,
+-                                              output_shape, output_data);
++    reference_integer_ops::AveragePool(params, input_shape, input_data,
++                                       output_shape, output_data);
+   } else {
+-    return AveragePool16(params, input_shape, input_data, output_shape,
+-                         output_data);
++    AveragePool16(params, input_shape, input_data, output_shape, output_data);
+   }
+ }
+ 
+diff --git a/tensorflow/lite/kernels/internal/optimized/legacy_optimized_ops.h b/tensorflow/lite/kernels/internal/optimized/legacy_optimized_ops.h
+index 0f1c50329c7..f206dfa9235 100644
+--- a/tensorflow/lite/kernels/internal/optimized/legacy_optimized_ops.h
++++ b/tensorflow/lite/kernels/internal/optimized/legacy_optimized_ops.h
+@@ -3763,7 +3763,7 @@ inline void BroadcastMul(const uint8* input1_data, const Dims<4>& input1_dims,
+                output_data, output_dims);
+ }
+ 
+-inline bool AveragePool(const float* input_data, const Dims<4>& input_dims,
++inline void AveragePool(const float* input_data, const Dims<4>& input_dims,
+                         int stride_width, int stride_height, int pad_width,
+                         int pad_height, int kwidth, int kheight,
+                         float output_activation_min,
+@@ -3778,37 +3778,35 @@ inline bool AveragePool(const float* input_data, const Dims<4>& input_dims,
+   params.padding_values.width = pad_width;
+   params.float_activation_min = output_activation_min;
+   params.float_activation_max = output_activation_max;
+-  return AveragePool(params, DimsToShape(input_dims), input_data,
+-                     DimsToShape(output_dims), output_data);
++  AveragePool(params, DimsToShape(input_dims), input_data,
++              DimsToShape(output_dims), output_data);
+ }
+ 
+ // legacy, for compatibility with old checked-in code
+ template <FusedActivationFunctionType Ac>
+-bool AveragePool(const float* input_data, const Dims<4>& input_dims,
++void AveragePool(const float* input_data, const Dims<4>& input_dims,
+                  int stride_width, int stride_height, int pad_width,
+                  int pad_height, int kwidth, int kheight, float* output_data,
+                  const Dims<4>& output_dims) {
+   float output_activation_min, output_activation_max;
+   GetActivationMinMax(Ac, &output_activation_min, &output_activation_max);
+ 
+-  return AveragePool(input_data, input_dims, stride_width, stride_height,
+-                     pad_width, pad_height, kwidth, kheight,
+-                     output_activation_min, output_activation_max, output_data,
+-                     output_dims);
++  AveragePool(input_data, input_dims, stride_width, stride_height, pad_width,
++              pad_height, kwidth, kheight, output_activation_min,
++              output_activation_max, output_data, output_dims);
+ }
+ 
+ // legacy, for compatibility with old checked-in code
+ template <FusedActivationFunctionType Ac>
+-bool AveragePool(const float* input_data, const Dims<4>& input_dims, int stride,
++void AveragePool(const float* input_data, const Dims<4>& input_dims, int stride,
+                  int pad_width, int pad_height, int filter_width,
+                  int filter_height, float* output_data,
+                  const Dims<4>& output_dims) {
+-  return AveragePool<Ac>(input_data, input_dims, stride, stride, pad_width,
+-                         pad_height, filter_width, filter_height, output_data,
+-                         output_dims);
++  AveragePool<Ac>(input_data, input_dims, stride, stride, pad_width, pad_height,
++                  filter_width, filter_height, output_data, output_dims);
+ }
+ 
+-inline bool AveragePool(const uint8* input_data, const Dims<4>& input_dims,
++inline void AveragePool(const uint8* input_data, const Dims<4>& input_dims,
+                         int stride_width, int stride_height, int pad_width,
+                         int pad_height, int filter_width, int filter_height,
+                         int32 output_activation_min,
+@@ -3823,13 +3821,13 @@ inline bool AveragePool(const uint8* input_data, const Dims<4>& input_dims,
+   params.padding_values.width = pad_width;
+   params.quantized_activation_min = output_activation_min;
+   params.quantized_activation_max = output_activation_max;
+-  return AveragePool(params, DimsToShape(input_dims), input_data,
+-                     DimsToShape(output_dims), output_data);
++  AveragePool(params, DimsToShape(input_dims), input_data,
++              DimsToShape(output_dims), output_data);
+ }
+ 
+ // legacy, for compatibility with old checked-in code
+ template <FusedActivationFunctionType Ac>
+-bool AveragePool(const uint8* input_data, const Dims<4>& input_dims,
++void AveragePool(const uint8* input_data, const Dims<4>& input_dims,
+                  int stride_width, int stride_height, int pad_width,
+                  int pad_height, int filter_width, int filter_height,
+                  int32 output_activation_min, int32 output_activation_max,
+@@ -3843,23 +3841,21 @@ bool AveragePool(const uint8* input_data, const Dims<4>& input_dims,
+     TFLITE_DCHECK_EQ(output_activation_min, 0);
+     TFLITE_DCHECK_EQ(output_activation_max, 255);
+   }
+-  return AveragePool(input_data, input_dims, stride_width, stride_height,
+-                     pad_width, pad_height, filter_width, filter_height,
+-                     output_activation_min, output_activation_max, output_data,
+-                     output_dims);
++  AveragePool(input_data, input_dims, stride_width, stride_height, pad_width,
++              pad_height, filter_width, filter_height, output_activation_min,
++              output_activation_max, output_data, output_dims);
+ }
+ 
+ // legacy, for compatibility with old checked-in code
+ template <FusedActivationFunctionType Ac>
+-bool AveragePool(const uint8* input_data, const Dims<4>& input_dims, int stride,
++void AveragePool(const uint8* input_data, const Dims<4>& input_dims, int stride,
+                  int pad_width, int pad_height, int filter_width,
+                  int filter_height, int32 output_activation_min,
+                  int32 output_activation_max, uint8* output_data,
+                  const Dims<4>& output_dims) {
+-  return AveragePool<Ac>(input_data, input_dims, stride, stride, pad_width,
+-                         pad_height, filter_width, filter_height,
+-                         output_activation_min, output_activation_max,
+-                         output_data, output_dims);
++  AveragePool<Ac>(input_data, input_dims, stride, stride, pad_width, pad_height,
++                  filter_width, filter_height, output_activation_min,
++                  output_activation_max, output_data, output_dims);
+ }
+ 
+ inline void MaxPool(const float* input_data, const Dims<4>& input_dims,
+diff --git a/tensorflow/lite/kernels/internal/optimized/optimized_ops.h b/tensorflow/lite/kernels/internal/optimized/optimized_ops.h
+index 32812ed842d..ef44c114d6a 100644
+--- a/tensorflow/lite/kernels/internal/optimized/optimized_ops.h
++++ b/tensorflow/lite/kernels/internal/optimized/optimized_ops.h
+@@ -3223,7 +3223,7 @@ inline int NodeOffset(int b, int h, int w, int height, int width) {
+   return (b * height + h) * width + w;
+ }
+ 
+-inline bool AveragePool(const PoolParams& params,
++inline void AveragePool(const PoolParams& params,
+                         const RuntimeShape& input_shape,
+                         const float* input_data,
+                         const RuntimeShape& output_shape, float* output_data) {
+@@ -3238,9 +3238,6 @@ inline bool AveragePool(const PoolParams& params,
+   const int stride_height = params.stride_height;
+   const int stride_width = params.stride_width;
+ 
+-  if (stride_height == 0) return false;
+-  if (stride_width == 0) return false;
+-
+   // TODO(benoitjacob) make this a proper reference impl without Eigen!
+   const auto in_mat = MapAsMatrixWithLastDimAsRows(input_data, input_shape);
+   auto out_mat = MapAsMatrixWithLastDimAsRows(output_data, output_shape);
+@@ -3286,11 +3283,9 @@ inline bool AveragePool(const PoolParams& params,
+                                                   params.float_activation_min,
+                                                   params.float_activation_max);
+   }
+-
+-  return true;
+ }
+ 
+-inline bool AveragePool16(const PoolParams& params,
++inline void AveragePool16(const PoolParams& params,
+                           const RuntimeShape& input_shape,
+                           const uint8* input_data,
+                           const RuntimeShape& output_shape,
+@@ -3340,7 +3335,6 @@ inline bool AveragePool16(const PoolParams& params,
+               std::min(params.filter_height, input_height - in_y_origin);
+           const int filter_count =
+               (filter_x_end - filter_x_start) * (filter_y_end - filter_y_start);
+-          if (filter_count == 0) return false;
+           memset(acc, 0, tranche_depth * sizeof(acc[0]));
+           const uint8* input_ptr =
+               input_data + depth_base +
+@@ -3423,7 +3417,7 @@ inline bool AveragePool16(const PoolParams& params,
+   }
+ }
+ 
+-inline bool AveragePool32(const PoolParams& params,
++inline void AveragePool32(const PoolParams& params,
+                           const RuntimeShape& input_shape,
+                           const uint8* input_data,
+                           const RuntimeShape& output_shape,
+@@ -3473,7 +3467,6 @@ inline bool AveragePool32(const PoolParams& params,
+               std::min(params.filter_height, input_height - in_y_origin);
+           const int filter_count =
+               (filter_x_end - filter_x_start) * (filter_y_end - filter_y_start);
+-          if (filter_count == 0) return false;
+           memset(acc, 0, tranche_depth * sizeof(acc[0]));
+           const uint8* input_ptr =
+               input_data + depth_base +
+@@ -3560,19 +3553,16 @@ inline bool AveragePool32(const PoolParams& params,
+       }
+     }
+   }
+-  return true;
+ }
+ 
+-inline bool AveragePool(const PoolParams& params,
++inline void AveragePool(const PoolParams& params,
+                         const RuntimeShape& input_shape,
+                         const uint8* input_data,
+                         const RuntimeShape& output_shape, uint8* output_data) {
+   if (params.filter_height * params.filter_width > 16 * 16) {
+-    return AveragePool32(params, input_shape, input_data, output_shape,
+-                         output_data);
++    AveragePool32(params, input_shape, input_data, output_shape, output_data);
+   } else {
+-    return AveragePool16(params, input_shape, input_data, output_shape,
+-                         output_data);
++    AveragePool16(params, input_shape, input_data, output_shape, output_data);
+   }
+ }
+ 
+diff --git a/tensorflow/lite/kernels/internal/reference/integer_ops/pooling.h b/tensorflow/lite/kernels/internal/reference/integer_ops/pooling.h
+index 2cb4dada8a6..17944bc47dd 100644
+--- a/tensorflow/lite/kernels/internal/reference/integer_ops/pooling.h
++++ b/tensorflow/lite/kernels/internal/reference/integer_ops/pooling.h
+@@ -21,7 +21,7 @@ limitations under the License.
+ namespace tflite {
+ namespace reference_integer_ops {
+ 
+-inline bool AveragePool(const PoolParams& params,
++inline void AveragePool(const PoolParams& params,
+                         const RuntimeShape& input_shape,
+                         const int8_t* input_data,
+                         const RuntimeShape& output_shape, int8_t* output_data) {
+@@ -66,7 +66,6 @@ inline bool AveragePool(const PoolParams& params,
+               filter_count++;
+             }
+           }
+-          if (filter_count == 0) return false;
+           // Round to the closest integer value.
+           acc = acc > 0 ? (acc + filter_count / 2) / filter_count
+                         : (acc - filter_count / 2) / filter_count;
+@@ -78,7 +77,6 @@ inline bool AveragePool(const PoolParams& params,
+       }
+     }
+   }
+-  return true;
+ }
+ 
+ inline void MaxPool(const PoolParams& params, const RuntimeShape& input_shape,
+@@ -138,7 +136,7 @@ inline void MaxPool(const PoolParams& params, const RuntimeShape& input_shape,
+   }
+ }
+ 
+-inline bool AveragePool(const PoolParams& params,
++inline void AveragePool(const PoolParams& params,
+                         const RuntimeShape& input_shape,
+                         const int16_t* input_data,
+                         const RuntimeShape& output_shape,
+@@ -184,7 +182,6 @@ inline bool AveragePool(const PoolParams& params,
+               filter_count++;
+             }
+           }
+-          if (filter_count == 0) return false;
+           // Round to the closest integer value.
+           acc = acc > 0 ? (acc + filter_count / 2) / filter_count
+                         : (acc - filter_count / 2) / filter_count;
+@@ -196,7 +193,6 @@ inline bool AveragePool(const PoolParams& params,
+       }
+     }
+   }
+-  return true;
+ }
+ 
+ inline void MaxPool(const PoolParams& params, const RuntimeShape& input_shape,
+diff --git a/tensorflow/lite/kernels/internal/reference/legacy_reference_ops.h b/tensorflow/lite/kernels/internal/reference/legacy_reference_ops.h
+index 88309ea9d0c..85d3b674c92 100644
+--- a/tensorflow/lite/kernels/internal/reference/legacy_reference_ops.h
++++ b/tensorflow/lite/kernels/internal/reference/legacy_reference_ops.h
+@@ -1486,7 +1486,7 @@ void Sub(const T* input1_data, const Dims<4>& input1_dims, const T* input2_data,
+       output_data);
+ }
+ 
+-inline bool AveragePool(const float* input_data, const Dims<4>& input_dims,
++inline void AveragePool(const float* input_data, const Dims<4>& input_dims,
+                         int stride_width, int stride_height, int pad_width,
+                         int pad_height, int kwidth, int kheight,
+                         float output_activation_min,
+@@ -1501,8 +1501,8 @@ inline bool AveragePool(const float* input_data, const Dims<4>& input_dims,
+   params.padding_values.width = pad_width;
+   params.float_activation_min = output_activation_min;
+   params.float_activation_max = output_activation_max;
+-  return AveragePool(params, DimsToShape(input_dims), input_data,
+-                     DimsToShape(output_dims), output_data);
++  AveragePool(params, DimsToShape(input_dims), input_data,
++              DimsToShape(output_dims), output_data);
+ }
+ 
+ // Transitional version that will be moved shortly to legacy_reference_ops, as
+@@ -1561,31 +1561,29 @@ inline void BroadcastMul(const uint8* input1_data, const Dims<4>& input1_dims,
+ 
+ // legacy, for compatibility with old checked-in code
+ template <FusedActivationFunctionType Ac>
+-bool AveragePool(const float* input_data, const Dims<4>& input_dims,
++void AveragePool(const float* input_data, const Dims<4>& input_dims,
+                  int stride_width, int stride_height, int pad_width,
+                  int pad_height, int kwidth, int kheight, float* output_data,
+                  const Dims<4>& output_dims) {
+   float output_activation_min, output_activation_max;
+   GetActivationMinMax(Ac, &output_activation_min, &output_activation_max);
+ 
+-  return AveragePool(input_data, input_dims, stride_width, stride_height,
+-                     pad_width, pad_height, kwidth, kheight,
+-                     output_activation_min, output_activation_max, output_data,
+-                     output_dims);
++  AveragePool(input_data, input_dims, stride_width, stride_height, pad_width,
++              pad_height, kwidth, kheight, output_activation_min,
++              output_activation_max, output_data, output_dims);
+ }
+ 
+ // legacy, for compatibility with old checked-in code
+ template <FusedActivationFunctionType Ac>
+-bool AveragePool(const float* input_data, const Dims<4>& input_dims, int stride,
++void AveragePool(const float* input_data, const Dims<4>& input_dims, int stride,
+                  int pad_width, int pad_height, int filter_width,
+                  int filter_height, float* output_data,
+                  const Dims<4>& output_dims) {
+-  return AveragePool<Ac>(input_data, input_dims, stride, stride, pad_width,
+-                         pad_height, filter_width, filter_height, output_data,
+-                         output_dims);
++  AveragePool<Ac>(input_data, input_dims, stride, stride, pad_width, pad_height,
++                  filter_width, filter_height, output_data, output_dims);
+ }
+ 
+-inline bool AveragePool(const uint8* input_data, const Dims<4>& input_dims,
++inline void AveragePool(const uint8* input_data, const Dims<4>& input_dims,
+                         int stride_width, int stride_height, int pad_width,
+                         int pad_height, int filter_width, int filter_height,
+                         int32 output_activation_min,
+@@ -1600,13 +1598,13 @@ inline bool AveragePool(const uint8* input_data, const Dims<4>& input_dims,
+   params.padding_values.width = pad_width;
+   params.quantized_activation_min = output_activation_min;
+   params.quantized_activation_max = output_activation_max;
+-  return AveragePool(params, DimsToShape(input_dims), input_data,
+-                     DimsToShape(output_dims), output_data);
++  AveragePool(params, DimsToShape(input_dims), input_data,
++              DimsToShape(output_dims), output_data);
+ }
+ 
+ // legacy, for compatibility with old checked-in code
+ template <FusedActivationFunctionType Ac>
+-bool AveragePool(const uint8* input_data, const Dims<4>& input_dims,
++void AveragePool(const uint8* input_data, const Dims<4>& input_dims,
+                  int stride_width, int stride_height, int pad_width,
+                  int pad_height, int filter_width, int filter_height,
+                  int32 output_activation_min, int32 output_activation_max,
+@@ -1620,23 +1618,21 @@ bool AveragePool(const uint8* input_data, const Dims<4>& input_dims,
+     TFLITE_DCHECK_EQ(output_activation_min, 0);
+     TFLITE_DCHECK_EQ(output_activation_max, 255);
+   }
+-  return AveragePool(input_data, input_dims, stride_width, stride_height,
+-                     pad_width, pad_height, filter_width, filter_height,
+-                     output_activation_min, output_activation_max, output_data,
+-                     output_dims);
++  AveragePool(input_data, input_dims, stride_width, stride_height, pad_width,
++              pad_height, filter_width, filter_height, output_activation_min,
++              output_activation_max, output_data, output_dims);
+ }
+ 
+ // legacy, for compatibility with old checked-in code
+ template <FusedActivationFunctionType Ac>
+-bool AveragePool(const uint8* input_data, const Dims<4>& input_dims, int stride,
++void AveragePool(const uint8* input_data, const Dims<4>& input_dims, int stride,
+                  int pad_width, int pad_height, int filter_width,
+                  int filter_height, int32 output_activation_min,
+                  int32 output_activation_max, uint8* output_data,
+                  const Dims<4>& output_dims) {
+-  return AveragePool<Ac>(input_data, input_dims, stride, stride, pad_width,
+-                         pad_height, filter_width, filter_height,
+-                         output_activation_min, output_activation_max,
+-                         output_data, output_dims);
++  AveragePool<Ac>(input_data, input_dims, stride, stride, pad_width, pad_height,
++                  filter_width, filter_height, output_activation_min,
++                  output_activation_max, output_data, output_dims);
+ }
+ 
+ inline void MaxPool(const float* input_data, const Dims<4>& input_dims,
+diff --git a/tensorflow/lite/kernels/internal/reference/pooling.h b/tensorflow/lite/kernels/internal/reference/pooling.h
+index ee30b840446..0872f5210c8 100644
+--- a/tensorflow/lite/kernels/internal/reference/pooling.h
++++ b/tensorflow/lite/kernels/internal/reference/pooling.h
+@@ -23,7 +23,7 @@ limitations under the License.
+ namespace tflite {
+ namespace reference_ops {
+ 
+-inline bool AveragePool(const PoolParams& params,
++inline void AveragePool(const PoolParams& params,
+                         const RuntimeShape& input_shape,
+                         const float* input_data,
+                         const RuntimeShape& output_shape, float* output_data) {
+@@ -66,7 +66,6 @@ inline bool AveragePool(const PoolParams& params,
+               filter_count++;
+             }
+           }
+-          if (filter_count == 0) return false;
+           const float average = total / filter_count;
+           output_data[Offset(output_shape, batch, out_y, out_x, channel)] =
+               ActivationFunctionWithMinMax(average, params.float_activation_min,
+@@ -75,10 +74,9 @@ inline bool AveragePool(const PoolParams& params,
+       }
+     }
+   }
+-  return true;
+ }
+ 
+-inline bool AveragePool(const PoolParams& params,
++inline void AveragePool(const PoolParams& params,
+                         const RuntimeShape& input_shape,
+                         const uint8_t* input_data,
+                         const RuntimeShape& output_shape,
+@@ -124,7 +122,6 @@ inline bool AveragePool(const PoolParams& params,
+               filter_count++;
+             }
+           }
+-          if (filter_count == 0) return false;
+           acc = (acc + filter_count / 2) / filter_count;
+           acc = std::max(acc, params.quantized_activation_min);
+           acc = std::min(acc, params.quantized_activation_max);
+@@ -134,7 +131,6 @@ inline bool AveragePool(const PoolParams& params,
+       }
+     }
+   }
+-  return true;
+ }
+ 
+ inline void L2Pool(const PoolParams& params, const RuntimeShape& input_shape,
+diff --git a/tensorflow/lite/kernels/pooling.cc b/tensorflow/lite/kernels/pooling.cc
+index d54bd89b221..474bd3825f4 100644
+--- a/tensorflow/lite/kernels/pooling.cc
++++ b/tensorflow/lite/kernels/pooling.cc
+@@ -117,126 +117,117 @@ TfLiteStatus GenericPrepare(TfLiteContext* context, TfLiteNode* node) {
+ }
+ 
+ template <KernelType kernel_type>
+-TfLiteStatus AverageEvalFloat(TfLiteContext* context, TfLiteNode* node,
+-                              TfLitePoolParams* params, OpData* data,
+-                              const TfLiteTensor* input, TfLiteTensor* output) {
++void AverageEvalFloat(TfLiteContext* context, TfLiteNode* node,
++                      TfLitePoolParams* params, OpData* data,
++                      const TfLiteTensor* input, TfLiteTensor* output) {
+   float activation_min, activation_max;
+   CalculateActivationRange(params->activation, &activation_min,
+                            &activation_max);
+-#define TF_LITE_AVERAGE_POOL(type)                                            \
+-  tflite::PoolParams op_params;                                               \
+-  op_params.stride_height = params->stride_height;                            \
+-  op_params.stride_width = params->stride_width;                              \
+-  op_params.filter_height = params->filter_height;                            \
+-  op_params.filter_width = params->filter_width;                              \
+-  op_params.padding_values.height = data->padding.height;                     \
+-  op_params.padding_values.width = data->padding.width;                       \
+-  op_params.float_activation_min = activation_min;                            \
+-  op_params.float_activation_max = activation_max;                            \
+-  TF_LITE_ENSURE(context, type::AveragePool(op_params, GetTensorShape(input), \
+-                                            GetTensorData<float>(input),      \
+-                                            GetTensorShape(output),           \
+-                                            GetTensorData<float>(output)))
++#define TF_LITE_AVERAGE_POOL(type)                                       \
++  tflite::PoolParams op_params;                                          \
++  op_params.stride_height = params->stride_height;                       \
++  op_params.stride_width = params->stride_width;                         \
++  op_params.filter_height = params->filter_height;                       \
++  op_params.filter_width = params->filter_width;                         \
++  op_params.padding_values.height = data->padding.height;                \
++  op_params.padding_values.width = data->padding.width;                  \
++  op_params.float_activation_min = activation_min;                       \
++  op_params.float_activation_max = activation_max;                       \
++  type::AveragePool(op_params, GetTensorShape(input),                    \
++                    GetTensorData<float>(input), GetTensorShape(output), \
++                    GetTensorData<float>(output))
+   if (kernel_type == kReference) {
+     TF_LITE_AVERAGE_POOL(reference_ops);
+   } else {
+     TF_LITE_AVERAGE_POOL(optimized_ops);
+   }
+ #undef TF_LITE_AVERAGE_POOL
+-  return kTfLiteOk;
+ }
+ 
+ template <KernelType kernel_type>
+-TfLiteStatus AverageEvalQuantizedUint8(TfLiteContext* context, TfLiteNode* node,
+-                                       TfLitePoolParams* params, OpData* data,
+-                                       const TfLiteTensor* input,
+-                                       TfLiteTensor* output) {
++void AverageEvalQuantizedUint8(TfLiteContext* context, TfLiteNode* node,
++                               TfLitePoolParams* params, OpData* data,
++                               const TfLiteTensor* input,
++                               TfLiteTensor* output) {
+   int32_t activation_min;
+   int32_t activation_max;
+   (void)CalculateActivationRangeQuantized(context, params->activation, output,
+                                           &activation_min, &activation_max);
+-#define TF_LITE_AVERAGE_POOL(type)                                            \
+-  tflite::PoolParams op_params;                                               \
+-  op_params.stride_height = params->stride_height;                            \
+-  op_params.stride_width = params->stride_width;                              \
+-  op_params.filter_height = params->filter_height;                            \
+-  op_params.filter_width = params->filter_width;                              \
+-  op_params.padding_values.height = data->padding.height;                     \
+-  op_params.padding_values.width = data->padding.width;                       \
+-  op_params.quantized_activation_min = activation_min;                        \
+-  op_params.quantized_activation_max = activation_max;                        \
+-  TF_LITE_ENSURE(context, type::AveragePool(op_params, GetTensorShape(input), \
+-                                            GetTensorData<uint8_t>(input),    \
+-                                            GetTensorShape(output),           \
+-                                            GetTensorData<uint8_t>(output)))
++#define TF_LITE_AVERAGE_POOL(type)                                         \
++  tflite::PoolParams op_params;                                            \
++  op_params.stride_height = params->stride_height;                         \
++  op_params.stride_width = params->stride_width;                           \
++  op_params.filter_height = params->filter_height;                         \
++  op_params.filter_width = params->filter_width;                           \
++  op_params.padding_values.height = data->padding.height;                  \
++  op_params.padding_values.width = data->padding.width;                    \
++  op_params.quantized_activation_min = activation_min;                     \
++  op_params.quantized_activation_max = activation_max;                     \
++  type::AveragePool(op_params, GetTensorShape(input),                      \
++                    GetTensorData<uint8_t>(input), GetTensorShape(output), \
++                    GetTensorData<uint8_t>(output))
+   if (kernel_type == kReference) {
+     TF_LITE_AVERAGE_POOL(reference_ops);
+   } else {
+     TF_LITE_AVERAGE_POOL(optimized_ops);
+   }
+ #undef TF_LITE_AVERAGE_POOL
+-  return kTfLiteOk;
+ }
+ 
+ template <KernelType kernel_type>
+-TfLiteStatus AverageEvalQuantizedInt8(TfLiteContext* context, TfLiteNode* node,
+-                                      TfLitePoolParams* params, OpData* data,
+-                                      const TfLiteTensor* input,
+-                                      TfLiteTensor* output) {
++void AverageEvalQuantizedInt8(TfLiteContext* context, TfLiteNode* node,
++                              TfLitePoolParams* params, OpData* data,
++                              const TfLiteTensor* input, TfLiteTensor* output) {
+   int32_t activation_min;
+   int32_t activation_max;
+ 
+   (void)CalculateActivationRangeQuantized(context, params->activation, output,
+                                           &activation_min, &activation_max);
+-#define TF_LITE_AVERAGE_POOL(type)                                            \
+-  tflite::PoolParams op_params;                                               \
+-  op_params.stride_height = params->stride_height;                            \
+-  op_params.stride_width = params->stride_width;                              \
+-  op_params.filter_height = params->filter_height;                            \
+-  op_params.filter_width = params->filter_width;                              \
+-  op_params.padding_values.height = data->padding.height;                     \
+-  op_params.padding_values.width = data->padding.width;                       \
+-  op_params.quantized_activation_min = activation_min;                        \
+-  op_params.quantized_activation_max = activation_max;                        \
+-  TF_LITE_ENSURE(context, type::AveragePool(op_params, GetTensorShape(input), \
+-                                            GetTensorData<int8_t>(input),     \
+-                                            GetTensorShape(output),           \
+-                                            GetTensorData<int8_t>(output)))
++#define TF_LITE_AVERAGE_POOL(type)                                        \
++  tflite::PoolParams op_params;                                           \
++  op_params.stride_height = params->stride_height;                        \
++  op_params.stride_width = params->stride_width;                          \
++  op_params.filter_height = params->filter_height;                        \
++  op_params.filter_width = params->filter_width;                          \
++  op_params.padding_values.height = data->padding.height;                 \
++  op_params.padding_values.width = data->padding.width;                   \
++  op_params.quantized_activation_min = activation_min;                    \
++  op_params.quantized_activation_max = activation_max;                    \
++  type::AveragePool(op_params, GetTensorShape(input),                     \
++                    GetTensorData<int8_t>(input), GetTensorShape(output), \
++                    GetTensorData<int8_t>(output))
+   if (kernel_type == kReference) {
+     TF_LITE_AVERAGE_POOL(reference_integer_ops);
+   } else {
+     TF_LITE_AVERAGE_POOL(optimized_integer_ops);
+   }
+ #undef TF_LITE_AVERAGE_POOL
+-  return kTfLiteOk;
+ }
+ 
+ template <KernelType kernel_type>
+-TfLiteStatus AverageEvalQuantizedInt16(TfLiteContext* context, TfLiteNode* node,
+-                                       TfLitePoolParams* params, OpData* data,
+-                                       const TfLiteTensor* input,
+-                                       TfLiteTensor* output) {
++void AverageEvalQuantizedInt16(TfLiteContext* context, TfLiteNode* node,
++                               TfLitePoolParams* params, OpData* data,
++                               const TfLiteTensor* input,
++                               TfLiteTensor* output) {
+   int32_t activation_min;
+   int32_t activation_max;
+   CalculateActivationRangeQuantized(context, params->activation, output,
+                                     &activation_min, &activation_max);
+-#define TF_LITE_AVERAGE_POOL(type)                                            \
+-  tflite::PoolParams op_params;                                               \
+-  op_params.stride_height = params->stride_height;                            \
+-  op_params.stride_width = params->stride_width;                              \
+-  op_params.filter_height = params->filter_height;                            \
+-  op_params.filter_width = params->filter_width;                              \
+-  op_params.padding_values.height = data->padding.height;                     \
+-  op_params.padding_values.width = data->padding.width;                       \
+-  op_params.quantized_activation_min = activation_min;                        \
+-  op_params.quantized_activation_max = activation_max;                        \
+-  TF_LITE_ENSURE(context, type::AveragePool(op_params, GetTensorShape(input), \
+-                                            GetTensorData<int16_t>(input),    \
+-                                            GetTensorShape(output),           \
+-                                            GetTensorData<int16_t>(output)))
++#define TF_LITE_AVERAGE_POOL(type)                                         \
++  tflite::PoolParams op_params;                                            \
++  op_params.stride_height = params->stride_height;                         \
++  op_params.stride_width = params->stride_width;                           \
++  op_params.filter_height = params->filter_height;                         \
++  op_params.filter_width = params->filter_width;                           \
++  op_params.padding_values.height = data->padding.height;                  \
++  op_params.padding_values.width = data->padding.width;                    \
++  op_params.quantized_activation_min = activation_min;                     \
++  op_params.quantized_activation_max = activation_max;                     \
++  type::AveragePool(op_params, GetTensorShape(input),                      \
++                    GetTensorData<int16_t>(input), GetTensorShape(output), \
++                    GetTensorData<int16_t>(output))
+   TF_LITE_AVERAGE_POOL(reference_integer_ops);
+ #undef TF_LITE_AVERAGE_POOL
+-  return kTfLiteOk;
+ }
+ 
+ template <KernelType kernel_type>
+@@ -389,17 +380,20 @@ TfLiteStatus AverageEval(TfLiteContext* context, TfLiteNode* node) {
+   TF_LITE_ENSURE_OK(context, GetInputSafe(context, node, 0, &input));
+   switch (input->type) {  // Already know in/out types are same.
+     case kTfLiteFloat32:
+-      return AverageEvalFloat<kernel_type>(context, node, params, data, input,
+-                                           output);
++      AverageEvalFloat<kernel_type>(context, node, params, data, input, output);
++      break;
+     case kTfLiteUInt8:
+-      return AverageEvalQuantizedUint8<kernel_type>(context, node, params, data,
+-                                                    input, output);
++      AverageEvalQuantizedUint8<kernel_type>(context, node, params, data, input,
++                                             output);
++      break;
+     case kTfLiteInt8:
+-      return AverageEvalQuantizedInt8<kernel_type>(context, node, params, data,
+-                                                   input, output);
++      AverageEvalQuantizedInt8<kernel_type>(context, node, params, data, input,
++                                            output);
++      break;
+     case kTfLiteInt16:
+-      return AverageEvalQuantizedInt16<kernel_type>(context, node, params, data,
+-                                                    input, output);
++      AverageEvalQuantizedInt16<kernel_type>(context, node, params, data, input,
++                                             output);
++      break;
+     default:
+       TF_LITE_KERNEL_LOG(context, "Type %s not currently supported.",
+                          TfLiteTypeGetName(input->type));
+-- 
+2.27.0
+
