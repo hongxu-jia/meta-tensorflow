@@ -1,7 +1,7 @@
 # Limitation
 ```
-* Target arch only supports 32 bit arm and 32 bit x86, 64 bit arm and
-  64 bit x86. BSP (MACHINE) incluced in above archs should be supported.
+* Target arch only supports 64 bit arm and 64 bit x86. BSP (MACHINE)
+  incluced in above archs should be supported.
 
 * Bazel build takes lots of time, it has own rules and builds everything
   from scratch. Currently bazel could not reuse Yocto DEPENDS/RDEPENDS.
