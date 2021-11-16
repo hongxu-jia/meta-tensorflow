@@ -1,0 +1,49 @@
+From e888524b13eea6322fc7a9f161081986145cb6bd Mon Sep 17 00:00:00 2001
+From: Hongxu Jia <hongxu.jia@windriver.com>
+Date: Tue, 16 Nov 2021 16:32:39 +0800
+Subject: [PATCH] `distutils` is deprecated in Python 3.10 #51776
+
+The `distutils` is deprecated in Python 3.10.
+
+As of #51776, In `python_configure.bzl`, the deprecation message will be
+printed prior to the include path, causing error on return.
+
+Use environment CROSSTOOL_PYTHON_INCLUDE_PATH to replace
+
+Upstream-Status: Inappropriate [oe specific]
+
+Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+---
+ third_party/py/python_configure.bzl | 16 +---------------
+ 1 file changed, 1 insertion(+), 15 deletions(-)
+
+diff --git a/third_party/py/python_configure.bzl b/third_party/py/python_configure.bzl
+index 2f75262ea9f..588059d2297 100644
+--- a/third_party/py/python_configure.bzl
++++ b/third_party/py/python_configure.bzl
+@@ -149,21 +149,7 @@ def _check_python_bin(repository_ctx, python_bin):
+ 
+ def _get_python_include(repository_ctx, python_bin):
+     """Gets the python include path."""
+-    result = execute(
+-        repository_ctx,
+-        [
+-            python_bin,
+-            "-c",
+-            "from __future__ import print_function;" +
+-            "from distutils import sysconfig;" +
+-            "print(sysconfig.get_python_inc())",
+-        ],
+-        error_msg = "Problem getting python include path.",
+-        error_details = ("Is the Python binary path set up right? " +
+-                         "(See ./configure or " + PYTHON_BIN_PATH + ".) " +
+-                         "Is distutils installed?"),
+-    )
+-    return result.stdout.splitlines()[0]
++    return repository_ctx.os.environ["CROSSTOOL_PYTHON_INCLUDE_PATH"]
+ 
+ def _get_python_import_lib_name(repository_ctx, python_bin):
+     """Get Python import library name (pythonXY.lib) on Windows."""
+-- 
+2.27.0
+

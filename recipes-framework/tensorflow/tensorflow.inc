@@ -10,7 +10,6 @@ SRC_URI = "git://github.com/tensorflow/tensorflow.git;branch=r2.6 \
            file://0001-third_party-eigen_archive-workaround-ice-failure-whi.patch \
            file://0001-drop-bazel_toolchains_repositories-to-support-offlin.patch \
            file://0001-drop-v2-config.patch \
-           file://0001-distutils-is-deprecated-in-Python-3.10-51776.patch \
            file://0002-Replace-distutils.sysconfig.get_python_lib-with-sysc.patch \
            file://0001-fix-building-from-source-failed-on-Python-3.10-51776.patch \
           "
