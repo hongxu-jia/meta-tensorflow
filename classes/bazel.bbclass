@@ -7,7 +7,7 @@ inherit bazel-base
 
 BAZEL_DIR ?= "${WORKDIR}/bazel"
 BAZEL_OUTPUTBASE_DIR ?= "${BAZEL_DIR}/output_base"
-export BAZEL_ARGS="--output_user_root=${BAZEL_DIR}/user_root \
+export BAZEL_STARTUP_OPTIONS="--output_user_root=${BAZEL_DIR}/user_root \
                    --output_base=${BAZEL_OUTPUTBASE_DIR} \
                    --bazelrc=${S}/bazelrc \
                    --batch  \
@@ -19,7 +19,7 @@ do_prepare_recipe_sysroot[postfuncs] += "do_install_bazel"
 do_install_bazel() {
     mkdir -p ${BAZEL_DIR}
     install -m 0755 ${STAGING_BINDIR_NATIVE}/bazel ${BAZEL_DIR}
-    create_cmdline_wrapper ${BAZEL} \$BAZEL_ARGS
+    create_cmdline_wrapper ${BAZEL} \$BAZEL_STARTUP_OPTIONS
     zip -A ${BAZEL}.real
 }
 
