@@ -3,7 +3,7 @@ DESCRIPTION = "TensorFlow Keras is an implementation of the Keras API that\
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=c573baaa40a28002a2d03d3e7e9bc583"
 
-SRC_URI = "git://github.com/keras-team/keras.git;branch=r2.6 \
+SRC_URI = "git://github.com/keras-team/keras.git;branch=r2.6;protocol=https \
            file://0001-customize-for-yocto.patch \
           "
 
