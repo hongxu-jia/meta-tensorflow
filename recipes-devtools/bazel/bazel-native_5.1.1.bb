@@ -20,7 +20,7 @@ CCACHE_DISABLE = "1"
 
 DEPENDS = "coreutils-native \
            zip-native \
-           openjdk-8-native \
+           openjdk-11-native \
           "
 
 S="${WORKDIR}"

@@ -1,4 +1,4 @@
-export JAVA_HOME="${STAGING_LIBDIR_NATIVE}/jvm/openjdk-8-native"
+export JAVA_HOME="${STAGING_LIBDIR_NATIVE}/jvm/openjdk-11-native"
 
 BAZEL_JOBS ??= "4"
 
