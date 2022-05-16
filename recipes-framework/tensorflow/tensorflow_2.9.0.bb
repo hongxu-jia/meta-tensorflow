@@ -8,7 +8,6 @@ SRC_URI += " \
            file://0001-CheckFeatureOrDie-use-warning-to-avoid-die.patch \
            file://0001-support-32-bit-x64-and-arm-for-yocto.patch \
            file://0001-Revert-set-distinct_host_configuration-false-by-defa.patch \
-           file://0001-fix-default-Bazel-toolchain-not-work.patch \
            file://0001-distutils-is-deprecated-in-Python-3.10-cross.patch \
            file://BUILD.in \
            file://BUILD.yocto_compiler \
@@ -41,6 +40,7 @@ RDEPENDS:${PN} += " \
     python3-opt-einsum \
     python3-google-pasta \
     python3-typing-extensions \
+    python3-packaging \
     flatbuffers-python3 \
     tensorboard \
     tensorflow-estimator \

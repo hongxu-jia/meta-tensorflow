@@ -1,6 +1,6 @@
-From e888524b13eea6322fc7a9f161081986145cb6bd Mon Sep 17 00:00:00 2001
+From 79bd5c1e597ffd877822297a48d9eaa9ca3a317d Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@windriver.com>
-Date: Tue, 16 Nov 2021 16:32:39 +0800
+Date: Mon, 16 May 2022 01:18:43 -0700
 Subject: [PATCH] `distutils` is deprecated in Python 3.10 #51776
 
 The `distutils` is deprecated in Python 3.10.
@@ -14,14 +14,14 @@ Upstream-Status: Inappropriate [oe specific]
 
 Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
 ---
- third_party/py/python_configure.bzl | 16 +---------------
- 1 file changed, 1 insertion(+), 15 deletions(-)
+ third_party/py/python_configure.bzl | 19 +------------------
+ 1 file changed, 1 insertion(+), 18 deletions(-)
 
 diff --git a/third_party/py/python_configure.bzl b/third_party/py/python_configure.bzl
-index 2f75262ea9f..588059d2297 100644
+index 300cbfb6c71..e57af9f9dc9 100644
 --- a/third_party/py/python_configure.bzl
 +++ b/third_party/py/python_configure.bzl
-@@ -149,21 +149,7 @@ def _check_python_bin(repository_ctx, python_bin):
+@@ -149,24 +149,7 @@ def _check_python_bin(repository_ctx, python_bin):
  
  def _get_python_include(repository_ctx, python_bin):
      """Gets the python include path."""
@@ -29,10 +29,13 @@ index 2f75262ea9f..588059d2297 100644
 -        repository_ctx,
 -        [
 -            python_bin,
+-            "-Wignore",
 -            "-c",
--            "from __future__ import print_function;" +
--            "from distutils import sysconfig;" +
--            "print(sysconfig.get_python_inc())",
+-            "import importlib; " +
+-            "import importlib.util; " +
+-            "print(importlib.import_module('distutils.sysconfig').get_python_inc() " +
+-            "if importlib.util.find_spec('distutils.sysconfig') " +
+-            "else importlib.import_module('sysconfig').get_path('include'))",
 -        ],
 -        error_msg = "Problem getting python include path.",
 -        error_details = ("Is the Python binary path set up right? " +
@@ -45,5 +48,5 @@ index 2f75262ea9f..588059d2297 100644
  def _get_python_import_lib_name(repository_ctx, python_bin):
      """Get Python import library name (pythonXY.lib) on Windows."""
 -- 
-2.27.0
+2.36.0
 

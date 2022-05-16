@@ -1,6 +1,6 @@
-From 14cbd9b4740b9fcb4552a9c2160be04040415987 Mon Sep 17 00:00:00 2001
+From 17e03724c925f8d0b11c8f14699646aa498af798 Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@windriver.com>
-Date: Mon, 25 Feb 2019 00:54:21 -0500
+Date: Mon, 16 May 2022 00:36:00 -0700
 Subject: [PATCH] label_image: tweak default model location
 
 Upstream-Status: Inappropriate [oe specific]
@@ -12,10 +12,10 @@ Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
  2 files changed, 6 insertions(+), 6 deletions(-)
 
 diff --git a/tensorflow/examples/label_image/label_image.py b/tensorflow/examples/label_image/label_image.py
-index fe5e0fc..55e344a 100644
+index 3e4bc1ddaab..83558251d77 100644
 --- a/tensorflow/examples/label_image/label_image.py
 +++ b/tensorflow/examples/label_image/label_image.py
-@@ -73,10 +73,10 @@ def load_labels(label_file):
+@@ -62,10 +62,10 @@ def load_labels(label_file):
  
  
  if __name__ == "__main__":
@@ -30,10 +30,10 @@ index fe5e0fc..55e344a 100644
    input_width = 299
    input_mean = 0
 diff --git a/tensorflow/examples/label_image/main.cc b/tensorflow/examples/label_image/main.cc
-index ee2927d..2c59370 100644
+index 13bb5980276..38935a57dd4 100644
 --- a/tensorflow/examples/label_image/main.cc
 +++ b/tensorflow/examples/label_image/main.cc
-@@ -278,11 +278,11 @@ int main(int argc, char* argv[]) {
+@@ -279,11 +279,11 @@ int main(int argc, char* argv[]) {
    // They define where the graph and input data is located, and what kind of
    // input the model expects. If you train your own model, or use something
    // other than inception_v3, then you'll need to update these.
@@ -45,9 +45,9 @@ index ee2927d..2c59370 100644
    string labels =
 -      "tensorflow/examples/label_image/data/imagenet_slim_labels.txt";
 +      "/usr/share/label_image/imagenet_slim_labels.txt";
-   int32 input_width = 299;
-   int32 input_height = 299;
+   int32_t input_width = 299;
+   int32_t input_height = 299;
    float input_mean = 0;
 -- 
-2.8.1
+2.36.0
 

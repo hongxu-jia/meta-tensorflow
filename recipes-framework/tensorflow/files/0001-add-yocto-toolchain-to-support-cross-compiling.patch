@@ -1,17 +1,16 @@
-From df2fc39e4ff2dcb5d795d5f924e36d8014eb905b Mon Sep 17 00:00:00 2001
+From 2bc17fd2dfa2e4d6b0cbedf692a31b56e02cf6e6 Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@windriver.com>
-Date: Tue, 17 Aug 2021 15:54:25 +0800
+Date: Mon, 16 May 2022 00:31:42 -0700
 Subject: [PATCH] add yocto toolchain to support cross compiling
 
 Upstream-Status: Inappropriate [oe specific]
 
 Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
 ---
- WORKSPACE                   | 6 ++++++
- tensorflow/BUILD            | 9 +++++++++
- tensorflow/workspace2.bzl   | 8 ++++++++
- third_party/aws/BUILD.bazel | 3 +++
- 4 files changed, 26 insertions(+)
+ WORKSPACE                 | 6 ++++++
+ tensorflow/BUILD          | 9 +++++++++
+ tensorflow/workspace2.bzl | 8 ++++++++
+ 3 files changed, 23 insertions(+)
 
 diff --git a/WORKSPACE b/WORKSPACE
 index 1286ef9ac03..3ed96c1052d 100644
@@ -28,10 +27,10 @@ index 1286ef9ac03..3ed96c1052d 100644
 +    build_file = "//:BUILD.yocto_compiler",
 +)
 diff --git a/tensorflow/BUILD b/tensorflow/BUILD
-index 04dcc5d82f3..b8b81fa1791 100644
+index 92e11a68e8d..7ae7fc79356 100644
 --- a/tensorflow/BUILD
 +++ b/tensorflow/BUILD
-@@ -191,6 +191,15 @@ config_setting(
+@@ -207,6 +207,15 @@ config_setting(
      visibility = ["//visibility:public"],
  )
  
@@ -48,18 +47,18 @@ index 04dcc5d82f3..b8b81fa1791 100644
      name = "android_arm",
      flag_values = if_google(
 diff --git a/tensorflow/workspace2.bzl b/tensorflow/workspace2.bzl
-index 3e66023a149..c9f89f47dfa 100644
+index 77c76aa6e20..f5c323174d5 100644
 --- a/tensorflow/workspace2.bzl
 +++ b/tensorflow/workspace2.bzl
 @@ -10,6 +10,7 @@ load("//third_party/git:git_configure.bzl", "git_configure")
  load("//third_party/py:python_configure.bzl", "python_configure")
  load("//third_party/systemlibs:syslibs_configure.bzl", "syslibs_configure")
- load("@tf_toolchains//toolchains/cpus/arm:arm_compiler_configure.bzl", "arm_compiler_configure")
+ load("//tensorflow/tools/toolchains:cpus/arm/arm_compiler_configure.bzl", "arm_compiler_configure")
 +load("//third_party/toolchains/yocto:yocto_compiler_configure.bzl", "yocto_compiler_configure")
- load("@tf_toolchains//toolchains/embedded/arm-linux:arm_linux_toolchain_configure.bzl", "arm_linux_toolchain_configure")
- load("//third_party:repo.bzl", "tf_http_archive")
+ load("//tensorflow/tools/toolchains/embedded/arm-linux:arm_linux_toolchain_configure.bzl", "arm_linux_toolchain_configure")
+ load("//third_party:repo.bzl", "tf_http_archive", "tf_mirror_urls")
  load("//third_party/clang_toolchain:cc_configure_clang.bzl", "cc_download_clang_toolchain")
-@@ -108,6 +109,13 @@ def _tf_toolchains():
+@@ -114,6 +115,13 @@ def _tf_toolchains():
          remote_config_repo_aarch64 = "../aarch64_compiler",
      )
  
@@ -73,20 +72,6 @@ index 3e66023a149..c9f89f47dfa 100644
      # TFLite crossbuild toolchain for embeddeds Linux
      arm_linux_toolchain_configure(
          name = "local_config_embedded_arm",
-diff --git a/third_party/aws/BUILD.bazel b/third_party/aws/BUILD.bazel
-index d9e40703caa..e1058edaba4 100644
---- a/third_party/aws/BUILD.bazel
-+++ b/third_party/aws/BUILD.bazel
-@@ -30,6 +30,9 @@ cc_library(
-         "@org_tensorflow//tensorflow:freebsd": glob([
-             "aws-cpp-sdk-core/source/platform/linux-shared/*.cpp",
-         ]),
-+        "@org_tensorflow//tensorflow:yocto_armeabi": glob([
-+            "aws-cpp-sdk-core/source/platform/linux-shared/*.cpp",
-+        ]),
-         "//conditions:default": [],
-     }) + select({
-         "//conditions:default": glob([
 -- 
-2.27.0
+2.36.0
 

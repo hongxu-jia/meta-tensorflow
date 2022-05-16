@@ -2,10 +2,6 @@ include tensorflow.inc
 
 inherit native
 
-SRC_URI += " \
-    file://0001-distutils-is-deprecated-in-Python-3.10-51776.patch \
-"
-
 export PYTHON_BIN_PATH="${PYTHON}"
 export PYTHON_LIB_PATH="${PYTHON_SITEPACKAGES_DIR}"
 

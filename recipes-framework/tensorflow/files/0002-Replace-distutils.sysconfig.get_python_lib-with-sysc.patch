@@ -1,7 +1,7 @@
-From f9a0142a292ce49f74796f11b462a4644ad50771 Mon Sep 17 00:00:00 2001
+From 5dc007d64a9928d379851a6524a376bfdb819c6d Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@windriver.com>
-Date: Wed, 20 Oct 2021 16:10:54 +0800
-Subject: [PATCH 2/2] Replace distutils.sysconfig.get_python_lib() with
+Date: Mon, 16 May 2022 00:17:02 -0700
+Subject: [PATCH] Replace distutils.sysconfig.get_python_lib() with 
  sysconfig.get_path('purelib') - python 3.10 support
 
 This is part of the effort for 51776 to get python 3.10 support.
@@ -21,19 +21,19 @@ Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
  2 files changed, 4 insertions(+), 6 deletions(-)
 
 diff --git a/tensorflow/api_template.__init__.py b/tensorflow/api_template.__init__.py
-index ddfa725cd32..3e6e28d0c03 100644
+index 1ed97439b06..58904070e62 100644
 --- a/tensorflow/api_template.__init__.py
 +++ b/tensorflow/api_template.__init__.py
-@@ -30,7 +30,7 @@ from __future__ import absolute_import as _absolute_import
- from __future__ import division as _division
- from __future__ import print_function as _print_function
+@@ -26,7 +26,7 @@ only a placeholder to enable test cases to run. The TensorFlow build replaces
+ this file with a file generated from [`api_template.__init__.py`](https://www.github.com/tensorflow/tensorflow/blob/master/tensorflow/api_template.__init__.py)
+ """
  
 -import distutils as _distutils
 +import sysconfig as _sysconfig
  import inspect as _inspect
  import logging as _logging
  import os as _os
-@@ -121,8 +121,7 @@ _site_packages_dirs += [_p for _p in _sys.path if 'site-packages' in _p]
+@@ -122,8 +122,7 @@ _site_packages_dirs += [_p for _p in _sys.path if 'site-packages' in _p]
  if 'getsitepackages' in dir(_site):
    _site_packages_dirs += _site.getsitepackages()
  
@@ -44,19 +44,19 @@ index ddfa725cd32..3e6e28d0c03 100644
  _site_packages_dirs = list(set(_site_packages_dirs))
  
 diff --git a/tensorflow/api_template_v1.__init__.py b/tensorflow/api_template_v1.__init__.py
-index 613bc3e64df..d41c441c3bc 100644
+index 87d9bc1f204..70e0fd70c34 100644
 --- a/tensorflow/api_template_v1.__init__.py
 +++ b/tensorflow/api_template_v1.__init__.py
-@@ -18,7 +18,7 @@ from __future__ import absolute_import as _absolute_import
- from __future__ import division as _division
- from __future__ import print_function as _print_function
+@@ -14,7 +14,7 @@
+ # ==============================================================================
+ """Bring in all of the public TensorFlow interface into this module."""
  
 -import distutils as _distutils
 +import sysconfig as _sysconfig
  import inspect as _inspect
  import os as _os
  import site as _site
-@@ -153,8 +153,7 @@ _site_packages_dirs += [_p for _p in _sys.path if 'site-packages' in _p]
+@@ -163,8 +163,7 @@ _site_packages_dirs += [_p for _p in _sys.path if 'site-packages' in _p]
  if 'getsitepackages' in dir(_site):
    _site_packages_dirs += _site.getsitepackages()
  
@@ -67,5 +67,5 @@ index 613bc3e64df..d41c441c3bc 100644
  _site_packages_dirs = list(set(_site_packages_dirs))
  
 -- 
-2.27.0
+2.36.0
 
