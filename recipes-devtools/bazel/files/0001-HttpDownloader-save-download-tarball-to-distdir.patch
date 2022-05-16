@@ -1,6 +1,6 @@
-From 7225fc4a62a06b654fe7d04a2446a594888a7b8c Mon Sep 17 00:00:00 2001
+From 1f8b103ef64a62780489f17f279acb7b4f091d74 Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@windriver.com>
-Date: Tue, 8 Dec 2020 10:58:52 +0800
+Date: Mon, 16 May 2022 01:57:39 -0700
 Subject: [PATCH] HttpDownloader: save download tarball to distdir
 
 It is helpful for collecting tarball url which supports offline build.
@@ -13,10 +13,10 @@ Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
  1 file changed, 38 insertions(+), 24 deletions(-)
 
 diff --git a/src/main/java/com/google/devtools/build/lib/bazel/repository/downloader/DownloadManager.java b/src/main/java/com/google/devtools/build/lib/bazel/repository/downloader/DownloadManager.java
-index a89077e..ccaadb3 100755
+index b8c1fdf240..b190f2876a 100644
 --- a/src/main/java/com/google/devtools/build/lib/bazel/repository/downloader/DownloadManager.java
 +++ b/src/main/java/com/google/devtools/build/lib/bazel/repository/downloader/DownloadManager.java
-@@ -152,33 +152,36 @@ public class DownloadManager {
+@@ -197,33 +197,36 @@ public class DownloadManager {
          } else if (!dir.isDirectory()) {
            eventHandler.handle(Event.warn("distdir " + dir + " is not a directory"));
          } else {
@@ -77,8 +77,8 @@ index a89077e..ccaadb3 100755
              }
            }
          }
-@@ -200,6 +203,17 @@ public class DownloadManager {
-       eventHandler.handle(Event.info("SHA256 (" + urls.get(0) + ") = " + newSha256));
+@@ -267,6 +270,17 @@ public class DownloadManager {
+       repositoryCache.put(destination, KeyType.SHA256, canonicalId);
      }
  
 +    for (Path dir : distdir) {
@@ -96,5 +96,5 @@ index a89077e..ccaadb3 100755
    }
  
 -- 
-2.18.2
+2.36.0
 

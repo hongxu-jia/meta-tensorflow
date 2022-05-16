@@ -9,3 +9,4 @@ TS_DL_DIR ??= "${DL_DIR}"
 
 CCACHE_DISABLE = "1"
 
+export HOSTTOOLS_DIR
