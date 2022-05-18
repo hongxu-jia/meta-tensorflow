@@ -36,6 +36,7 @@ EXTRA_BAZEL_ARGS = " \
     ${@oe.utils.conditional("BAZEL_MEM", "", "", "--local_ram_resources=${BAZEL_MEM}", d )} \
 "
 
+do_compile[network] = "1"
 do_compile () {
     TMPDIR="${TOPDIR}/bazel" \
     VERBOSE=yes \

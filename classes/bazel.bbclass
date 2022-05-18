@@ -150,3 +150,5 @@ clean_bazel() {
     fi
     rm ${BAZEL_DIR} -rf
 }
+
+do_compile[network] = "1"
