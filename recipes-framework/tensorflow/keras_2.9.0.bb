@@ -1,13 +1,14 @@
 DESCRIPTION = "TensorFlow Keras is an implementation of the Keras API that\
  uses TensorFlow as a backend."
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://LICENSE;md5=c573baaa40a28002a2d03d3e7e9bc583"
+LIC_FILES_CHKSUM = "file://LICENSE;md5=175792518e4ac015ab6696d16c4f607e"
 
-SRC_URI = "git://github.com/keras-team/keras.git;branch=r2.6;protocol=https \
+SRC_URI = "git://github.com/keras-team/keras.git;branch=r2.9;protocol=https \
            file://0001-customize-for-yocto.patch \
+           file://0001-update-link-of-zlib-1.2.11.tar.gz.patch \
           "
 
-SRCREV = "3a33d53ea4aca312c5ad650b4883d9bac608a32e"
+SRCREV = "07e13740fd181fc3ddec7d9a594d8a08666645f6"
 S = "${WORKDIR}/git"
 
 inherit python3native bazel
@@ -21,6 +22,7 @@ DEPENDS += " \
     python3-gast-native \
     python3-astunparse-native \
     python3-termcolor-native \
+    python3-typing-extensions-native \
     flatbuffers-native \
     tensorflow-native \
 "
