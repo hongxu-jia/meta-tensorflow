@@ -66,7 +66,8 @@ ENDOF
     SED_COMMAND="${SED_COMMAND}; s#%%YOCTO_COMPILER_PATH%%#${BAZEL_OUTPUTBASE_DIR}/external/yocto_compiler#g"
 
     sed -i "${SED_COMMAND}" ${S}/BUILD.yocto_compiler \
-                            ${S}/WORKSPACE
+                            ${S}/WORKSPACE \
+                            ${S}/configure.py
 
     ${TF_CONFIG} \
     ./configure

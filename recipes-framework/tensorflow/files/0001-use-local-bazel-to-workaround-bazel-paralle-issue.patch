@@ -6,6 +6,7 @@ Subject: [PATCH] use local bazel to workaround bazel paralle issue
 Upstream-Status: Inappropriate [oe specific]
 
 Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+Signed-off-by: Julien STEPHAN <jstephan@baylibre.com>
 ---
  configure.py | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
@@ -19,7 +20,7 @@ index dae3dce89d3..979f00f3633 100644
      The bazel version detected.
    """
 -  bazel_executable = which('bazel')
-+  bazel_executable = "../bazel/bazel"
++  bazel_executable = "%%WORKDIR%%/bazel/bazel"
    if bazel_executable is None:
      bazel_executable = which('bazelisk')
      if bazel_executable is None:

@@ -6,6 +6,9 @@ export PYTHON_BIN_PATH="${PYTHON}"
 export PYTHON_LIB_PATH="${PYTHON_SITEPACKAGES_DIR}"
 
 do_configure:append () {
+    SED_COMMAND="s#%%WORKDIR%%#${WORKDIR}#g"
+    sed -i "${SED_COMMAND}" ${S}/configure.py
+
     ${TF_CONFIG} \
     ./configure
 }
