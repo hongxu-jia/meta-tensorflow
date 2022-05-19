@@ -144,8 +144,6 @@ SOLIBS = ".so"
 FILES_SOLIBSDEV = ""
 ALLOW_EMPTY:${PN} = "1"
 
-FILES:${PN} += "${libdir} /home/root/*"
-
 inherit siteinfo unsupportarch
 python __anonymous() {
     if d.getVar("SITEINFO_ENDIANNESS") == 'be':
