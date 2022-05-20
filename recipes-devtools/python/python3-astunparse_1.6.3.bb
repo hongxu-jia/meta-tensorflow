@@ -1,7 +1,7 @@
 SUMMARY = "An AST unparser for Python"
 HOMEPAGE = "https://github.com/simonpercivall/astunparse"
 SECTION = "devel/python"
-LICENSE = "BSD"
+LICENSE = "PSF-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=7a7c771110c28a37480b73d07ad6d2a1"
 
 SRC_URI[md5sum] = "2cea4d8e49beba7684bac890e73d6a40"
