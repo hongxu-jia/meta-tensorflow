@@ -41,7 +41,7 @@ RDEPENDS:${PN} += " \
     python3-google-pasta \
     python3-typing-extensions \
     python3-packaging \
-    flatbuffers-python3 \
+    python3-flatbuffers \
     tensorboard \
     tensorflow-estimator \
     keras \
