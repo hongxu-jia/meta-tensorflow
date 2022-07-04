@@ -23,7 +23,7 @@ DEPENDS += " \
     python3-astunparse-native \
     python3-termcolor-native \
     python3-typing-extensions-native \
-    flatbuffers-native \
+    python3-flatbuffers-native \
     tensorflow-native \
 "
 
