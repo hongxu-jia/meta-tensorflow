@@ -1,4 +1,4 @@
-From b358b4df4b1d410d17b7203862dd90f3f9be6c04 Mon Sep 17 00:00:00 2001
+From 385074d9300c18293a42c9d8ca9fb12cbffccb80 Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@windriver.com>
 Date: Mon, 16 May 2022 23:15:47 -0700
 Subject: [PATCH] third_party/eigen_archive:workaround ice failure while
@@ -21,13 +21,13 @@ Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
 
 diff --git a/third_party/eigen3/0001-workaround-ice-failure-while-building-from-source-wi.patch b/third_party/eigen3/0001-workaround-ice-failure-while-building-from-source-wi.patch
 new file mode 100644
-index 00000000000..2b71d92c14a
+index 00000000000..436f35fca13
 --- /dev/null
 +++ b/third_party/eigen3/0001-workaround-ice-failure-while-building-from-source-wi.patch
 @@ -0,0 +1,69 @@
-+From 5e3d1fca74780964103c4fd69d38f85766ed6d59 Mon Sep 17 00:00:00 2001
++From 035fd96026e18d61c19da038ab2b0f7a61e97799 Mon Sep 17 00:00:00 2001
 +From: Hongxu Jia <hongxu.jia@windriver.com>
-+Date: Tue, 17 Aug 2021 00:35:55 -0700
++Date: Mon, 19 Sep 2022 01:08:18 -0700
 +Subject: [PATCH] workaround ice failure while building from source with gcc
 + 7.3.1
 +
@@ -46,11 +46,11 @@ index 00000000000..2b71d92c14a
 + 2 files changed, 8 insertions(+), 4 deletions(-)
 +
 +diff --git a/unsupported/Eigen/CXX11/src/Tensor/TensorImagePatch.h b/unsupported/Eigen/CXX11/src/Tensor/TensorImagePatch.h
-+index dd51850..b49d877 100644
++index a9b281f..ec570d6 100644
 +--- a/unsupported/Eigen/CXX11/src/Tensor/TensorImagePatch.h
 ++++ b/unsupported/Eigen/CXX11/src/Tensor/TensorImagePatch.h
-+@@ -543,7 +543,8 @@ struct TensorEvaluator<const TensorImagePatchOp<Rows, Cols, ArgType>, Device>
-+     EIGEN_ALIGN_MAX typename internal::remove_const<CoeffReturnType>::type values[PacketSize];
++@@ -544,7 +544,8 @@ struct TensorEvaluator<const TensorImagePatchOp<Rows, Cols, ArgType>, Device>
++     EIGEN_ALIGN_MAX std::remove_const_t<CoeffReturnType> values[PacketSize];
 +     EIGEN_UNROLL_LOOP
 +     for (int i = 0; i < PacketSize; ++i) {
 +-      values[i] = coeff(index+i);
@@ -60,10 +60,10 @@ index 00000000000..2b71d92c14a
 +     PacketReturnType rslt = internal::pload<PacketReturnType>(values);
 +     return rslt;
 +diff --git a/unsupported/Eigen/CXX11/src/Tensor/TensorReduction.h b/unsupported/Eigen/CXX11/src/Tensor/TensorReduction.h
-+index 583f462..023acc2 100644
++index e62397a..fcd44c3 100644
 +--- a/unsupported/Eigen/CXX11/src/Tensor/TensorReduction.h
 ++++ b/unsupported/Eigen/CXX11/src/Tensor/TensorReduction.h
-+@@ -798,8 +798,9 @@ struct TensorReductionEvaluatorBase<const TensorReductionOp<Op, Dims, ArgType, M
++@@ -850,8 +850,9 @@ static constexpr bool RunningOnGPU = false;
 +       const Index firstIndex = firstInput(index);
 +       for (Index i = 0; i < PacketSize; ++i) {
 +         Op reducer(m_reducer);
@@ -74,7 +74,7 @@ index 00000000000..2b71d92c14a
 +       }
 +     } else if (PreservingInnerMostDims) {
 +       const Index firstIndex = firstInput(index);
-+@@ -812,12 +813,14 @@ struct TensorReductionEvaluatorBase<const TensorReductionOp<Op, Dims, ArgType, M
++@@ -864,12 +865,14 @@ static constexpr bool RunningOnGPU = false;
 +         return reducer.finalizePacket(accum);
 +       } else {
 +         for (int i = 0; i < PacketSize; ++i) {
@@ -92,10 +92,10 @@ index 00000000000..2b71d92c14a
 +     }
 +     PacketReturnType rslt = internal::pload<PacketReturnType>(values);
 +-- 
-+2.30.2
++2.37.1
 +
 diff --git a/third_party/eigen3/workspace.bzl b/third_party/eigen3/workspace.bzl
-index 4d327eedb37..dd03446e4ea 100644
+index 1380722ee67..722cfbece83 100644
 --- a/third_party/eigen3/workspace.bzl
 +++ b/third_party/eigen3/workspace.bzl
 @@ -14,6 +14,7 @@ def repo():
@@ -107,5 +107,5 @@ index 4d327eedb37..dd03446e4ea 100644
          strip_prefix = "eigen-{commit}".format(commit = EIGEN_COMMIT),
          urls = tf_mirror_urls("https://gitlab.com/libeigen/eigen/-/archive/{commit}/eigen-{commit}.tar.gz".format(commit = EIGEN_COMMIT)),
 -- 
-2.36.0
+2.37.1
 
