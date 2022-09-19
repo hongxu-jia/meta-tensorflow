@@ -3,12 +3,11 @@ DESCRIPTION = "TensorFlow Keras is an implementation of the Keras API that\
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=175792518e4ac015ab6696d16c4f607e"
 
-SRC_URI = "git://github.com/keras-team/keras.git;branch=r2.9;protocol=https \
+SRC_URI = "git://github.com/keras-team/keras.git;branch=r2.10;protocol=https \
            file://0001-customize-for-yocto.patch \
-           file://0001-update-link-of-zlib-1.2.11.tar.gz.patch \
           "
 
-SRCREV = "07e13740fd181fc3ddec7d9a594d8a08666645f6"
+SRCREV = "b80dd12da9c0bc3f569eca3455e77762cf2ee8ef"
 S = "${WORKDIR}/git"
 
 inherit python3native bazel
