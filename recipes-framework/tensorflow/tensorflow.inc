@@ -3,8 +3,8 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=4158a261ca7f2525513e31ba9c50ae98"
 
 DEPENDS = "bazel-native protobuf-native util-linux-native protobuf"
-SRCREV = "8a20d54a3c1bfa38c03ea99a2ad3c1b0a45dfa95"
-SRC_URI = "git://github.com/tensorflow/tensorflow.git;branch=r2.9;protocol=https \
+SRCREV = "359c3cdfc5fabac82b3c70b3b6de2b0a8c16874f"
+SRC_URI = "git://github.com/tensorflow/tensorflow.git;branch=r2.10;protocol=https \
            file://0001-support-musl.patch \
            file://0001-use-local-bazel-to-workaround-bazel-paralle-issue.patch \
            file://0001-third_party-eigen_archive-workaround-ice-failure-whi.patch \
@@ -17,6 +17,7 @@ S = "${WORKDIR}/git"
 
 DEPENDS += " \
     python3 \
+    python3-requests-native \
     python3-numpy-native \
     python3-keras-applications-native \
     python3-keras-preprocessing-native \

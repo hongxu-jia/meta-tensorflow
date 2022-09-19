@@ -1,24 +1,26 @@
-From 656f5e0f4fdcdf25de8629e645e32571b16910cc Mon Sep 17 00:00:00 2001
+From 73fffc29b6384c2695fa221fac9067c9661af4de Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@windriver.com>
-Date: Mon, 16 May 2022 00:51:03 -0700
+Date: Mon, 19 Sep 2022 00:02:14 -0700
 Subject: [PATCH] support 32 bit x64 and arm for yocto
 
 Upstream-Status: Inappropriate [oe specific]
 
+Rebase to 2.10.0
 Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
 ---
  tensorflow/BUILD                              |  3 --
- tensorflow/workspace2.bzl                     |  1 +
+ tensorflow/workspace2.bzl                     |  2 ++
  .../0001-XNNPACK-support-32-bit-x86.patch     | 29 +++++++++++++++++++
- third_party/cpuinfo/cpuinfo.BUILD             |  1 -
- 4 files changed, 30 insertions(+), 4 deletions(-)
+ .../0001-cpuinfo-support-32-bit-x86.patch     | 28 ++++++++++++++++++
+ 4 files changed, 59 insertions(+), 3 deletions(-)
  create mode 100644 third_party/0001-XNNPACK-support-32-bit-x86.patch
+ create mode 100644 third_party/0001-cpuinfo-support-32-bit-x86.patch
 
 diff --git a/tensorflow/BUILD b/tensorflow/BUILD
-index 7ae7fc79356..8fcccf01f25 100644
+index d01b55aaa92..9a03e9b60c2 100644
 --- a/tensorflow/BUILD
 +++ b/tensorflow/BUILD
-@@ -124,9 +124,6 @@ config_setting(
+@@ -176,9 +176,6 @@ config_setting(
          {},
      ),
      values = dict(
@@ -29,17 +31,25 @@ index 7ae7fc79356..8fcccf01f25 100644
      ),
      visibility = ["//visibility:public"],
 diff --git a/tensorflow/workspace2.bzl b/tensorflow/workspace2.bzl
-index f5c323174d5..9d99947286d 100644
+index a49aeeb7434..c1d90686dcb 100644
 --- a/tensorflow/workspace2.bzl
 +++ b/tensorflow/workspace2.bzl
-@@ -145,6 +145,7 @@ def _tf_repositories():
+@@ -140,6 +140,7 @@ def _tf_repositories():
          name = "XNNPACK",
-         sha256 = "7e9ad45391e5158fd00e816022bda21d54a6180788af7c455c864a78cee252c6",
-         strip_prefix = "XNNPACK-11b2812d64e49bab9b6c489f79067fc94e69db9f",
+         sha256 = "09d83e19a5f54e46365a29fa9a891de58d589696fb1a0464a14c2446b8257792",
+         strip_prefix = "XNNPACK-6b409ac0a3090ebe74d0cdfb494c4cd91485ad39",
 +        patch_file = ["//third_party:0001-XNNPACK-support-32-bit-x86.patch"],
-         urls = tf_mirror_urls("https://github.com/google/XNNPACK/archive/11b2812d64e49bab9b6c489f79067fc94e69db9f.zip"),
+         urls = tf_mirror_urls("https://github.com/google/XNNPACK/archive/6b409ac0a3090ebe74d0cdfb494c4cd91485ad39.zip"),
      )
      # LINT.ThenChange(//tensorflow/lite/tools/cmake/modules/xnnpack.cmake)
+@@ -168,6 +169,7 @@ def _tf_repositories():
+     tf_http_archive(
+         name = "cpuinfo",
+         strip_prefix = "cpuinfo-5e63739504f0f8e18e941bd63b2d6d42536c7d90",
++        patch_file = ["//third_party:0001-cpuinfo-support-32-bit-x86.patch"],
+         sha256 = "18eca9bc8d9c4ce5496d0d2be9f456d55cbbb5f0639a551ce9c8bac2e84d85fe",
+         urls = tf_mirror_urls("https://github.com/pytorch/cpuinfo/archive/5e63739504f0f8e18e941bd63b2d6d42536c7d90.tar.gz"),
+     )
 diff --git a/third_party/0001-XNNPACK-support-32-bit-x86.patch b/third_party/0001-XNNPACK-support-32-bit-x86.patch
 new file mode 100644
 index 00000000000..2141c37236b
@@ -75,18 +85,40 @@ index 00000000000..2141c37236b
 +-- 
 +2.30.2
 +
-diff --git a/third_party/cpuinfo/cpuinfo.BUILD b/third_party/cpuinfo/cpuinfo.BUILD
-index eb2937d20ef..7c435fe6595 100644
---- a/third_party/cpuinfo/cpuinfo.BUILD
-+++ b/third_party/cpuinfo/cpuinfo.BUILD
-@@ -266,7 +266,6 @@ config_setting(
- config_setting(
-     name = "android_x86",
-     values = {
--        "crosstool_top": "//external:android/crosstool",
-         "cpu": "x86",
-     },
-     visibility = ["//visibility:public"],
+diff --git a/third_party/0001-cpuinfo-support-32-bit-x86.patch b/third_party/0001-cpuinfo-support-32-bit-x86.patch
+new file mode 100644
+index 00000000000..0c83cf01675
+--- /dev/null
++++ b/third_party/0001-cpuinfo-support-32-bit-x86.patch
+@@ -0,0 +1,28 @@
++From f5e52b2db5516954dab9026e4f386982c4c3c3a4 Mon Sep 17 00:00:00 2001
++From: Hongxu Jia <hongxu.jia@windriver.com>
++Date: Mon, 19 Sep 2022 00:10:18 -0700
++Subject: [PATCH] cpuinfo: support 32 bit x86
++
++Use android_x86 as a workaround to support 32 bit x86
++
++Upstream-Status: Inappropriate [oe specific]
++Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
++---
++ BUILD.bazel | 1 -
++ 1 file changed, 1 deletion(-)
++
++diff --git a/BUILD.bazel b/BUILD.bazel
++index 7c002fe..68fd5b5 100644
++--- a/BUILD.bazel
+++++ b/BUILD.bazel
++@@ -274,7 +274,6 @@ config_setting(
++ config_setting(
++     name = "android_x86",
++     values = {
++-        "crosstool_top": "//external:android/crosstool",
++         "cpu": "x86",
++     },
++     visibility = ["//visibility:public"],
++-- 
++2.37.1
++
 -- 
-2.36.0
+2.37.1
 
