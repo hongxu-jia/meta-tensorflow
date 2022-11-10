@@ -1,0 +1,259 @@
+From fbeda57f6da004feeda019e162361d662829f666 Mon Sep 17 00:00:00 2001
+From: Hongxu Jia <hongxu.jia@windriver.com>
+Date: Thu, 10 Nov 2022 15:06:33 +0800
+Subject: [PATCH] fix XNNPACK build failure for qemuarm
+
+Does not support 32 bit ARM with Neon DotProduct
+
+Upstream-Status: Inappropriate [oe specific]
+
+Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+---
+ .../0001-XNNPACK-support-32-bit-x86.patch     | 214 +++++++++++++++++-
+ 1 file changed, 208 insertions(+), 6 deletions(-)
+
+diff --git a/third_party/0001-XNNPACK-support-32-bit-x86.patch b/third_party/0001-XNNPACK-support-32-bit-x86.patch
+index 2141c37236b..97a2e511cee 100644
+--- a/third_party/0001-XNNPACK-support-32-bit-x86.patch
++++ b/third_party/0001-XNNPACK-support-32-bit-x86.patch
+@@ -1,22 +1,36 @@
+-From 2345756776fa09fd95e29f96f781e15e3b18a61b Mon Sep 17 00:00:00 2001
++From 4b4dacfa05831a6f5ecc5fe180bdd62ebabff8f4 Mon Sep 17 00:00:00 2001
+ From: Hongxu Jia <hongxu.jia@windriver.com>
+ Date: Tue, 17 Aug 2021 01:09:53 -0700
+ Subject: [PATCH] XNNPACK: support 32 bit x86
+ 
+ Use android_x86 as a workaround to support 32 bit x86
+ 
++Does not support 32 bit ARM with Neon DotProduct
++
+ Upstream-Status: Inappropriate [oe specific]
+ 
+ Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+ ---
+- BUILD.bazel | 1 -
+- 1 file changed, 1 deletion(-)
++ BUILD.bazel                                                   | 2 --
++ .../gen/4x8c4-minmax-fp32-aarch32-neondot-cortex-a55.S        | 4 ++--
++ src/qc8-gemm/gen/4x8c4-minmax-fp32-aarch32-neondot-ld64.S     | 4 ++--
++ .../gen/4x8c4-minmax-fp32-aarch32-neondot-cortex-a55.S        | 4 ++--
++ src/qc8-igemm/gen/4x8c4-minmax-fp32-aarch32-neondot-ld64.S    | 4 ++--
++ src/qs8-gemm/4x8c4-aarch32-neondot-cortex-a55.S.in            | 4 ++--
++ src/qs8-gemm/4x8c4-aarch32-neondot-ld64.S.in                  | 4 ++--
++ .../gen/4x8c4-minmax-rndnu-aarch32-neondot-cortex-a55.S       | 4 ++--
++ src/qs8-gemm/gen/4x8c4-minmax-rndnu-aarch32-neondot-ld64.S    | 4 ++--
++ src/qs8-igemm/4x8c4-aarch32-neondot-cortex-a55.S.in           | 4 ++--
++ src/qs8-igemm/4x8c4-aarch32-neondot-ld64.S.in                 | 4 ++--
++ .../gen/4x8c4-minmax-rndnu-aarch32-neondot-cortex-a55.S       | 4 ++--
++ src/qs8-igemm/gen/4x8c4-minmax-rndnu-aarch32-neondot-ld64.S   | 4 ++--
++ 13 files changed, 24 insertions(+), 26 deletions(-)
+ 
+ diff --git a/BUILD.bazel b/BUILD.bazel
+-index 27ab07c9..f223d2ab 100644
++index fea0f74..c98066b 100644
+ --- a/BUILD.bazel
+ +++ b/BUILD.bazel
+-@@ -8783,7 +8783,6 @@ config_setting(
++@@ -15689,7 +15689,6 @@ config_setting(
+  config_setting(
+      name = "android_x86",
+      values = {
+@@ -24,6 +38,194 @@ index 27ab07c9..f223d2ab 100644
+          "cpu": "x86",
+      },
+  )
++@@ -15910,7 +15909,6 @@ alias(
++ selects.config_setting_group(
++     name = "arm_dotprod_enabled_by_default",
++     match_any = [
++-        ":aarch32",
++         ":aarch64",
++     ],
++ )
++diff --git a/src/qc8-gemm/gen/4x8c4-minmax-fp32-aarch32-neondot-cortex-a55.S b/src/qc8-gemm/gen/4x8c4-minmax-fp32-aarch32-neondot-cortex-a55.S
++index a5a0849..3a17d4f 100644
++--- a/src/qc8-gemm/gen/4x8c4-minmax-fp32-aarch32-neondot-cortex-a55.S
+++++ b/src/qc8-gemm/gen/4x8c4-minmax-fp32-aarch32-neondot-cortex-a55.S
++@@ -48,8 +48,8 @@
++ //    int8_t output_max;          d13[7]
++ //  } xnn_qs8_minmax_params.neonv8;
++ 
++-// iOS does not support 32 bit ARM with Neon DotProduct.
++-#ifndef __APPLE__
+++// Do not support 32 bit ARM with Neon DotProduct.
+++#if 0
++ BEGIN_FUNCTION xnn_qc8_gemm_minmax_fp32_ukernel_4x8c4__aarch32_neondot_cortex_a55
++         # Push 80 bytes
++         PUSH    {r4, r5, r6, r7, r8, r9, r10, r11}  // 32
++diff --git a/src/qc8-gemm/gen/4x8c4-minmax-fp32-aarch32-neondot-ld64.S b/src/qc8-gemm/gen/4x8c4-minmax-fp32-aarch32-neondot-ld64.S
++index 2b569e2..9633a33 100644
++--- a/src/qc8-gemm/gen/4x8c4-minmax-fp32-aarch32-neondot-ld64.S
+++++ b/src/qc8-gemm/gen/4x8c4-minmax-fp32-aarch32-neondot-ld64.S
++@@ -48,8 +48,8 @@
++ //    int8_t output_max;          d13[7]
++ //  } xnn_qs8_minmax_params.neonv8;
++ 
++-// iOS does not support 32 bit ARM with Neon DotProduct.
++-#ifndef __APPLE__
+++// Do not support 32 bit ARM with Neon DotProduct.
+++#if 0
++ BEGIN_FUNCTION xnn_qc8_gemm_minmax_fp32_ukernel_4x8c4__aarch32_neondot_ld64
++         # Push 80 bytes
++         PUSH    {r4, r5, r6, r7, r8, r9, r10, r11}  // 32
++diff --git a/src/qc8-igemm/gen/4x8c4-minmax-fp32-aarch32-neondot-cortex-a55.S b/src/qc8-igemm/gen/4x8c4-minmax-fp32-aarch32-neondot-cortex-a55.S
++index b5110e4..48ff007 100644
++--- a/src/qc8-igemm/gen/4x8c4-minmax-fp32-aarch32-neondot-cortex-a55.S
+++++ b/src/qc8-igemm/gen/4x8c4-minmax-fp32-aarch32-neondot-cortex-a55.S
++@@ -50,8 +50,8 @@
++ //    int8_t output_max;          d13[7]
++ //  } xnn_qs8_minmax_params.neonv8;
++ 
++-// iOS does not support 32 bit ARM with Neon DotProduct.
++-#ifndef __APPLE__
+++// Do not support 32 bit ARM with Neon DotProduct.
+++#if 0
++ BEGIN_FUNCTION xnn_qc8_igemm_minmax_fp32_ukernel_4x8c4__aarch32_neondot_cortex_a55
++         ADD     r2, r2, 3               // kc = (kc + 3) & ~3
++         BIC     r2, r2, 3
++diff --git a/src/qc8-igemm/gen/4x8c4-minmax-fp32-aarch32-neondot-ld64.S b/src/qc8-igemm/gen/4x8c4-minmax-fp32-aarch32-neondot-ld64.S
++index 301c2a3..5b5a08e 100644
++--- a/src/qc8-igemm/gen/4x8c4-minmax-fp32-aarch32-neondot-ld64.S
+++++ b/src/qc8-igemm/gen/4x8c4-minmax-fp32-aarch32-neondot-ld64.S
++@@ -50,8 +50,8 @@
++ //    int8_t output_max;          d13[7]
++ //  } xnn_qs8_minmax_params.neonv8;
++ 
++-// iOS does not support 32 bit ARM with Neon DotProduct.
++-#ifndef __APPLE__
+++// Do not support 32 bit ARM with Neon DotProduct.
+++#if 0
++ BEGIN_FUNCTION xnn_qc8_igemm_minmax_fp32_ukernel_4x8c4__aarch32_neondot_ld64
++         ADD     r2, r2, 3               // kc = (kc + 3) & ~3
++         BIC     r2, r2, 3
++diff --git a/src/qs8-gemm/4x8c4-aarch32-neondot-cortex-a55.S.in b/src/qs8-gemm/4x8c4-aarch32-neondot-cortex-a55.S.in
++index b341013..05c630f 100644
++--- a/src/qs8-gemm/4x8c4-aarch32-neondot-cortex-a55.S.in
+++++ b/src/qs8-gemm/4x8c4-aarch32-neondot-cortex-a55.S.in
++@@ -60,8 +60,8 @@ $else:
++   //    int8_t output_max;          d13[7]
++   //  } xnn_qs8_minmax_params.neonv8;
++ 
++-// iOS does not support 32 bit ARM with Neon DotProduct.
++-#ifndef __APPLE__
+++// Do not support 32 bit ARM with Neon DotProduct.
+++#if 0
++ BEGIN_FUNCTION xnn_${DATATYPE.lower()}_gemm_minmax_${REQUANTIZATION.lower()}_ukernel_4x8c4__aarch32_neondot_cortex_a55
++         # Push 80 bytes
++         PUSH    {r4, r5, r6, r7, r8, r9, r10, r11}  // 32
++diff --git a/src/qs8-gemm/4x8c4-aarch32-neondot-ld64.S.in b/src/qs8-gemm/4x8c4-aarch32-neondot-ld64.S.in
++index 7e7b7e0..eb58d65 100644
++--- a/src/qs8-gemm/4x8c4-aarch32-neondot-ld64.S.in
+++++ b/src/qs8-gemm/4x8c4-aarch32-neondot-ld64.S.in
++@@ -61,8 +61,8 @@ $else:
++   //    int8_t output_max;          d13[7]
++   //  } xnn_qs8_minmax_params.neonv8;
++ 
++-// iOS does not support 32 bit ARM with Neon DotProduct.
++-#ifndef __APPLE__
+++// Do not support 32 bit ARM with Neon DotProduct.
+++#if 0
++ BEGIN_FUNCTION xnn_${DATATYPE.lower()}_gemm_minmax_${REQUANTIZATION.lower()}_ukernel_4x8c4__aarch32_neondot_ld64
++         # Push 80 bytes
++         PUSH    {r4, r5, r6, r7, r8, r9, r10, r11}  // 32
++diff --git a/src/qs8-gemm/gen/4x8c4-minmax-rndnu-aarch32-neondot-cortex-a55.S b/src/qs8-gemm/gen/4x8c4-minmax-rndnu-aarch32-neondot-cortex-a55.S
++index 92648af..7f4485a 100644
++--- a/src/qs8-gemm/gen/4x8c4-minmax-rndnu-aarch32-neondot-cortex-a55.S
+++++ b/src/qs8-gemm/gen/4x8c4-minmax-rndnu-aarch32-neondot-cortex-a55.S
++@@ -51,8 +51,8 @@
++ //    int8_t output_max;          d13[7]
++ //  } rndnu_neon;
++ 
++-// iOS does not support 32 bit ARM with Neon DotProduct.
++-#ifndef __APPLE__
+++// Do not support 32 bit ARM with Neon DotProduct.
+++#if 0
++ BEGIN_FUNCTION xnn_qs8_gemm_minmax_rndnu_ukernel_4x8c4__aarch32_neondot_cortex_a55
++         # Push 80 bytes
++         PUSH    {r4, r5, r6, r7, r8, r9, r10, r11}  // 32
++diff --git a/src/qs8-gemm/gen/4x8c4-minmax-rndnu-aarch32-neondot-ld64.S b/src/qs8-gemm/gen/4x8c4-minmax-rndnu-aarch32-neondot-ld64.S
++index 460a680..23607f3 100644
++--- a/src/qs8-gemm/gen/4x8c4-minmax-rndnu-aarch32-neondot-ld64.S
+++++ b/src/qs8-gemm/gen/4x8c4-minmax-rndnu-aarch32-neondot-ld64.S
++@@ -51,8 +51,8 @@
++ //    int8_t output_max;          d13[7]
++ //  } rndnu_neon;
++ 
++-// iOS does not support 32 bit ARM with Neon DotProduct.
++-#ifndef __APPLE__
+++// Do not support 32 bit ARM with Neon DotProduct.
+++#if 0
++ BEGIN_FUNCTION xnn_qs8_gemm_minmax_rndnu_ukernel_4x8c4__aarch32_neondot_ld64
++         # Push 80 bytes
++         PUSH    {r4, r5, r6, r7, r8, r9, r10, r11}  // 32
++diff --git a/src/qs8-igemm/4x8c4-aarch32-neondot-cortex-a55.S.in b/src/qs8-igemm/4x8c4-aarch32-neondot-cortex-a55.S.in
++index cd60189..c483f86 100644
++--- a/src/qs8-igemm/4x8c4-aarch32-neondot-cortex-a55.S.in
+++++ b/src/qs8-igemm/4x8c4-aarch32-neondot-cortex-a55.S.in
++@@ -62,8 +62,8 @@ $else:
++   //    int8_t output_max;          d13[7]
++   //  } xnn_qs8_minmax_params.neonv8;
++ 
++-// iOS does not support 32 bit ARM with Neon DotProduct.
++-#ifndef __APPLE__
+++// Do not support 32 bit ARM with Neon DotProduct.
+++#if 0
++ BEGIN_FUNCTION xnn_${DATATYPE.lower()}_igemm_minmax_${REQUANTIZATION.lower()}_ukernel_4x8c4__aarch32_neondot_cortex_a55
++         ADD     r2, r2, 3               // kc = (kc + 3) & ~3
++         BIC     r2, r2, 3
++diff --git a/src/qs8-igemm/4x8c4-aarch32-neondot-ld64.S.in b/src/qs8-igemm/4x8c4-aarch32-neondot-ld64.S.in
++index 9d85949..40bf5a8 100644
++--- a/src/qs8-igemm/4x8c4-aarch32-neondot-ld64.S.in
+++++ b/src/qs8-igemm/4x8c4-aarch32-neondot-ld64.S.in
++@@ -63,8 +63,8 @@ $else:
++   //    int8_t output_max;          d13[7]
++   //  } xnn_qs8_minmax_params.neonv8;
++ 
++-// iOS does not support 32 bit ARM with Neon DotProduct.
++-#ifndef __APPLE__
+++// Do not support 32 bit ARM with Neon DotProduct.
+++#if 0
++ BEGIN_FUNCTION xnn_${DATATYPE.lower()}_igemm_minmax_${REQUANTIZATION.lower()}_ukernel_4x8c4__aarch32_neondot_ld64
++         ADD     r2, r2, 3               // kc = (kc + 3) & ~3
++         BIC     r2, r2, 3
++diff --git a/src/qs8-igemm/gen/4x8c4-minmax-rndnu-aarch32-neondot-cortex-a55.S b/src/qs8-igemm/gen/4x8c4-minmax-rndnu-aarch32-neondot-cortex-a55.S
++index 0b41d4d..e597f34 100644
++--- a/src/qs8-igemm/gen/4x8c4-minmax-rndnu-aarch32-neondot-cortex-a55.S
+++++ b/src/qs8-igemm/gen/4x8c4-minmax-rndnu-aarch32-neondot-cortex-a55.S
++@@ -53,8 +53,8 @@
++ //    int8_t output_max;          d13[7]
++ //  } rndnu_neon;
++ 
++-// iOS does not support 32 bit ARM with Neon DotProduct.
++-#ifndef __APPLE__
+++// Do not support 32 bit ARM with Neon DotProduct.
+++#if 0
++ BEGIN_FUNCTION xnn_qs8_igemm_minmax_rndnu_ukernel_4x8c4__aarch32_neondot_cortex_a55
++         ADD     r2, r2, 3               // kc = (kc + 3) & ~3
++         BIC     r2, r2, 3
++diff --git a/src/qs8-igemm/gen/4x8c4-minmax-rndnu-aarch32-neondot-ld64.S b/src/qs8-igemm/gen/4x8c4-minmax-rndnu-aarch32-neondot-ld64.S
++index a9a2bf5..f814252 100644
++--- a/src/qs8-igemm/gen/4x8c4-minmax-rndnu-aarch32-neondot-ld64.S
+++++ b/src/qs8-igemm/gen/4x8c4-minmax-rndnu-aarch32-neondot-ld64.S
++@@ -53,8 +53,8 @@
++ //    int8_t output_max;          d13[7]
++ //  } rndnu_neon;
++ 
++-// iOS does not support 32 bit ARM with Neon DotProduct.
++-#ifndef __APPLE__
+++// Do not support 32 bit ARM with Neon DotProduct.
+++#if 0
++ BEGIN_FUNCTION xnn_qs8_igemm_minmax_rndnu_ukernel_4x8c4__aarch32_neondot_ld64
++         ADD     r2, r2, 3               // kc = (kc + 3) & ~3
++         BIC     r2, r2, 3
+ -- 
+-2.30.2
++2.27.0
+ 
+-- 
+2.27.0
+
