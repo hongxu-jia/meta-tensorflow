@@ -1,5 +1,9 @@
 include tensorflow.inc
 
+SRC_URI += " \
+    file://0001-fix-python3-include-directory-not-found.patch \
+"
+
 inherit native
 
 export PYTHON_BIN_PATH="${PYTHON}"
