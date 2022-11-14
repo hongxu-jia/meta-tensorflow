@@ -11,6 +11,12 @@ SRC_URI = "git://github.com/tensorflow/tensorflow.git;branch=r2.10;protocol=http
            file://0001-drop-bazel_toolchains_repositories-to-support-offlin.patch \
            file://0001-drop-v2-config.patch \
            file://0002-Replace-distutils.sysconfig.get_python_lib-with-sysc.patch \
+           file://0001-Fix-Python-3.11-compatibility-problems-for-JAX-XLA.patch \
+           file://0002-Update-pybind11-to-2.10.0.patch \
+           file://0003-Support-python-3.11-changes.patch \
+           file://0004-protobuf-fix-build-with-Python-3.11.patch \
+           file://0005-cpython-support-Python-3.11.patch \
+           file://0006-wrapt-support-Python-3.11.patch \
           "
 
 S = "${WORKDIR}/git"

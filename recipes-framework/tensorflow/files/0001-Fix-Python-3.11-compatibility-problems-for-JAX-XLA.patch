@@ -1,0 +1,117 @@
+From 8275d5e23066198592af5358049daca79b340171 Mon Sep 17 00:00:00 2001
+From: Peter Hawkins <phawkins@google.com>
+Date: Mon, 14 Nov 2022 10:26:54 +0800
+Subject: [PATCH 1/6] Fix Python 3.11 compatibility problems for JAX/XLA.
+
+Upstream-Status: Backport [https://github.com/tensorflow/tensorflow/commit/7c25287968fd8f996094905d99a9eb878a68c57b]
+
+Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+---
+ tensorflow/compiler/xla/python/traceback.cc   | 25 +++++++++++++------
+ tensorflow/python/lib/core/bfloat16.cc        |  4 +++
+ .../python/profiler/internal/python_hooks.cc  | 12 +++++++++
+ 3 files changed, 34 insertions(+), 7 deletions(-)
+
+diff --git a/tensorflow/compiler/xla/python/traceback.cc b/tensorflow/compiler/xla/python/traceback.cc
+index 1e185110152..fa235a7f124 100644
+--- a/tensorflow/compiler/xla/python/traceback.cc
++++ b/tensorflow/compiler/xla/python/traceback.cc
+@@ -72,13 +72,22 @@ std::shared_ptr<Traceback> Traceback::Get() {
+   if (!enabled_) {
+     return nullptr;
+   }
+-  auto tb = std::make_shared<Traceback>();
+-  const PyThreadState* thread_state = PyThreadState_GET();
+-  for (PyFrameObject* py_frame = thread_state->frame; py_frame != nullptr;
+-       py_frame = py_frame->f_back) {
+-    Py_INCREF(py_frame->f_code);
+-    tb->frames_.emplace_back(py_frame->f_code, py_frame->f_lasti);
++  PyThreadState* thread_state = PyThreadState_GET();
++
++#if PY_VERSION_HEX < 0x030b0000
++   for (PyFrameObject* py_frame = thread_state->frame; py_frame != nullptr;
++        py_frame = py_frame->f_back) {
++     Py_INCREF(py_frame->f_code);
++     tb->frames_.emplace_back(py_frame->f_code, py_frame->f_lasti);
++   }
++#else  // PY_VERSION_HEX < 0x030b0000
++  for (PyFrameObject* py_frame = PyThreadState_GetFrame(thread_state); py_frame != nullptr;
++       py_frame = PyFrame_GetBack(py_frame)) {
++    tb-frames_.emplace_back(PyFrame_GetCode(py_frame), PyFrame_GetLasti(py_frame));
++    Py_XDECREF(py_frame);
+   }
++#endif  // PY_VERSION_HEX < 0x030b0000
++
+   return tb;
+ }
+ 
+@@ -165,6 +174,7 @@ void BuildTracebackSubmodule(py::module& m) {
+       },
+       "Python wrapper around the Python C API function PyCode_Addr2Line");
+ 
++#if PY_VERSION_HEX < 0x030b0000
+   // This function replaces the exception traceback associated with the current
+   // Python thread.
+   m.def(
+@@ -186,6 +196,7 @@ void BuildTracebackSubmodule(py::module& m) {
+         Py_XDECREF(old_exc_traceback);
+       },
+       py::arg("traceback"));
+-}
++#endif  // PY_VERSION_HEX < 0x30b0000
+ 
++}
+ }  // namespace xla
+diff --git a/tensorflow/python/lib/core/bfloat16.cc b/tensorflow/python/lib/core/bfloat16.cc
+index 2f4031df139..a8ec05d2f4b 100644
+--- a/tensorflow/python/lib/core/bfloat16.cc
++++ b/tensorflow/python/lib/core/bfloat16.cc
+@@ -1642,7 +1642,11 @@ bool RegisterNumpyDtype(PyObject* numpy) {
+   arr_funcs.argmax = NPyCustomFloat_ArgMaxFunc<T>;
+   arr_funcs.argmin = NPyCustomFloat_ArgMinFunc<T>;
+ 
++#if PY_VERSION_HEX < 0x030900A4 && !defined(Py_SET_TYPE)
+   Py_TYPE(&CustomFloatTypeDescriptor<T>::npy_descr) = &PyArrayDescr_Type;
++#else
++  Py_SET_TYPE(&CustomFloatTypeDescriptor<T>::npy_descr, &PyArrayDescr_Type);
++#endif
+   TypeDescriptor<T>::npy_type =
+       PyArray_RegisterDataType(&CustomFloatTypeDescriptor<T>::npy_descr);
+   TypeDescriptor<T>::type_ptr = &TypeDescriptor<T>::type;
+diff --git a/tensorflow/python/profiler/internal/python_hooks.cc b/tensorflow/python/profiler/internal/python_hooks.cc
+index 62b1dddc92f..12bf5c47920 100644
+--- a/tensorflow/python/profiler/internal/python_hooks.cc
++++ b/tensorflow/python/profiler/internal/python_hooks.cc
+@@ -274,8 +274,14 @@ void PythonHookContext::ProfileFast(PyFrameObject* frame, int what,
+ 
+   switch (what) {
+     case PyTrace_CALL: {
++#if PY_VERSION_HEX < 0x030b0000
+       PyCodeObject* f_code = frame->f_code;
+       thread_traces.active.emplace(now, 0, f_code);
++#else  // PY_VERSION_HEX < 0x030b0000
++      PyCodeObject* f_code = PyFrame_GetCode(frame);
++      thread_traces.active.emplace(now, 0, f_code);
++      Py_XDECREF(f_code);
++#endif  // PY_VERSION_HEX < 0x030b0000
+       break;
+     }
+     case PyTrace_RETURN:
+@@ -286,8 +292,14 @@ void PythonHookContext::ProfileFast(PyFrameObject* frame, int what,
+         thread_traces.completed.emplace_back(std::move(entry));
+         thread_traces.active.pop();
+       } else if (options_.include_incomplete_events) {
++#if PY_VERSION_HEX < 0x030b0000
+         PyCodeObject* f_code = frame->f_code;
+         thread_traces.completed.emplace_back(start_timestamp_ns_, now, f_code);
++#else  // PY_VERSION_HEX < 0x030b0000
++        PyCodeObject* f_code = PyFrame_GetCode(frame);
++        thread_traces.completed.emplace_back(start_timestamp_ns_, now, f_code);
++        Py_XDECREF(f_code);
++#endif  // PY_VERSION_HEX < 0x030b0000
+       }
+       break;
+     }
+-- 
+2.27.0
+
