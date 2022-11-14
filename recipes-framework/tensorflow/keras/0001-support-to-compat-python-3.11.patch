@@ -1,0 +1,45 @@
+From bab3bf8fdec422e6ae210d1062075ab611683434 Mon Sep 17 00:00:00 2001
+From: Hongxu Jia <hongxu.jia@windriver.com>
+Date: Mon, 14 Nov 2022 16:43:10 +0800
+Subject: [PATCH] support to compat python 3.11
+
+The python 3.11 has removed long-deprecated inspect methods [1],
+use collections.namedtuple to instead
+
+[1] https://github.com/python/cpython/commit/d89fb9a5a610a257014d112bdceef73d7df14082
+
+Upstream-Status: Submitted [https://github.com/keras-team/keras/pull/17239]
+
+Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+---
+ keras/utils/tf_inspect.py | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
+
+diff --git a/keras/utils/tf_inspect.py b/keras/utils/tf_inspect.py
+index 3c516efc..d9ea152c 100644
+--- a/keras/utils/tf_inspect.py
++++ b/keras/utils/tf_inspect.py
+@@ -19,8 +19,18 @@ import inspect as _inspect
+ 
+ import tensorflow.compat.v2 as tf
+ 
+-ArgSpec = _inspect.ArgSpec
+-
++if hasattr(_inspect, "ArgSpec"):
++    ArgSpec = _inspect.ArgSpec
++else:
++    ArgSpec = collections.namedtuple(
++        "ArgSpec",
++        [
++            "args",
++            "varargs",
++            "keywords",
++            "defaults",
++        ],
++    )
+ 
+ if hasattr(_inspect, "FullArgSpec"):
+     FullArgSpec = _inspect.FullArgSpec
+-- 
+2.27.0
+
