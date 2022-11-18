@@ -11,6 +11,9 @@ inherit pypi setuptools3
 
 SRCNAME = "opt_einsum"
 PYPI_SRC_URI = "https://files.pythonhosted.org/packages/source/o/${PYPI_PACKAGE}/${SRCNAME}-${PV}.tar.gz"
+SRC_URI += " \
+    file://0001-Use-ConfigParser-instead-of-SafeConfigParser.patch \
+"
 S = "${WORKDIR}/${SRCNAME}-${PV}"
 
 BBCLASSEXTEND = "native"
