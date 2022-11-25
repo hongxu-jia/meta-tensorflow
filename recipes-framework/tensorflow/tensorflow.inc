@@ -53,19 +53,3 @@ do_compile:append() {
     chmod a+w ${BAZEL_DIR}/output_base/execroot/org_tensorflow/bazel-out/*/bin/tensorflow/lite/python/schema_py_srcs_no_include_all || true
     chmod a+w ${BAZEL_DIR}/output_base/execroot/org_tensorflow/bazel-out/*/bin/tensorflow/lite/python/schema_py_srcs_no_include_all/tflite || true
 }
-
-python __anonymous() {
-    if "tensorflow" not in (d.getVar("DISTRO_FEATURES") or "").split():
-        msg = "\nThe official TensorFlow is tested and supported under Python 3.7-3.10\n"
-        msg += "Please add DISTRO_FEATURES += 'tensorflow' to local.conf\n"
-        msg += "It will apply python3 3.10.6 recipe"
-        bb.warn(msg)
-    if d.getVar("PYTHON_BASEVERSION") != "3.10":
-        msg = "\nThe official TensorFlow is tested and supported under Python 3.7-3.10\n"
-        msg += "Please add the following to local.conf\n"
-        msg += "    PYTHON_BASEVERSION:class-target = '3.10'\n"
-        msg += "    PYTHON_BASEVERSION:class-native = '3.10'\n"
-        msg += "    PYTHON_BASEVERSION:class-nativesdk = '3.10'\n"
-        msg += "It will apply python3 modules for 3.10"
-        bb.warn(msg)
-}
