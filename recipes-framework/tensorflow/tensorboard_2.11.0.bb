@@ -1,16 +1,17 @@
 DESCRIPTION = "A suite of web applications for inspecting and understanding \
 your TensorFlow runs and graphs."
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://tensorboard-2.10.0.dist-info/LICENSE;md5=6767c3dee46f5a6b27902ea046d2389d"
+LIC_FILES_CHKSUM = "file://tensorboard-2.11.0.dist-info/LICENSE;md5=6767c3dee46f5a6b27902ea046d2389d"
 
 SRC_URI = " \
-    https://files.pythonhosted.org/packages/6b/42/e271c40c84c250b52fa460fda970899407c837a2049c53969f37e404b1f6/tensorboard-2.10.0-py3-none-any.whl \
+    https://files.pythonhosted.org/packages/05/70/ee7968f4a92ff9f95354d0ccaa9c0ba17b2644a33472ea845d92dd4e4821/tensorboard-2.11.0-py3-none-any.whl \
 "
+
 
 do_unpack[depends] += "python3-pip-native:do_populate_sysroot"
 
-SRC_URI[md5sum] = "e8973431406c2226ff0732ab3d4672d9"
-SRC_URI[sha256sum] = "76c91a5e8959cd2208cc32cb17a0cb002badabb66a06ac2af02a7810f49a59e3"
+SRC_URI[md5sum] = "cc0752e850d4f1c1354b8d33a912dee0"
+SRC_URI[sha256sum] = "a0e592ee87962e17af3f0dce7faae3fbbd239030159e9e625cce810b7e35c53d"
 
 RDEPENDS:${PN} += "python3 \
            python3-core \
@@ -32,13 +33,13 @@ do_unpack () {
     echo "Installing pip package"
     ${STAGING_BINDIR_NATIVE}/pip3 install --disable-pip-version-check -v \
         -t ${S} --no-cache-dir --no-deps \
-         ${DL_DIR}/tensorboard-2.10.0-py3-none-any.whl
+         ${DL_DIR}/tensorboard-2.11.0-py3-none-any.whl
 }
 
 do_install () {
     install -d ${D}${PYTHON_SITEPACKAGES_DIR}
     cp -rf ${S}/* ${D}${PYTHON_SITEPACKAGES_DIR}/
-    rm ${D}/${PYTHON_SITEPACKAGES_DIR}/bin ${D}/${PYTHON_SITEPACKAGES_DIR}/tensorboard-2.10.0.dist-info  -rf
+    rm ${D}/${PYTHON_SITEPACKAGES_DIR}/bin ${D}/${PYTHON_SITEPACKAGES_DIR}/tensorboard-2.11.0.dist-info  -rf
     rm ${D}/${PYTHON_SITEPACKAGES_DIR}/bin -rf
 }
 
