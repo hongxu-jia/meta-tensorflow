@@ -1,83 +1,30 @@
-From 1f8b103ef64a62780489f17f279acb7b4f091d74 Mon Sep 17 00:00:00 2001
-From: Hongxu Jia <hongxu.jia@windriver.com>
-Date: Mon, 16 May 2022 01:57:39 -0700
+From 28acb4a213938bcb7e55ef3859699091c1f434c0 Mon Sep 17 00:00:00 2001
+From: Hongxu Jia <hongxu.jia@eng.windriver.com>
+Date: Thu, 1 Dec 2022 19:32:33 +0800
 Subject: [PATCH] HttpDownloader: save download tarball to distdir
 
 It is helpful for collecting tarball url which supports offline build.
 
 Upstream-Status: Inappropriate [oe specific]
 
-Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+Signed-off-by: Hongxu Jia <hongxu.jia@eng.windriver.com>
 ---
- .../downloader/DownloadManager.java           | 62 ++++++++++++-------
- 1 file changed, 38 insertions(+), 24 deletions(-)
+ .../bazel/repository/downloader/DownloadManager.java | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
 diff --git a/src/main/java/com/google/devtools/build/lib/bazel/repository/downloader/DownloadManager.java b/src/main/java/com/google/devtools/build/lib/bazel/repository/downloader/DownloadManager.java
-index b8c1fdf240..b190f2876a 100644
+index bf65090..ee30dde 100755
 --- a/src/main/java/com/google/devtools/build/lib/bazel/repository/downloader/DownloadManager.java
 +++ b/src/main/java/com/google/devtools/build/lib/bazel/repository/downloader/DownloadManager.java
-@@ -197,33 +197,36 @@ public class DownloadManager {
-         } else if (!dir.isDirectory()) {
-           eventHandler.handle(Event.warn("distdir " + dir + " is not a directory"));
+@@ -213,6 +213,7 @@ public class DownloadManager {
          } else {
--          for (String name : candidateFileNames) {
-+          for (String candidateFileName : candidateFileNames) {
+           for (String name : candidateFileNames) {
              boolean match = false;
--            Path candidate = dir.getRelative(name);
--            try {
--              eventHandler.post(
--                  new CacheProgress(
--                      mainUrl.toString(), "Checking " + cacheKeyType + " of " + candidate));
--              match = RepositoryCache.getChecksum(cacheKeyType, candidate).equals(cacheKey);
--            } catch (IOException e) {
--              // Not finding anything in a distdir is a normal case, so handle it absolutely
--              // quietly. In fact, it is common to specify a whole list of dist dirs,
--              // with the assumption that only one will contain an entry.
--            } finally {
--              eventHandler.post(new CacheProgress(mainUrl.toString()));
--            }
--            if (match) {
--              if (isCachingByProvidedChecksum) {
--                try {
--                  repositoryCache.put(cacheKey, candidate, cacheKeyType, canonicalId);
--                } catch (IOException e) {
--                  eventHandler.handle(
--                      Event.warn("Failed to copy " + candidate + " to repository cache: " + e));
-+            String[] names = {candidateFileName, candidateFileName+"_"+cacheKey};
-+            for (String name: names) {
-+              Path candidate = dir.getRelative(name);
-+              try {
-+                eventHandler.post(
-+                    new CacheProgress(
-+                        mainUrl.toString(), "Checking " + cacheKeyType + " of " + candidate));
-+                match = RepositoryCache.getChecksum(cacheKeyType, candidate).equals(cacheKey);
-+              } catch (IOException e) {
-+                // Not finding anything in a distdir is a normal case, so handle it absolutely
-+                // quietly. In fact, it is common to specify a whole list of dist dirs,
-+                // with the assumption that only one will contain an entry.
-+              } finally {
-+                eventHandler.post(new CacheProgress(mainUrl.toString()));
-+              }
-+              if (match) {
-+                if (isCachingByProvidedChecksum) {
-+                  try {
-+                    repositoryCache.put(cacheKey, candidate, cacheKeyType, canonicalId);
-+                  } catch (IOException e) {
-+                    eventHandler.handle(
-+                        Event.warn("Failed to copy " + candidate + " to repository cache: " + e));
-+                  }
-                 }
-+                FileSystemUtils.createDirectoryAndParents(destination.getParentDirectory());
-+                FileSystemUtils.copyFile(candidate, destination);
-+                return destination;
-               }
--              FileSystemUtils.createDirectoryAndParents(destination.getParentDirectory());
--              FileSystemUtils.copyFile(candidate, destination);
--              return destination;
-             }
-           }
-         }
-@@ -267,6 +270,17 @@ public class DownloadManager {
++            name += "_"+cacheKey;
+             Path candidate = dir.getRelative(name);
+             try {
+               eventHandler.post(
+@@ -280,6 +281,17 @@ public class DownloadManager {
        repositoryCache.put(destination, KeyType.SHA256, canonicalId);
      }
  
@@ -96,5 +43,5 @@ index b8c1fdf240..b190f2876a 100644
    }
  
 -- 
-2.36.0
+2.27.0
 
