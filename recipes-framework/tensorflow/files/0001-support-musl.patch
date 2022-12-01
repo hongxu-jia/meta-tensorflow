@@ -1,6 +1,6 @@
-From a37010bee0ef08a2b42c10fc6ca1f3bd793b0e6a Mon Sep 17 00:00:00 2001
-From: Hongxu Jia <hongxu.jia@windriver.com>
-Date: Tue, 8 Dec 2020 17:06:52 +0800
+From cc3c636c06bbc6ca6e81a547c9a740c4ead21f61 Mon Sep 17 00:00:00 2001
+From: Hongxu Jia <hongxu.jia@eng.windriver.com>
+Date: Wed, 30 Nov 2022 22:20:52 -0800
 Subject: [PATCH] support musl
 
 Build fails looking for `execinfo.h` when building against musl
@@ -11,18 +11,18 @@ execinfo.h: No such file or directory
 
 Upstream-Status: Pending
 
-Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+Signed-off-by: Hongxu Jia <hongxu.jia@eng.windriver.com>
 ---
- tensorflow/core/platform/default/stacktrace.h          | 3 ++-
- tensorflow/core/platform/default/stacktrace_handler.cc | 3 ++-
+ tensorflow/tsl/platform/default/stacktrace.h          | 3 ++-
+ tensorflow/tsl/platform/default/stacktrace_handler.cc | 3 ++-
  2 files changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/tensorflow/core/platform/default/stacktrace.h b/tensorflow/core/platform/default/stacktrace.h
-index 0a8c124ff51..db7945611d3 100644
---- a/tensorflow/core/platform/default/stacktrace.h
-+++ b/tensorflow/core/platform/default/stacktrace.h
+diff --git a/tensorflow/tsl/platform/default/stacktrace.h b/tensorflow/tsl/platform/default/stacktrace.h
+index 896bae1fa87..ff6fa4524e6 100644
+--- a/tensorflow/tsl/platform/default/stacktrace.h
++++ b/tensorflow/tsl/platform/default/stacktrace.h
 @@ -20,7 +20,8 @@ limitations under the License.
- #include "tensorflow/core/platform/platform.h"
+ #include "tensorflow/tsl/platform/platform.h"
  // clang-format on
  
 -#if !defined(IS_MOBILE_PLATFORM) && (defined(__clang__) || defined(__GNUC__))
@@ -31,12 +31,12 @@ index 0a8c124ff51..db7945611d3 100644
  #define TF_HAS_STACKTRACE
  #endif
  
-diff --git a/tensorflow/core/platform/default/stacktrace_handler.cc b/tensorflow/core/platform/default/stacktrace_handler.cc
-index 70fcdc27042..f38fe71c917 100644
---- a/tensorflow/core/platform/default/stacktrace_handler.cc
-+++ b/tensorflow/core/platform/default/stacktrace_handler.cc
+diff --git a/tensorflow/tsl/platform/default/stacktrace_handler.cc b/tensorflow/tsl/platform/default/stacktrace_handler.cc
+index 1b62651b1be..4dc38cba6bd 100644
+--- a/tensorflow/tsl/platform/default/stacktrace_handler.cc
++++ b/tensorflow/tsl/platform/default/stacktrace_handler.cc
 @@ -16,7 +16,8 @@ limitations under the License.
- #include "tensorflow/core/platform/platform.h"
+ #include "tensorflow/tsl/platform/platform.h"
  
  #if !defined(IS_MOBILE_PLATFORM) && defined(PLATFORM_POSIX) && \
 -    (defined(__clang__) || defined(__GNUC__))
@@ -46,5 +46,5 @@ index 70fcdc27042..f38fe71c917 100644
  #endif
  
 -- 
-2.18.2
+2.37.1
 
