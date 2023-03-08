@@ -36,6 +36,8 @@ SRC_URI = "http://www.python.org/ftp/python/${PV}/Python-${PV}.tar.xz \
            file://deterministic_imports.patch \
            file://0001-Avoid-shebang-overflow-on-python-config.py.patch \
            file://0001-Mitigate-the-race-condition-in-testSockName.patch \
+           file://0001-bpo-40059-Add-tomllib-PEP-680-GH-31498.patch \
+           file://0002-bpo-40059-Fix-installation-of-tomllib-GH-31784.patch \
            "
 
 SRC_URI:append:class-native = " \
