@@ -1,11 +1,11 @@
-From 73077909cd0bf7d283530c6c7ccc448d98aa2411 Mon Sep 17 00:00:00 2001
+From 66e10e0d0999493509d0946a40ce2e8bf8b50ff4 Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@eng.windriver.com>
-Date: Wed, 30 Nov 2022 22:53:01 -0800
+Date: Sun, 12 Mar 2023 23:48:00 -0700
 Subject: [PATCH] support 32 bit x64 and arm for yocto
 
 Upstream-Status: Inappropriate [oe specific]
 
-Rebase to 2.11.0
+Rebase to 2.12.0
 
 Signed-off-by: Hongxu Jia <hongxu.jia@eng.windriver.com>
 ---
@@ -18,10 +18,10 @@ Signed-off-by: Hongxu Jia <hongxu.jia@eng.windriver.com>
  create mode 100644 third_party/0001-cpuinfo-support-32-bit-x86.patch
 
 diff --git a/tensorflow/BUILD b/tensorflow/BUILD
-index 186aca81c81..5c2f9d09a83 100644
+index 3eea542c7a3..7ff3afc79c8 100644
 --- a/tensorflow/BUILD
 +++ b/tensorflow/BUILD
-@@ -183,9 +183,6 @@ config_setting(
+@@ -206,9 +206,6 @@ config_setting(
          {},
      ),
      values = dict(
@@ -32,25 +32,25 @@ index 186aca81c81..5c2f9d09a83 100644
      ),
      visibility = ["//visibility:public"],
 diff --git a/tensorflow/workspace2.bzl b/tensorflow/workspace2.bzl
-index 34716382e62..14e3d8dcbed 100644
+index b8fa81642bd..2c86e3c8639 100644
 --- a/tensorflow/workspace2.bzl
 +++ b/tensorflow/workspace2.bzl
-@@ -142,6 +142,7 @@ def _tf_repositories():
+@@ -151,6 +151,7 @@ def _tf_repositories():
          name = "XNNPACK",
-         sha256 = "7a16ab0d767d9f8819973dbea1dc45e4e08236f89ab702d96f389fdc78c5855c",
-         strip_prefix = "XNNPACK-e8f74a9763aa36559980a0c2f37f587794995622",
+         sha256 = "0a7ad183dcb4db36e82c4c24376a28281c30e986bd2d71311e624405229a7618",
+         strip_prefix = "XNNPACK-659147817805d17c7be2d60bd7bbca7e780f9c82",
 +        patch_file = ["//third_party:0001-XNNPACK-support-32-bit-x86.patch"],
-         urls = tf_mirror_urls("https://github.com/google/XNNPACK/archive/e8f74a9763aa36559980a0c2f37f587794995622.zip"),
+         urls = tf_mirror_urls("https://github.com/google/XNNPACK/archive/659147817805d17c7be2d60bd7bbca7e780f9c82.zip"),
      )
      # LINT.ThenChange(//tensorflow/lite/tools/cmake/modules/xnnpack.cmake)
-@@ -170,6 +171,7 @@ def _tf_repositories():
-     tf_http_archive(
+@@ -173,6 +174,7 @@ def _tf_repositories():
          name = "cpuinfo",
-         strip_prefix = "cpuinfo-5e63739504f0f8e18e941bd63b2d6d42536c7d90",
+         strip_prefix = "cpuinfo-3dc310302210c1891ffcfb12ae67b11a3ad3a150",
+         sha256 = "ba668f9f8ea5b4890309b7db1ed2e152aaaf98af6f9a8a63dbe1b75c04e52cb9",
 +        patch_file = ["//third_party:0001-cpuinfo-support-32-bit-x86.patch"],
-         sha256 = "18eca9bc8d9c4ce5496d0d2be9f456d55cbbb5f0639a551ce9c8bac2e84d85fe",
-         urls = tf_mirror_urls("https://github.com/pytorch/cpuinfo/archive/5e63739504f0f8e18e941bd63b2d6d42536c7d90.tar.gz"),
+         urls = tf_mirror_urls("https://github.com/pytorch/cpuinfo/archive/3dc310302210c1891ffcfb12ae67b11a3ad3a150.zip"),
      )
+ 
 diff --git a/third_party/0001-XNNPACK-support-32-bit-x86.patch b/third_party/0001-XNNPACK-support-32-bit-x86.patch
 new file mode 100644
 index 00000000000..2141c37236b

@@ -30,24 +30,6 @@ RDEPENDS:${PN} += " \
     python3 \
     python3-core \
     python3-numpy \
-    python3-keras-applications \
-    python3-keras-preprocessing \
-    python3-protobuf \
-    python3-grpcio \
-    python3-absl \
-    python3-astor \
-    python3-astunparse \
-    python3-gast \
-    python3-termcolor \
-    python3-wrapt \
-    python3-opt-einsum \
-    python3-google-pasta \
-    python3-typing-extensions \
-    python3-packaging \
-    python3-flatbuffers \
-    tensorboard \
-    tensorflow-estimator \
-    keras \
 "
 
 export PYTHON_BIN_PATH="${PYTHON}"
@@ -61,7 +43,7 @@ do_configure:append () {
     fi
 
     install -m 644 ${STAGING_INCDIR_NATIVE}/python${PYTHON_BASEVERSION}${PYTHON_ABI}/pyconfig.h \
-        ${CROSSTOOL_PYTHON_INCLUDE_PATH}/pyconfig-native.h
+       ${CROSSTOOL_PYTHON_INCLUDE_PATH}/pyconfig-native.h
 
     cat > ${CROSSTOOL_PYTHON_INCLUDE_PATH}/pyconfig.h <<ENDOF
 #if defined (_PYTHON_INCLUDE_TARGET)
@@ -95,45 +77,44 @@ ENDOF
 }
 
 TF_TARGET_EXTRA ??= ""
+
+export CUSTOM_BAZEL_FLAGS = " \
+    ${TF_ARGS_EXTRA} \
+    --jobs=auto \
+    -c opt \
+    --cpu=${BAZEL_TARGET_CPU} \
+    --crosstool_top=@local_config_yocto_compiler//:toolchain \
+    --host_crosstool_top=@bazel_tools//tools/cpp:toolchain \
+"
+
 do_compile () {
     export CT_NAME=$(echo ${HOST_PREFIX} | rev | cut -c 2- | rev)
     unset CC
+
     ${BAZEL} build \
-        ${TF_ARGS_EXTRA} \
-        -c opt \
-        --cpu=${BAZEL_TARGET_CPU} \
-        --subcommands --explain=${T}/explain.log \
-        --verbose_explanations --verbose_failures \
-        --crosstool_top=@local_config_yocto_compiler//:toolchain \
-        --host_crosstool_top=@bazel_tools//tools/cpp:toolchain \
-        --verbose_failures \
-        --copt -DTF_LITE_DISABLE_X86_NEON \
-        //tensorflow:libtensorflow.so \
-        //tensorflow:libtensorflow_cc.so \
-        //tensorflow:libtensorflow_framework.so \
-        //tensorflow/tools/benchmark:benchmark_model \
-        //tensorflow/tools/pip_package:build_pip_package \
-        tensorflow/examples/label_image/... \
+        ${CUSTOM_BAZEL_FLAGS} \
+        --copt -DTF_LITE_DISABLE_X86_NEON --copt -DMESA_EGL_NO_X11_HEADERS \
+        tensorflow/lite:libtensorflowlite.so \
+        tensorflow/lite/tools/benchmark:benchmark_model \
         //tensorflow/lite/examples/label_image:label_image \
         ${TF_TARGET_EXTRA}
+
+    # build pip package
+    ${S}/tensorflow/lite/tools/pip_package/build_pip_package_with_bazel.sh
+
 }
 
 do_install() {
     install -d ${D}${libdir}
-    install -m 644 ${S}/bazel-bin/tensorflow/libtensorflow.so \
-        ${D}${libdir}
-    install -m 644 ${S}/bazel-bin/tensorflow/libtensorflow_cc.so \
+    install -m 644 ${S}/bazel-bin/tensorflow/lite/libtensorflowlite.so \
         ${D}${libdir}
 
     install -d ${D}${sbindir}
-    install -m 755 ${S}/bazel-bin/tensorflow/tools/benchmark/benchmark_model \
-        ${D}${sbindir}
-
-    install -m 755 ${S}/bazel-bin/tensorflow/examples/label_image/label_image \
+    install -m 755 ${S}/bazel-bin/tensorflow/lite/tools/benchmark/benchmark_model \
         ${D}${sbindir}
 
     install -m 755 ${S}/bazel-bin/tensorflow/lite/examples/label_image/label_image \
-        ${D}${sbindir}/label_image.lite
+        ${D}${sbindir}/label_image
 
     install -d ${D}${datadir}/label_image
     install -m 644 ${WORKDIR}/imagenet_slim_labels.txt ${D}${datadir}/label_image
@@ -149,46 +130,22 @@ do_install() {
         ${D}${datadir}/label_image
 
 
-    export TMPDIR="${WORKDIR}"
-    echo "Generating pip package"
-    BDIST_OPTS="--universal" \
-        ${S}/bazel-bin/tensorflow/tools/pip_package/build_pip_package ${WORKDIR}
-
-    echo "Installing pip package"
+    #echo "Installing pip package"
     install -d ${D}/${PYTHON_SITEPACKAGES_DIR}
     ${STAGING_BINDIR_NATIVE}/pip3 install --disable-pip-version-check -v \
         -t ${D}/${PYTHON_SITEPACKAGES_DIR} --no-cache-dir --no-deps \
-         ${WORKDIR}/tensorflow-${PV}-*.whl
+        ${S}/tensorflow/lite/tools/pip_package/gen/tflite_pip/python3/dist/tflite_runtime-${PV}*.whl
 
-    (
-        cd ${D}${PYTHON_SITEPACKAGES_DIR}/bin;
-        for app in `ls`; do
-            sed -i "s:${STAGING_BINDIR_NATIVE}/nativepython3:/usr/bin/python3:g" $app
-            mv $app ${D}${sbindir}
-        done
-
-        mv ${D}${PYTHON_SITEPACKAGES_DIR}/tensorflow/libtensorflow_framework.so*  ${D}${libdir}
-    )
 }
 
-FILES:${PN}-dev = ""
+FILES:${PN} += "${libdir} ${sbindir} ${datadir}/*"
 INSANE_SKIP:${PN} += "dev-so \
                       already-stripped \
                      "
 
-PACKAGE_BEFORE_PN += "libtensorflow-c libtensorflow-framework label-image label-image-lite python3-tensorflow"
-
-RDEPENDS:label-image += "libtensorflow-framework"
-RDEPENDS:python3-tensorflow += "libtensorflow-framework"
-RDEPENDS:${PN} += "libtensorflow-c libtensorflow-framework label-image label-image-lite python3-tensorflow"
-
+SOLIBS = ".so"
+FILES_SOLIBSDEV = ""
 ALLOW_EMPTY:${PN} = "1"
-
-FILES:python3-tensorflow += "${libdir}/* ${datadir}/* ${sbindir}/*"
-FILES:libtensorflow-c = "${libdir}/libtensorflow.so ${libdir}/libtensorflow_cc.so"
-FILES:libtensorflow-framework = "${libdir}/libtensorflow.so ${libdir}/libtensorflow_framework.so*"
-FILES:label-image = "${sbindir}/label_image"
-FILES:label-image-lite = "${sbindir}/label_image.lite"
 
 inherit siteinfo unsupportarch
 python __anonymous() {
@@ -197,23 +154,4 @@ python __anonymous() {
         msg += "\n(such as qemumips), since upstream does not support big-endian very well."
         msg += "\nDetails: https://github.com/tensorflow/tensorflow/issues/16364"
         bb.warn(msg)
-
-    if not bb.utils.contains("DISTRO_FEATURES", "tensorflow", True, False, d):
-        msg = "\nThe official TensorFlow is tested and supported under Python 3.7-3.10\n"
-        msg += "Please add the following to local.conf\n"
-        msg += "    DISTRO_FEATURES:append = ' tensorflow'\n"
-        msg += "    DISTRO_FEATURES_NATIVE:append = ' tensorflow'\n"
-        msg += "    DISTRO_FEATURES_NATIVESDK:append = ' tensorflow'\n"
-        msg += "It will apply python3 3.10.6 recipe"
-        raise bb.parse.SkipPackage(msg)
-
-    if d.getVar("PYTHON_BASEVERSION") != "3.10":
-        msg = "\nThe official TensorFlow is tested and supported under Python 3.7-3.10\n"
-        msg += "Please add the following to local.conf\n"
-        msg += "    PYTHON_BASEVERSION:class-target = '3.10'\n"
-        msg += "    PYTHON_BASEVERSION:class-native = '3.10'\n"
-        msg += "    PYTHON_BASEVERSION:class-nativesdk = '3.10'\n"
-        msg += "It will apply python3 modules for 3.10"
-        raise bb.parse.SkipPackage(msg)
-
 }

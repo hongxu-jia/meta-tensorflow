@@ -3,18 +3,14 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=4158a261ca7f2525513e31ba9c50ae98"
 
 DEPENDS = "bazel-native protobuf-native util-linux-native protobuf"
-SRCREV = "d5b57ca93e506df258271ea00fc29cf98383a374"
-SRC_URI = "git://github.com/tensorflow/tensorflow.git;branch=r2.11;protocol=https \
+SRCREV = "0d8efc960d2874c2f56eed8690d132763a92a33c"
+SRC_URI = "git://github.com/tensorflow/tensorflow.git;branch=r2.12;protocol=https \
            file://0001-support-musl.patch \
            file://0001-use-local-bazel-to-workaround-bazel-paralle-issue.patch \
            file://0001-third_party-eigen_archive-workaround-ice-failure-whi.patch \
            file://0001-drop-bazel_toolchains_repositories-to-support-offlin.patch \
            file://0001-drop-v2-config.patch \
            file://0002-Replace-distutils.sysconfig.get_python_lib-with-sysc.patch \
-           file://0003-Support-python-3.11-changes.patch \
-           file://0004-protobuf-fix-build-with-Python-3.11.patch \
-           file://0005-cpython-support-Python-3.11.patch \
-           file://0006-wrapt-support-Python-3.11.patch \
            file://0001-hardcode-go-SDKS.patch \
           "
 
@@ -48,7 +44,8 @@ inherit tensorflow_ver
 
 CC:append:qemuarm = " -mfp16-format=ieee"
 
+CFLAGS += "-Wno-stringop-overflow"
+
 do_compile:append() {
-    chmod a+w ${BAZEL_DIR}/output_base/execroot/org_tensorflow/bazel-out/*/bin/tensorflow/lite/python/schema_py_srcs_no_include_all || true
-    chmod a+w ${BAZEL_DIR}/output_base/execroot/org_tensorflow/bazel-out/*/bin/tensorflow/lite/python/schema_py_srcs_no_include_all/tflite || true
+    chmod a+w ${BAZEL_DIR}/output_base/execroot/org_tensorflow/bazel-out/*/bin/tensorflow/lite/python/conversion_metadata_schema_py_srcs_no_include_all || true
 }
