@@ -184,6 +184,8 @@ RDEPENDS:${PN} += "libtensorflow-c libtensorflow-framework label-image label-ima
 
 ALLOW_EMPTY:${PN} = "1"
 
+PRIVATE_LIBS:python3-tensorflow = "libtensorflow_cc.so.2"
+
 FILES:python3-tensorflow += "${libdir}/* ${datadir}/* ${sbindir}/*"
 FILES:libtensorflow-c = "${libdir}/libtensorflow.so ${libdir}/libtensorflow_cc.so"
 FILES:libtensorflow-framework = "${libdir}/libtensorflow.so ${libdir}/libtensorflow_framework.so*"
