@@ -26,7 +26,7 @@ SRC_URI += "https://storage.googleapis.com/download.tensorflow.org/models/tflite
 SRC_URI[model-mobv1.md5sum] = "38ac0c626947875bd311ef96c8baab62"
 SRC_URI[model-mobv1.sha256sum] = "2f8054076cf655e1a73778a49bd8fd0306d32b290b7e576dda9574f00f186c0f"
 
-RDEPENDS:${PN} += " \
+RDEPENDS:python3-tensorflow += " \
     python3 \
     python3-core \
     python3-numpy \
