@@ -1,9 +1,10 @@
 export JAVA_HOME="${STAGING_LIBDIR_NATIVE}/jvm/openjdk-11-native"
 
-BAZEL_JOBS ??= "4"
+# %25 of total number of local CPU cores
+BAZEL_JOBS ??= "HOST_CPUS*.25"
 
-# Memory 4GB
-BAZEL_MEM ??= "4096"
+# 25% of total amount of local host RAM
+BAZEL_MEM ??= "HOST_RAM*.25"
 
 TS_DL_DIR ??= "${DL_DIR}"
 

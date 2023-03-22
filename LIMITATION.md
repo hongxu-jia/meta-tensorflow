@@ -19,9 +19,9 @@
 
 * Due to tensorflow build requires lots of CPU and Memory, in order to
   avoid out of memory issue, explicitly set the number of local CPU
-  threads available to 4 and the amount of local host RAM (in MB) available
-  to 4096MB by default. If host is powerful enough, adjust BAZEL_JOBS and
-  BAZEL_MEM in local.conf to override default set. If set BAZEL_JOBS = ""
-  and BAZEL_MEM = "", there will be no limitation on the available CPU
-  and RAM.
+  threads available to 25% of total number of local CPU cores and
+  the amount of local host RAM (in MB) available to 25% of total amount
+  of local host RAM by default. If host is powerful enough, adjust BAZEL_JOBS
+  and BAZEL_MEM in local.conf to override default set. If set BAZEL_JOBS = ""
+  and BAZEL_MEM = "", there will be no limitation on the available CPU and RAM.
 ```
