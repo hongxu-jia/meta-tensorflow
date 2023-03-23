@@ -198,3 +198,5 @@ python __anonymous() {
         msg += "\nDetails: https://github.com/tensorflow/tensorflow/issues/16364"
         bb.warn(msg)
 }
+
+COMPATIBLE_HOST:arm = "null"
