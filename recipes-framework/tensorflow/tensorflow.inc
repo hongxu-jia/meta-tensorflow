@@ -3,7 +3,7 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=4158a261ca7f2525513e31ba9c50ae98"
 
 DEPENDS = "bazel-native protobuf-native util-linux-native protobuf"
-SRCREV = "0d8efc960d2874c2f56eed8690d132763a92a33c"
+SRCREV = "0db597d0d758aba578783b5bf46c889700a45085"
 SRC_URI = "git://github.com/tensorflow/tensorflow.git;branch=r2.12;protocol=https \
            file://0001-support-musl.patch \
            file://0001-use-local-bazel-to-workaround-bazel-paralle-issue.patch \
