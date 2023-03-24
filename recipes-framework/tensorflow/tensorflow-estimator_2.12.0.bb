@@ -6,7 +6,7 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=01e86893010a1b87e69a213faa753ebd"
 SRC_URI = "git://github.com/tensorflow/estimator.git;branch=r2.12;protocol=https \
            file://0001-customize-for-yocto.patch \
           "
-SRCREV = "9d208c49977abbdcf847263d4b5b0f8fe3b9981c"
+SRCREV = "1bcfb76591c4ae8f520e4ec0178582de3f250f67"
 S = "${WORKDIR}/git"
 
 inherit python3native bazel
