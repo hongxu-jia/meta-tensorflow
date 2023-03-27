@@ -1,0 +1,34 @@
+From d844e0ed4cab7ca4156927a029df36279e119edc Mon Sep 17 00:00:00 2001
+From: Hongxu Jia <hongxu.jia@windriver.com>
+Date: Mon, 27 Mar 2023 12:33:25 +0800
+Subject: [PATCH] Fix failure while gcc <= 7.5.0
+
+|tensorflow/compiler/mlir/quantization/tensorflow/debugging/mlir_dump.cc:93:10:
+error: could not convert 'dump_file' from 'std::unique_ptr<llvm::raw_fd_ostream>'
+to 'absl::lts_20220623::StatusOr<std::unique_ptr<llvm::raw_fd_ostream> >'
+|   return dump_file;
+          ^~~~~~~~~
+
+Upstream-Status: Pending
+
+Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+---
+ .../mlir/quantization/tensorflow/debugging/mlir_dump.cc         | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tensorflow/compiler/mlir/quantization/tensorflow/debugging/mlir_dump.cc b/tensorflow/compiler/mlir/quantization/tensorflow/debugging/mlir_dump.cc
+index fe1b205ce1d..09db4f83531 100644
+--- a/tensorflow/compiler/mlir/quantization/tensorflow/debugging/mlir_dump.cc
++++ b/tensorflow/compiler/mlir/quantization/tensorflow/debugging/mlir_dump.cc
+@@ -83,7 +83,7 @@ absl::StatusOr<std::unique_ptr<llvm::raw_fd_ostream>> CreateMlirDumpFile(
+   std::error_code ec{};  // NOLINT: Required to create llvm::raw_fd_ostream
+   const std::string dump_file_path =
+       tsl::io::JoinPath(*dump_dir, dump_file_name);
+-  auto dump_file = std::make_unique<llvm::raw_fd_ostream>(dump_file_path, ec);
++  absl::StatusOr<std::unique_ptr<llvm::raw_fd_ostream>> dump_file = std::make_unique<llvm::raw_fd_ostream>(dump_file_path, ec);
+   if (ec) {
+     return absl::InternalError(absl::StrFormat(
+         "Unable to open file: %s, error: %s", dump_file_path, ec.message()));
+-- 
+2.17.1
+
