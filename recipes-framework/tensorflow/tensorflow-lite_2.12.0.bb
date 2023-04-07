@@ -14,7 +14,7 @@ SRC_URI += " \
            file://cc_config.bzl.tpl \
            file://yocto_compiler_configure.bzl \
           "
-SRC_URI:append:qemuarm = " \
+SRC_URI:append:arm = " \
            file://0001-fix-XNNPACK-build-failure-for-qemuarm.patch \
 "
 

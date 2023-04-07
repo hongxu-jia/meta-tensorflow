@@ -43,7 +43,7 @@ TF_CONFIG ?= " \
 
 inherit tensorflow_ver
 
-CC:append:qemuarm = " -mfp16-format=ieee"
+CC:append:arm = " -mfp16-format=ieee"
 
 CFLAGS += "-Wno-stringop-overflow"
 
