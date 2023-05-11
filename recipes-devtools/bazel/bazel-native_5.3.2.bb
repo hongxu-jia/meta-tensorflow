@@ -38,7 +38,7 @@ EXTRA_BAZEL_ARGS = " \
 
 do_compile[network] = "1"
 do_compile () {
-    TMPDIR="${TOPDIR}/bazel" \
+    TMPDIR="${TMPDIR}/bazel" \
     VERBOSE=yes \
     EXTRA_BAZEL_ARGS="${EXTRA_BAZEL_ARGS}" \
     ./compile.sh
@@ -48,8 +48,5 @@ do_install () {
     install -d ${D}${bindir}
     install -m 0755 ${S}/output/bazel ${D}${bindir}
 }
-
-# Explicitly disable uninative
-UNINATIVE_LOADER = ""
 
 inherit native
