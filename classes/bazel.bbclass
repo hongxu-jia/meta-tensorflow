@@ -129,6 +129,18 @@ build --linkopt=-Wl,-latomic
 EOF
 
     sed -i "s:${WORKDIR}:${BAZEL_OUTPUTBASE_DIR}/external/yocto_compiler:g" ${S}/bazelrc
+
+    # Unzip bazel packages
+    ${BAZEL} ${BAZEL_STARTUP_OPTIONS} version
+
+    for binary in build-runfiles daemonize linux-sandbox process-wrapper; do
+        # Modify interpreter for bazel built-in binaries
+        patchelf-uninative --set-interpreter "${UNINATIVE_LOADER}" ${BAZEL_DIR}/user_root/install/*/$binary
+
+        # Set modification time somewhere in the future to avoid "corrupt installation: file PATH is missing or modified"
+        # in this case modification is required for successful build
+        touch -m -t 203712120101 ${BAZEL_DIR}/user_root/install/*/$binary
+    done
 }
 
 EXPORT_FUNCTIONS do_configure
