@@ -13,6 +13,7 @@ SRC_URI = "git://github.com/tensorflow/tensorflow.git;branch=r2.12;protocol=http
            file://0002-Replace-distutils.sysconfig.get_python_lib-with-sysc.patch \
            file://0001-hardcode-go-SDKS.patch \
            file://0001-Fix-failure-while-gcc-7.5.0.patch \
+           file://0001-fix-compile-error-for-gcc-13.1.patch \
           "
 
 S = "${WORKDIR}/git"
@@ -45,7 +46,7 @@ inherit tensorflow_ver
 
 CC:append:arm = " -mfp16-format=ieee"
 
-CFLAGS += "-Wno-stringop-overflow"
+CFLAGS += "-Wno-stringop-overflow -Wno-dangling-pointer"
 
 do_compile:append() {
     chmod a+w ${BAZEL_DIR}/output_base/execroot/org_tensorflow/bazel-out/*/bin/tensorflow/lite/python/conversion_metadata_schema_py_srcs_no_include_all || true
