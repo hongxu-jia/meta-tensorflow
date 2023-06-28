@@ -49,4 +49,7 @@ do_install () {
     install -m 0755 ${S}/output/bazel ${D}${bindir}
 }
 
+# Explicitly disable uninative
+UNINATIVE_LOADER = ""
+
 inherit native
