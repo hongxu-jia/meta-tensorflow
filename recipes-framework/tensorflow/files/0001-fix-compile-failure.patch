@@ -1,0 +1,33 @@
+From b8abee60ed3c49d496eb1427f36ec6c23e768ff6 Mon Sep 17 00:00:00 2001
+From: Hongxu Jia <hongxu.jia@windriver.com>
+Date: Tue, 12 Sep 2023 14:23:26 +0800
+Subject: [PATCH] fix compile failure
+
+...
+tensorflow/tsl/platform/denormal.cc:20:1: note: 'uint32_t' is defined in header '<cstdint>'; did you forget to '#include <cstdint>'?
+   19 | #include "tensorflow/tsl/platform/platform.h"
+  +++ |+#include <cstdint>
+...
+
+Upstream-Status: Pending
+
+Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+---
+ tensorflow/tsl/platform/denormal.cc | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/tensorflow/tsl/platform/denormal.cc b/tensorflow/tsl/platform/denormal.cc
+index d8685c4db26..e6d36a08d48 100644
+--- a/tensorflow/tsl/platform/denormal.cc
++++ b/tensorflow/tsl/platform/denormal.cc
+@@ -17,6 +17,7 @@ limitations under the License.
+ 
+ #include "tensorflow/tsl/platform/cpu_info.h"
+ #include "tensorflow/tsl/platform/platform.h"
++#include <cstdint>
+ 
+ // If we're on gcc 4.8 or older, there's a known bug that prevents the use of
+ // intrinsics when the architecture is not defined in the flags. See
+-- 
+2.27.0
+
