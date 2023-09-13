@@ -10,6 +10,12 @@ export PYTHON_BIN_PATH="${PYTHON}"
 export PYTHON_LIB_PATH="${PYTHON_SITEPACKAGES_DIR}"
 
 do_configure:append () {
+
+    cat >> "${S}/bazelrc" <<-EOF
+build --conlyopt=-Wno-stringop-overflow
+build --conlyopt=-Wno-dangling-pointer
+EOF
+
     SED_COMMAND="s#%%WORKDIR%%#${WORKDIR}#g"
     sed -i "${SED_COMMAND}" ${S}/configure.py
 
