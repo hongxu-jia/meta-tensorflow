@@ -1,6 +1,6 @@
-From 79bd5c1e597ffd877822297a48d9eaa9ca3a317d Mon Sep 17 00:00:00 2001
-From: Hongxu Jia <hongxu.jia@windriver.com>
-Date: Mon, 16 May 2022 01:18:43 -0700
+From 95c5886bce2030325da0b8c41b06050d8abe806f Mon Sep 17 00:00:00 2001
+From: Hongxu Jia <hongxu.jia@eng.windriver.com>
+Date: Thu, 14 Sep 2023 00:15:19 -0700
 Subject: [PATCH] `distutils` is deprecated in Python 3.10 #51776
 
 The `distutils` is deprecated in Python 3.10.
@@ -12,15 +12,15 @@ Use environment CROSSTOOL_PYTHON_INCLUDE_PATH to replace
 
 Upstream-Status: Inappropriate [oe specific]
 
-Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+Signed-off-by: Hongxu Jia <hongxu.jia@eng.windriver.com>
 ---
- third_party/py/python_configure.bzl | 19 +------------------
+ .../py/non_hermetic/python_configure.bzl      | 19 +------------------
  1 file changed, 1 insertion(+), 18 deletions(-)
 
-diff --git a/third_party/py/python_configure.bzl b/third_party/py/python_configure.bzl
+diff --git a/third_party/py/non_hermetic/python_configure.bzl b/third_party/py/non_hermetic/python_configure.bzl
 index 300cbfb6c71..e57af9f9dc9 100644
---- a/third_party/py/python_configure.bzl
-+++ b/third_party/py/python_configure.bzl
+--- a/third_party/py/non_hermetic/python_configure.bzl
++++ b/third_party/py/non_hermetic/python_configure.bzl
 @@ -149,24 +149,7 @@ def _check_python_bin(repository_ctx, python_bin):
  
  def _get_python_include(repository_ctx, python_bin):
@@ -48,5 +48,5 @@ index 300cbfb6c71..e57af9f9dc9 100644
  def _get_python_import_lib_name(repository_ctx, python_bin):
      """Get Python import library name (pythonXY.lib) on Windows."""
 -- 
-2.36.0
+2.40.0
 

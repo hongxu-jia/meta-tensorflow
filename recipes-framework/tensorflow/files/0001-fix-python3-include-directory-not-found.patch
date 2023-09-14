@@ -1,6 +1,6 @@
-From 2b6f5a64686ec78b4d1649ba401d06ae44b5a2d5 Mon Sep 17 00:00:00 2001
-From: Hongxu Jia <hongxu.jia@windriver.com>
-Date: Mon, 14 Nov 2022 15:27:41 +0800
+From 021f9306c31b042dd3f507e40ca7b8808e424d93 Mon Sep 17 00:00:00 2001
+From: Hongxu Jia <hongxu.jia@eng.windriver.com>
+Date: Thu, 14 Sep 2023 00:50:07 -0700
 Subject: [PATCH] fix python3 include directory not found
 
 After python3 in Yocto was upgraded to 3.11, the result of
@@ -17,15 +17,15 @@ $ ../recipe-sysroot-native/usr/bin/python3-native/python3
 
 Upstream-Status: Inappropriate [Yocto specific]
 
-Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+Signed-off-by: Hongxu Jia <hongxu.jia@eng.windriver.com>
 ---
- third_party/py/python_configure.bzl | 8 +++-----
+ third_party/py/non_hermetic/python_configure.bzl | 8 +++-----
  1 file changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/third_party/py/python_configure.bzl b/third_party/py/python_configure.bzl
+diff --git a/third_party/py/non_hermetic/python_configure.bzl b/third_party/py/non_hermetic/python_configure.bzl
 index 300cbfb6c71..14248233dc1 100644
---- a/third_party/py/python_configure.bzl
-+++ b/third_party/py/python_configure.bzl
+--- a/third_party/py/non_hermetic/python_configure.bzl
++++ b/third_party/py/non_hermetic/python_configure.bzl
 @@ -155,11 +155,9 @@ def _get_python_include(repository_ctx, python_bin):
              python_bin,
              "-Wignore",
@@ -42,5 +42,5 @@ index 300cbfb6c71..14248233dc1 100644
          error_msg = "Problem getting python include path.",
          error_details = ("Is the Python binary path set up right? " +
 -- 
-2.27.0
+2.40.0
 

@@ -2,9 +2,15 @@ DESCRIPTION = "TensorFlow C/C++ Libraries"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=4158a261ca7f2525513e31ba9c50ae98"
 
-DEPENDS = "bazel-native protobuf-native util-linux-native protobuf"
-SRCREV = "0db597d0d758aba578783b5bf46c889700a45085"
-SRC_URI = "git://github.com/tensorflow/tensorflow.git;branch=r2.12;protocol=https \
+DEPENDS = " \
+    bazel-native \
+    protobuf-native \
+    util-linux-native \
+    patchelf-native \
+    protobuf \
+"
+SRCREV = "9b87467bd9aa501269bbb84f02608af35b02d8cf"
+SRC_URI = "git://github.com/tensorflow/tensorflow.git;branch=r2.14;protocol=https \
            file://0001-support-musl.patch \
            file://0001-use-local-bazel-to-workaround-bazel-paralle-issue.patch \
            file://0001-third_party-eigen_archive-workaround-ice-failure-whi.patch \
@@ -13,8 +19,9 @@ SRC_URI = "git://github.com/tensorflow/tensorflow.git;branch=r2.12;protocol=http
            file://0002-Replace-distutils.sysconfig.get_python_lib-with-sysc.patch \
            file://0001-hardcode-go-SDKS.patch \
            file://0001-Fix-failure-while-gcc-7.5.0.patch \
-           file://0001-fix-compile-error-for-gcc-13.1.patch \
            file://0001-fix-compile-failure.patch \
+           file://0001-fix-build-failure-on-gcc-13.patch \
+           file://0001-use-host-python-in-tensorflow.patch \
           "
 
 S = "${WORKDIR}/git"
@@ -41,6 +48,8 @@ TF_CONFIG ?= " \
     TF_ENABLE_XLA=0 \
     TF_NEED_MPI=0 \
     TF_SET_ANDROID_WORKSPACE=0 \
+    TF_NEED_CLANG=0 \
+    TF_NEED_ROCM=0 \
 "
 
 inherit tensorflow_ver

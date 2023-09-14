@@ -9,6 +9,8 @@ inherit native
 export PYTHON_BIN_PATH="${PYTHON}"
 export PYTHON_LIB_PATH="${PYTHON_SITEPACKAGES_DIR}"
 
+export CROSSTOOL_PYTHON_INCLUDE_PATH="${STAGING_INCDIR_NATIVE}/python${PYTHON_BASEVERSION}${PYTHON_ABI}"
+
 do_configure:append () {
 
     cat >> "${S}/bazelrc" <<-EOF
