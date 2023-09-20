@@ -41,6 +41,8 @@ RDEPENDS:python3-tensorflow += " \
     python3-typing-extensions \
     python3-packaging \
     python3-flatbuffers \
+    python3-mldtypes \
+    python3-pybind11 \
     tensorboard \
     tensorflow-estimator \
     keras \

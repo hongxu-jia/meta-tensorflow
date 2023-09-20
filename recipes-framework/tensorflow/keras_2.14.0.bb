@@ -23,6 +23,8 @@ DEPENDS += " \
     python3-termcolor-native \
     python3-typing-extensions-native \
     python3-flatbuffers-native \
+    python3-mldtypes-native \
+    python3-pybind11-native \
     tensorflow-native \
 "
 
