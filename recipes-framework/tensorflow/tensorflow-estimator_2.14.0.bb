@@ -3,10 +3,10 @@ learning programming."
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=01e86893010a1b87e69a213faa753ebd"
 
-SRC_URI = "git://github.com/tensorflow/estimator.git;branch=r2.12;protocol=https \
+SRC_URI = "git://github.com/tensorflow/estimator.git;branch=r2.14;protocol=https \
            file://0001-customize-for-yocto.patch \
           "
-SRCREV = "1bcfb76591c4ae8f520e4ec0178582de3f250f67"
+SRCREV = "4462afbe682f6bc4bf607a9f5f140dd8f521be70"
 S = "${WORKDIR}/git"
 
 inherit python3native bazel
