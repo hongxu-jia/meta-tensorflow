@@ -8,6 +8,7 @@ SRC_URI += " \
            file://0001-CheckFeatureOrDie-use-warning-to-avoid-die.patch \
            file://0001-support-32-bit-x64-and-arm-for-yocto.patch \
            file://0001-distutils-is-deprecated-in-Python-3.10-cross.patch \
+           file://0001-build-api_gen_binary_target-as-host-tools.patch \
            file://BUILD.in \
            file://BUILD.yocto_compiler \
            file://cc_config.bzl.tpl \
