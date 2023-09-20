@@ -106,6 +106,7 @@ do_compile () {
         --host_crosstool_top=@bazel_tools//tools/cpp:toolchain \
         --verbose_failures \
         --copt -DTF_LITE_DISABLE_X86_NEON \
+        --define tflite_with_xnnpack=false \
         //tensorflow:libtensorflow.so \
         //tensorflow:libtensorflow_cc.so \
         //tensorflow:libtensorflow_framework.so \
