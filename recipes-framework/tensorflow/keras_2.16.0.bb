@@ -3,11 +3,12 @@ DESCRIPTION = "TensorFlow Keras is an implementation of the Keras API that\
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=175792518e4ac015ab6696d16c4f607e"
 
-SRC_URI = "git://github.com/keras-team/keras.git;branch=r2.14;protocol=https \
+SRC_URI = "git://github.com/keras-team/tf-keras.git;branch=r2.16;protocol=https \
            file://0001-customize-for-yocto.patch \
+           file://0001-skip-pip-file-check.patch \
           "
 
-SRCREV = "68f9af408a1734704746f7e6fa9cfede0d6879d8"
+SRCREV = "7fb2e8b64dd12a61109abdad341bbf63888a0ce6"
 S = "${WORKDIR}/git"
 
 inherit python3native bazel
@@ -25,6 +26,7 @@ DEPENDS += " \
     python3-flatbuffers-native \
     python3-mldtypes-native \
     python3-pybind11-native \
+    python3-protobuf-native \
     tensorflow-native \
 "
 
@@ -38,17 +40,20 @@ do_compile () {
         --verbose_explanations --verbose_failures \
         --verbose_failures \
         --python_path="${PYTHON}" \
-        //keras/tools/pip_package:build_pip_package
+        //tf_keras/tools/pip_package:build_pip_package
 
-    ${S}/bazel-bin/keras/tools/pip_package/build_pip_package \
-        ${WORKDIR}/keras_pip
+    ${S}/bazel-bin/tf_keras/tools/pip_package/build_pip_package \
+        ${WORKDIR}/tf_keras_pip
 }
 
 do_install () {
     echo "Installing pip package"
     install -d ${D}${PYTHON_SITEPACKAGES_DIR}
     ${STAGING_BINDIR_NATIVE}/pip3 install --disable-pip-version-check -v --no-deps \
-        -t ${D}/${PYTHON_SITEPACKAGES_DIR} --no-cache-dir ${WORKDIR}/keras_pip/*.whl
+        -t ${D}/${PYTHON_SITEPACKAGES_DIR} --no-cache-dir ${WORKDIR}/tf_keras_pip/*.whl
+
+    # Provides module keras as usual
+    ln -snrf ${D}/${PYTHON_SITEPACKAGES_DIR}/tf_keras ${D}/${PYTHON_SITEPACKAGES_DIR}/keras
 
 }
 
