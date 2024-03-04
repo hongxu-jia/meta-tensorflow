@@ -1,6 +1,6 @@
-From 8ce5084e1f61f775a539da279533cc48e0ba0701 Mon Sep 17 00:00:00 2001
-From: Hongxu Jia <hongxu.jia@windriver.com>
-Date: Thu, 21 Sep 2023 13:36:19 +0800
+From e1471b0dd1eb2c6ee152f749437cab65c2b27ef3 Mon Sep 17 00:00:00 2001
+From: Hongxu Jia <hongxu.jia@eng.windriver.com>
+Date: Fri, 1 Mar 2024 00:41:25 -0800
 Subject: [PATCH] build api_gen_binary_target as host tools
 
 For cross compiling, build api_gen_binary_target as target tools will
@@ -24,24 +24,26 @@ at build time
 
 Upstream-Status: Inappropriate [oe specific]
 
-Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+Rebase to 2.16
+
+Signed-off-by: Hongxu Jia <hongxu.jia@eng.windriver.com>
 ---
  tensorflow/python/tools/api/generator/api_gen.bzl | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/tensorflow/python/tools/api/generator/api_gen.bzl b/tensorflow/python/tools/api/generator/api_gen.bzl
-index 057421e5e7f..246d8175597 100644
+index c41aeecc476..a087557ad0f 100644
 --- a/tensorflow/python/tools/api/generator/api_gen.bzl
 +++ b/tensorflow/python/tools/api/generator/api_gen.bzl
-@@ -227,7 +227,7 @@ api_gen_rule = rule(
+@@ -267,7 +267,7 @@ api_gen_rule = rule(
          "outs": attr.output_list(mandatory = True),
          "srcs": attr.label_list(allow_files = True),
          "flags": attr.string_list(),
 -        "api_gen_binary_target": attr.label(executable = True, cfg = if_oss("target", "exec"), mandatory = True),
 +        "api_gen_binary_target": attr.label(executable = True, cfg = "exec", mandatory = True),
          "loading_value": attr.string(mandatory = True),
+         "api_packages_path": attr.output(),
      },
- )
 -- 
-2.27.0
+2.42.0
 

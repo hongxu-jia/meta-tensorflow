@@ -7,7 +7,6 @@ SRC_URI += " \
            file://0001-label_image.lite-tweak-default-model-location.patch \
            file://0001-CheckFeatureOrDie-use-warning-to-avoid-die.patch \
            file://0001-support-32-bit-x64-and-arm-for-yocto.patch \
-           file://0001-distutils-is-deprecated-in-Python-3.10-cross.patch \
            file://BUILD.in \
            file://BUILD.yocto_compiler \
            file://cc_config.bzl.tpl \
@@ -31,30 +30,7 @@ RDEPENDS:${PN} += " \
     python3-numpy \
 "
 
-export PYTHON_BIN_PATH="${PYTHON}"
-export PYTHON_LIB_PATH="${STAGING_LIBDIR_NATIVE}/${PYTHON_DIR}/site-packages"
-
-export CROSSTOOL_PYTHON_INCLUDE_PATH="${STAGING_INCDIR}/python${PYTHON_BASEVERSION}${PYTHON_ABI}"
-
 do_configure:append () {
-    if [ ! -e ${CROSSTOOL_PYTHON_INCLUDE_PATH}/pyconfig-target.h ];then
-        mv ${CROSSTOOL_PYTHON_INCLUDE_PATH}/pyconfig.h ${CROSSTOOL_PYTHON_INCLUDE_PATH}/pyconfig-target.h
-    fi
-
-    install -m 644 ${STAGING_INCDIR_NATIVE}/python${PYTHON_BASEVERSION}${PYTHON_ABI}/pyconfig.h \
-       ${CROSSTOOL_PYTHON_INCLUDE_PATH}/pyconfig-native.h
-
-    cat > ${CROSSTOOL_PYTHON_INCLUDE_PATH}/pyconfig.h <<ENDOF
-#if defined (_PYTHON_INCLUDE_TARGET)
-#include "pyconfig-target.h"
-#elif defined (_PYTHON_INCLUDE_NATIVE)
-#include "pyconfig-native.h"
-#else
-#error "_PYTHON_INCLUDE_TARGET or _PYTHON_INCLUDE_NATIVE is not defined"
-#endif // End of #if defined (_PYTHON_INCLUDE_TARGET)
-
-ENDOF
-
     mkdir -p ${S}/third_party/toolchains/yocto/
     sed "s#%%CPU%%#${BAZEL_TARGET_CPU}#g" ${WORKDIR}/BUILD.in  > ${S}/third_party/toolchains/yocto/BUILD
     chmod 644 ${S}/third_party/toolchains/yocto/BUILD
@@ -94,6 +70,7 @@ do_compile () {
         ${CUSTOM_BAZEL_FLAGS} \
         --copt -DTF_LITE_DISABLE_X86_NEON --copt -DMESA_EGL_NO_X11_HEADERS \
         --define tflite_with_xnnpack=false \
+        --repo_env=TF_PYTHON_VERSION=3.12 \
         tensorflow/lite:libtensorflowlite.so \
         tensorflow/lite/tools/benchmark:benchmark_model \
         //tensorflow/lite/examples/label_image:label_image \

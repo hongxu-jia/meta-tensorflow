@@ -1,6 +1,6 @@
-From c7a3e265041f9fd0d86d473338122a597d5234c5 Mon Sep 17 00:00:00 2001
+From 2e03e5bcd0b1e05f10f7d2d0cfede314fbfa5818 Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@eng.windriver.com>
-Date: Sun, 12 Mar 2023 23:38:01 -0700
+Date: Fri, 1 Mar 2024 00:22:22 -0800
 Subject: [PATCH] add yocto toolchain to support cross compiling
 
 Upstream-Status: Inappropriate [oe specific]
@@ -13,10 +13,10 @@ Signed-off-by: Hongxu Jia <hongxu.jia@eng.windriver.com>
  3 files changed, 23 insertions(+)
 
 diff --git a/WORKSPACE b/WORKSPACE
-index 1286ef9ac03..3ed96c1052d 100644
+index 720fee74bd2..94095bf1914 100644
 --- a/WORKSPACE
 +++ b/WORKSPACE
-@@ -21,3 +21,9 @@ tf_workspace1()
+@@ -40,3 +40,9 @@ tf_workspace1()
  load("@//tensorflow:workspace0.bzl", "tf_workspace0")
  
  tf_workspace0()
@@ -27,10 +27,10 @@ index 1286ef9ac03..3ed96c1052d 100644
 +    build_file = "//:BUILD.yocto_compiler",
 +)
 diff --git a/tensorflow/BUILD b/tensorflow/BUILD
-index 0d27a8294f5..3eea542c7a3 100644
+index 9e724aff49b..0918af13243 100644
 --- a/tensorflow/BUILD
 +++ b/tensorflow/BUILD
-@@ -289,6 +289,15 @@ config_setting(
+@@ -352,6 +352,15 @@ config_setting(
      visibility = ["//visibility:public"],
  )
  
@@ -45,20 +45,20 @@ index 0d27a8294f5..3eea542c7a3 100644
 +
  config_setting(
      name = "android_arm",
-     flag_values = if_google(
+     constraint_values = if_google(
 diff --git a/tensorflow/workspace2.bzl b/tensorflow/workspace2.bzl
-index 11681ff4e29..b8fa81642bd 100644
+index 3ef4a544f1a..9e4c2da9fe2 100644
 --- a/tensorflow/workspace2.bzl
 +++ b/tensorflow/workspace2.bzl
-@@ -11,6 +11,7 @@ load("//third_party/py:python_configure.bzl", "python_configure")
- load("//third_party/systemlibs:syslibs_configure.bzl", "syslibs_configure")
+@@ -49,6 +49,7 @@ load("//tensorflow/tools/def_file_filter:def_file_filter_configure.bzl", "def_fi
  load("//tensorflow/tools/toolchains:cpus/aarch64/aarch64_compiler_configure.bzl", "aarch64_compiler_configure")
  load("//tensorflow/tools/toolchains:cpus/arm/arm_compiler_configure.bzl", "arm_compiler_configure")
+ load("//tensorflow/tools/toolchains/clang6:repo.bzl", "clang6_configure")
 +load("//third_party/toolchains/yocto:yocto_compiler_configure.bzl", "yocto_compiler_configure")
  load("//tensorflow/tools/toolchains/embedded/arm-linux:arm_linux_toolchain_configure.bzl", "arm_linux_toolchain_configure")
- load("//third_party:repo.bzl", "tf_http_archive", "tf_mirror_urls")
- load("//third_party/clang_toolchain:cc_configure_clang.bzl", "cc_download_clang_toolchain")
-@@ -120,6 +121,13 @@ def _tf_toolchains():
+ load("//tensorflow/tools/toolchains/remote:configure.bzl", "remote_execution_configure")
+ load("//tensorflow/tools/toolchains/remote_config:configs.bzl", "initialize_rbe_configs")
+@@ -127,6 +128,13 @@ def _tf_toolchains():
      # Load aarch64 toolchain
      aarch64_compiler_configure()
  
@@ -73,5 +73,5 @@ index 11681ff4e29..b8fa81642bd 100644
      arm_linux_toolchain_configure(
          name = "local_config_embedded_arm",
 -- 
-2.37.1
+2.42.0
 

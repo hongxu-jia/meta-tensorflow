@@ -1,0 +1,69 @@
+From deed5b2168689c08da37f94492323cc52313f29e Mon Sep 17 00:00:00 2001
+From: Hongxu Jia <hongxu.jia@windriver.com>
+Date: Fri, 8 Mar 2024 11:31:26 +0800
+Subject: [PATCH] make hermetic python3 support offline build
+
+If environment TS_DL_DIR is set, download python whl from local archive other then
+python index
+
+Upstream-Status: Inappropriate [Yocto specific]
+
+Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+---
+ WORKSPACE                                    |  2 ++
+ third_party/0001-support-offline-build.patch | 30 ++++++++++++++++++++
+ 2 files changed, 32 insertions(+)
+ create mode 100644 third_party/0001-support-offline-build.patch
+
+diff --git a/WORKSPACE b/WORKSPACE
+index a697405110e..9b33f0cfdf1 100644
+--- a/WORKSPACE
++++ b/WORKSPACE
+@@ -16,6 +16,8 @@ http_archive(
+     name = "rules_python",
+     sha256 = "9d04041ac92a0985e344235f5d946f71ac543f1b1565f2cdbc9a2aaee8adf55b",
+     strip_prefix = "rules_python-0.26.0",
++    patch_args = ["-p1"],
++    patches = ["//third_party:0001-support-offline-build.patch"],
+     url = "https://github.com/bazelbuild/rules_python/releases/download/0.26.0/rules_python-0.26.0.tar.gz",
+ )
+ 
+diff --git a/third_party/0001-support-offline-build.patch b/third_party/0001-support-offline-build.patch
+new file mode 100644
+index 00000000000..abe5e354c5b
+--- /dev/null
++++ b/third_party/0001-support-offline-build.patch
+@@ -0,0 +1,30 @@
++From 82d4d1c2ff7dfa2c15c3f058fbd11b60681cad47 Mon Sep 17 00:00:00 2001
++From: Hongxu Jia <hongxu.jia@windriver.com>
++Date: Fri, 8 Mar 2024 09:58:38 +0800
++Subject: [PATCH] support offline build
++
++If environment TS_DL_DIR is set, download python whl from local archive other then
++python index
++
++Upstream-Status: Inappropriate [Yocto specific]
++
++Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
++---
++ python/pip_install/tools/wheel_installer/wheel_installer.py | 1 +
++ 1 file changed, 1 insertion(+)
++
++diff --git a/python/pip_install/tools/wheel_installer/wheel_installer.py b/python/pip_install/tools/wheel_installer/wheel_installer.py
++index c6c2961..10421d0 100644
++--- a/python/pip_install/tools/wheel_installer/wheel_installer.py
+++++ b/python/pip_install/tools/wheel_installer/wheel_installer.py
++@@ -160,6 +160,7 @@ def main() -> None:
++         + (["--isolated"] if args.isolated else [])
++         + (["download", "--only-binary=:all:"] if args.download_only else ["wheel"])
++         + ["--no-deps"]
+++        + (["--cache-dir", os.environ.get('TS_DL_DIR')] if os.environ.get('TS_DL_DIR') else [])
++         + deserialized_args["extra_pip_args"]
++     )
++ 
++-- 
++2.27.0
++
+-- 
+2.27.0
+

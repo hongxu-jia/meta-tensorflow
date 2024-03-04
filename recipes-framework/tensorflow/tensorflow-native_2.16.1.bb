@@ -1,15 +1,6 @@
 include tensorflow.inc
 
-SRC_URI += " \
-    file://0001-fix-python3-include-directory-not-found.patch \
-"
-
 inherit native
-
-export PYTHON_BIN_PATH="${PYTHON}"
-export PYTHON_LIB_PATH="${PYTHON_SITEPACKAGES_DIR}"
-
-export CROSSTOOL_PYTHON_INCLUDE_PATH="${STAGING_INCDIR_NATIVE}/python${PYTHON_BASEVERSION}${PYTHON_ABI}"
 
 do_configure:append () {
 
@@ -32,6 +23,7 @@ do_compile () {
         -c opt \
         --subcommands --explain=${T}/explain.log \
         --verbose_explanations --verbose_failures \
+        --repo_env=TF_PYTHON_VERSION=3.12 \
         --verbose_failures \
         //tensorflow/tools/pip_package:build_pip_package
 }

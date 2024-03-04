@@ -9,19 +9,17 @@ DEPENDS = " \
     patchelf-native \
     protobuf \
 "
-SRCREV = "9b87467bd9aa501269bbb84f02608af35b02d8cf"
-SRC_URI = "git://github.com/tensorflow/tensorflow.git;branch=r2.14;protocol=https \
-           file://0001-support-musl.patch \
+SRCREV = "5bc9d26649cca274750ad3625bd93422617eed4b"
+SRC_URI = "git://github.com/tensorflow/tensorflow.git;branch=r2.16;protocol=https \
            file://0001-use-local-bazel-to-workaround-bazel-paralle-issue.patch \
            file://0001-third_party-eigen_archive-workaround-ice-failure-whi.patch \
            file://0001-drop-bazel_toolchains_repositories-to-support-offlin.patch \
            file://0001-drop-v2-config.patch \
            file://0002-Replace-distutils.sysconfig.get_python_lib-with-sysc.patch \
            file://0001-hardcode-go-SDKS.patch \
-           file://0001-Fix-failure-while-gcc-7.5.0.patch \
-           file://0001-fix-compile-failure.patch \
-           file://0001-fix-build-failure-on-gcc-13.patch \
-           file://0001-use-host-python-in-tensorflow.patch \
+           file://0001-fix-build-failure.patch \
+           file://0001-support-hermetic-Python.patch \
+           file://0001-make-hermetic-python3-support-offline-build.patch \
           "
 
 S = "${WORKDIR}/git"
@@ -57,6 +55,10 @@ inherit tensorflow_ver
 CC:append:arm = " -mfp16-format=ieee"
 
 CFLAGS += "-Wno-stringop-overflow -Wno-dangling-pointer"
+
+export TS_DL_DIR
+
+do_compile[network] = "1"
 
 do_compile:append() {
     chmod a+w ${BAZEL_DIR}/output_base/execroot/org_tensorflow/bazel-out/*/bin/tensorflow/lite/python/conversion_metadata_schema_py_srcs_no_include_all || true
