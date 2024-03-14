@@ -12,9 +12,6 @@ SRC_URI += " \
            file://cc_config.bzl.tpl \
            file://yocto_compiler_configure.bzl \
           "
-SRC_URI:append:arm = " \
-           file://0001-fix-XNNPACK-build-failure-for-qemuarm.patch \
-"
 
 SRC_URI += "https://storage.googleapis.com/download.tensorflow.org/models/inception_v3_2016_08_28_frozen.pb.tar.gz;name=model-inv3"
 SRC_URI[model-inv3.md5sum] = "a904ddf15593d03c7dd786d552e22d73"
@@ -132,3 +129,5 @@ python __anonymous() {
         msg += "\nDetails: https://github.com/tensorflow/tensorflow/issues/16364"
         bb.warn(msg)
 }
+
+COMPATIBLE_HOST:arm = "null"
