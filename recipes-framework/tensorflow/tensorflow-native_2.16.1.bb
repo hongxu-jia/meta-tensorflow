@@ -1,5 +1,9 @@
 include tensorflow.inc
 
+SRC_URI += " \
+    file://0001-disable-avxvnni-for-x86.patch \
+"
+
 inherit native
 
 do_configure:append () {
