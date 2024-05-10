@@ -35,9 +35,7 @@ do_unpack () {
         -t ${S} --no-cache-dir --no-deps \
          ${DL_DIR}/tensorboard-2.16.2-py3-none-any.whl
 
-    rm ${S}/${PYTHON_SITEPACKAGES_DIR}/bin ${S}/${PYTHON_SITEPACKAGES_DIR}/tensorboard-2.16.2.dist-info  -rf
-    rm ${S}/${PYTHON_SITEPACKAGES_DIR}/bin -rf
-
+    rm -rf ${S}/bin ${S}/tensorboard-2.16.2.dist-info/direct_url.json
 }
 
 do_install () {
