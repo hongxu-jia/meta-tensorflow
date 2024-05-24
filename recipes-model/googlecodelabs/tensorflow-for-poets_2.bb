@@ -88,7 +88,7 @@ do_install () {
     for file in retrain.py label_image.py __init__.py; do
         install -m 755 ${S}/scripts/$file ${D}/${PYTHON_SITEPACKAGES_DIR}/tensorflow_for_poets
     done
-    install -m 755 ${WORKDIR}/label_image_lite.py ${D}/${PYTHON_SITEPACKAGES_DIR}/tensorflow_for_poets
+    install -m 755 ${UNPACKDIR}/label_image_lite.py ${D}/${PYTHON_SITEPACKAGES_DIR}/tensorflow_for_poets
 
     install -d ${D}${datadir}/label_image
     install -m 644 ${S}/tf_files/*.pb ${D}${datadir}/label_image
