@@ -113,14 +113,14 @@ do_install() {
         ${D}${sbindir}/label_image.lite
 
     install -d ${D}${datadir}/label_image
-    install -m 644 ${WORKDIR}/imagenet_slim_labels.txt ${D}${datadir}/label_image
-    install -m 644 ${WORKDIR}/inception_v3_2016_08_28_frozen.pb \
+    install -m 644 ${UNPACKDIR}/imagenet_slim_labels.txt ${D}${datadir}/label_image
+    install -m 644 ${UNPACKDIR}/inception_v3_2016_08_28_frozen.pb \
         ${D}${datadir}/label_image
     install -m 644 ${S}/tensorflow/examples/label_image/data/grace_hopper.jpg \
         ${D}${datadir}/label_image
 
-    install -m 644 ${WORKDIR}/labels_mobilenet_quant_v1_224.txt ${D}${datadir}/label_image
-    install -m 644 ${WORKDIR}/mobilenet_v1_1.0_224_quant.tflite \
+    install -m 644 ${UNPACKDIR}/labels_mobilenet_quant_v1_224.txt ${D}${datadir}/label_image
+    install -m 644 ${UNPACKDIR}/mobilenet_v1_1.0_224_quant.tflite \
         ${D}${datadir}/label_image
     install -m 644 ${S}/tensorflow/lite/examples/label_image/testdata/grace_hopper.bmp \
         ${D}${datadir}/label_image
