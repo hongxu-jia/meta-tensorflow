@@ -20,6 +20,7 @@ SRC_URI = "git://github.com/tensorflow/tensorflow.git;branch=r2.16;protocol=http
            file://0001-fix-build-failure.patch \
            file://0001-support-hermetic-Python.patch \
            file://0001-make-hermetic-python3-support-offline-build.patch \
+           file://0001-Fix-build-with-gcc-12.patch \
           "
 
 S = "${WORKDIR}/git"
