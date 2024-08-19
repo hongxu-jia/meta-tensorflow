@@ -55,7 +55,7 @@ inherit tensorflow_ver
 
 CC:append:arm = " -mfp16-format=ieee"
 
-CFLAGS += "-Wno-stringop-overflow -Wno-dangling-pointer"
+CFLAGS += "-Wno-stringop-overflow -Wno-dangling-pointer -Wno-maybe-uninitialized"
 
 export TS_DL_DIR
 
