@@ -9,8 +9,8 @@ DEPENDS = " \
     patchelf-native \
     protobuf \
 "
-SRCREV = "5bc9d26649cca274750ad3625bd93422617eed4b"
-SRC_URI = "git://github.com/tensorflow/tensorflow.git;branch=r2.16;protocol=https \
+SRCREV = "999767f61417203f38537361e23bcdf3273deb8f"
+SRC_URI = "git://github.com/tensorflow/tensorflow.git;branch=r2.17;protocol=https \
            file://0001-use-local-bazel-to-workaround-bazel-paralle-issue.patch \
            file://0001-third_party-eigen_archive-workaround-ice-failure-whi.patch \
            file://0001-drop-bazel_toolchains_repositories-to-support-offlin.patch \
@@ -21,6 +21,7 @@ SRC_URI = "git://github.com/tensorflow/tensorflow.git;branch=r2.16;protocol=http
            file://0001-support-hermetic-Python.patch \
            file://0001-make-hermetic-python3-support-offline-build.patch \
            file://0001-Fix-build-with-gcc-12.patch \
+           file://0001-fix-patchelf-not-found.patch \
           "
 
 S = "${WORKDIR}/git"

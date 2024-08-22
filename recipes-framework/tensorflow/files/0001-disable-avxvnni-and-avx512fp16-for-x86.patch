@@ -1,0 +1,80 @@
+From e12b4fd2950cbfd47bbd14d091bf1d9f65b56b34 Mon Sep 17 00:00:00 2001
+From: Hongxu Jia <hongxu.jia@windriver.com>
+Date: Thu, 22 Aug 2024 02:04:23 -0700
+Subject: [PATCH] disable avxvnni and avx512fp16 for x86
+
+If host gcc is too old to support option -mavxvnni, the compile failed
+...
+DEBUG:  | gcc: error: unrecognized command line option '-mavxvnni'; did you mean '-mavx512vnni'?
+...
+DEBUG:  | gcc: error: unrecognized command-line option '-mavx512fp16'; did you mean '-mavx512bf16'?
+...
+
+Disable avxvnni and avx512fp16 for x86, use android as workaround
+for native build
+
+Upstream-Status: Inappropriate [Yocto specific]
+
+Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+---
+ tensorflow/workspace2.bzl                     |  1 +
+ .../0001-disable-avxvnni-and-avx512fp16.patch | 35 +++++++++++++++++++
+ 2 files changed, 36 insertions(+)
+ create mode 100644 third_party/0001-disable-avxvnni-and-avx512fp16.patch
+
+diff --git a/tensorflow/workspace2.bzl b/tensorflow/workspace2.bzl
+index d52d1f00f8c..0f533938d1e 100644
+--- a/tensorflow/workspace2.bzl
++++ b/tensorflow/workspace2.bzl
+@@ -160,6 +160,7 @@ def _tf_repositories():
+         name = "XNNPACK",
+         sha256 = "9e1efd0e43bff4a3b089faff6b0ee466291848fd855609a99e412befdec15bb0",
+         strip_prefix = "XNNPACK-bfea23551ac47c9d71b82120b299ff6173fc9097",
++        patch_file = ["//third_party:0001-disable-avxvnni-and-avx512fp16.patch"],
+         urls = tf_mirror_urls("https://github.com/google/XNNPACK/archive/bfea23551ac47c9d71b82120b299ff6173fc9097.zip"),
+     )
+     # LINT.ThenChange(//tensorflow/lite/tools/cmake/modules/xnnpack.cmake)
+diff --git a/third_party/0001-disable-avxvnni-and-avx512fp16.patch b/third_party/0001-disable-avxvnni-and-avx512fp16.patch
+new file mode 100644
+index 00000000000..e042cb7c481
+--- /dev/null
++++ b/third_party/0001-disable-avxvnni-and-avx512fp16.patch
+@@ -0,0 +1,35 @@
++From 0a2787563948e2647161dee3e30774466d9a1ec5 Mon Sep 17 00:00:00 2001
++From: Hongxu Jia <hongxu.jia@windriver.com>
++Date: Mon, 18 Mar 2024 12:33:45 +0800
++Subject: [PATCH] disable avxvnni and avx512fp16
++
++Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
++---
++ BUILD.bazel | 4 ++--
++ 1 file changed, 2 insertions(+), 2 deletions(-)
++
++diff --git a/BUILD.bazel b/BUILD.bazel
++index b645c9d..57012b6 100644
++--- a/BUILD.bazel
+++++ b/BUILD.bazel
++@@ -4510,7 +4510,7 @@ alias(
++ selects.config_setting_group(
++     name = "avx512fp16_enabled_by_default",
++     match_any = [
++-        "//build_config:x86",
+++        "//build_config:android",
++     ],
++ )
++ 
++@@ -4527,7 +4527,7 @@ alias(
++ selects.config_setting_group(
++     name = "avxvnni_enabled_by_default",
++     match_any = [
++-        "//build_config:x86",
+++        "//build_config:android",
++     ],
++ )
++ 
++-- 
++2.35.5
++
+-- 
+2.25.1
+

@@ -1,7 +1,7 @@
 include tensorflow.inc
 
 SRC_URI += " \
-    file://0001-disable-avxvnni-for-x86.patch \
+    file://0001-disable-avxvnni-and-avx512fp16-for-x86.patch \
 "
 
 inherit native
@@ -29,19 +29,15 @@ do_compile () {
         --verbose_explanations --verbose_failures \
         --repo_env=TF_PYTHON_VERSION=3.12 \
         --verbose_failures \
-        //tensorflow/tools/pip_package:build_pip_package
+        //tensorflow/tools/pip_package:wheel
 }
 
 do_install() {
-    export TMPDIR="${WORKDIR}"
-    echo "Generating pip package"
-    BDIST_OPTS="--universal" \
-        ${S}/bazel-bin/tensorflow/tools/pip_package/build_pip_package ${WORKDIR}
-
     echo "Installing pip package"
     install -d ${D}/${PYTHON_SITEPACKAGES_DIR}
     ${STAGING_BINDIR_NATIVE}/pip3 install --disable-pip-version-check -v --no-deps \
-        -t ${D}/${PYTHON_SITEPACKAGES_DIR} --no-cache-dir ${WORKDIR}/tensorflow-${PV}*.whl
+        -t ${D}/${PYTHON_SITEPACKAGES_DIR} --no-cache-dir \
+         ${S}/bazel-bin/tensorflow/tools/pip_package/wheel_house/tensorflow-${PV}*.whl
 
     install -d ${D}${sbindir}
     (

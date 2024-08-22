@@ -89,7 +89,7 @@ do_compile () {
         //tensorflow:libtensorflow_cc.so \
         //tensorflow:libtensorflow_framework.so \
         //tensorflow/tools/benchmark:benchmark_model \
-        //tensorflow/tools/pip_package:build_pip_package \
+        //tensorflow/tools/pip_package:wheel \
         tensorflow/examples/label_image/... \
         //tensorflow/lite/examples/label_image:label_image \
         ${TF_TARGET_EXTRA}
@@ -125,17 +125,11 @@ do_install() {
     install -m 644 ${S}/tensorflow/lite/examples/label_image/testdata/grace_hopper.bmp \
         ${D}${datadir}/label_image
 
-
-    export TMPDIR="${WORKDIR}"
-    echo "Generating pip package"
-    BDIST_OPTS="--universal" \
-        ${S}/bazel-bin/tensorflow/tools/pip_package/build_pip_package ${WORKDIR}
-
     echo "Installing pip package"
     install -d ${D}/${PYTHON_SITEPACKAGES_DIR}
     ${STAGING_BINDIR_NATIVE}/pip3 install --disable-pip-version-check -v \
         -t ${D}/${PYTHON_SITEPACKAGES_DIR} --no-cache-dir --no-deps \
-         ${WORKDIR}/tensorflow-${PV}*.whl
+         ${S}/bazel-bin/tensorflow/tools/pip_package/wheel_house/tensorflow-${PV}*.whl
 
     (
         cd ${D}${PYTHON_SITEPACKAGES_DIR}/bin;
@@ -145,6 +139,8 @@ do_install() {
         done
 
         mv ${D}${PYTHON_SITEPACKAGES_DIR}/tensorflow/libtensorflow_framework.so*  ${D}${libdir}
+
+        rm -rf ${D}${PYTHON_SITEPACKAGES_DIR}/tensorflow-${PV}.dist-info
     )
 }
 

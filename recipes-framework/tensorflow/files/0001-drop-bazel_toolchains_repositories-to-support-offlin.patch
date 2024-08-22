@@ -1,31 +1,30 @@
-From 6bb9c02aae20996a6e4edd8fe743a90ce8d677aa Mon Sep 17 00:00:00 2001
+From f1169a95cc393404648f171f8edc0788ec2be754 Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@windriver.com>
-Date: Sun, 18 Sep 2022 23:52:34 -0700
+Date: Thu, 22 Aug 2024 01:42:24 -0700
 Subject: [PATCH] drop bazel_toolchains_repositories to support offline build
 
 Upstream-Status: Inappropriate [oe specific]
 
 Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
 
-Rebase to 2.10.0
+Rebase to 2.17.0
 Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
 ---
  tensorflow/workspace0.bzl | 3 ---
  1 file changed, 3 deletions(-)
 
 diff --git a/tensorflow/workspace0.bzl b/tensorflow/workspace0.bzl
-index c3c081b19ef..445de71bb13 100644
+index 0fdb0342fae..d617f7d02d2 100644
 --- a/tensorflow/workspace0.bzl
 +++ b/tensorflow/workspace0.bzl
-@@ -2,7 +2,6 @@
+@@ -1,6 +1,5 @@
+ """TensorFlow workspace initialization. Consult the WORKSPACE on how to use it."""
  
- load("//third_party/googleapis:repository_rules.bzl", "config_googleapis")
- load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 -load("@bazel_toolchains//repositories:repositories.bzl", bazel_toolchains_repositories = "repositories")
- load("@build_bazel_rules_apple//apple:repositories.bzl", "apple_rules_dependencies")
- load("@build_bazel_rules_swift//swift:repositories.bzl", "swift_rules_dependencies")
+ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
  load("@build_bazel_apple_support//lib:repositories.bzl", "apple_support_dependencies")
-@@ -104,8 +103,6 @@ def workspace():
+ load("@build_bazel_rules_apple//apple:repositories.bzl", "apple_rules_dependencies")
+@@ -105,8 +104,6 @@ def workspace():
          ],
      )
  
@@ -35,5 +34,5 @@ index c3c081b19ef..445de71bb13 100644
      # Note: We add this to fix Kokoro builds.
      # The rules below call into `rules_proto` but the hash has changed and
 -- 
-2.37.1
+2.25.1
 

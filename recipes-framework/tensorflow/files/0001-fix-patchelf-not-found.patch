@@ -1,0 +1,32 @@
+From 03fdc48cea3a939b2d10fd170bef045c23b3ca5f Mon Sep 17 00:00:00 2001
+From: Hongxu Jia <hongxu.jia@windriver.com>
+Date: Fri, 23 Aug 2024 14:40:35 +0800
+Subject: [PATCH] fix patchelf not found
+
+Set use_default_shell_env=True [1] use the default shell environment
+PATH to provide command patchelf
+
+[1] https://bazel.build/rules/lib/builtins/actions#run
+
+Upstream-Status: Inappropriate [wr-installer specific]
+
+Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+---
+ tensorflow/tools/pip_package/utils/tf_wheel.bzl | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/tensorflow/tools/pip_package/utils/tf_wheel.bzl b/tensorflow/tools/pip_package/utils/tf_wheel.bzl
+index 01f878410e4..ef77ead6430 100644
+--- a/tensorflow/tools/pip_package/utils/tf_wheel.bzl
++++ b/tensorflow/tools/pip_package/utils/tf_wheel.bzl
+@@ -57,6 +57,7 @@ def _tf_wheel_impl(ctx):
+         inputs = srcs + headers + xla_aot,
+         outputs = [output],
+         executable = executable,
++        use_default_shell_env = True,
+     )
+     return [DefaultInfo(files = depset(direct = [output]))]
+ 
+-- 
+2.27.0
+

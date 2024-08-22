@@ -1,13 +1,13 @@
-From 161e6195a47466b354dbb9a095c5aeeba890a81a Mon Sep 17 00:00:00 2001
-From: Hongxu Jia <hongxu.jia@eng.windriver.com>
-Date: Fri, 1 Mar 2024 00:28:25 -0800
+From 87e7f67bc9a0fb3a9d227c5f676ec28ebdcaa010 Mon Sep 17 00:00:00 2001
+From: Hongxu Jia <hongxu.jia@windriver.com>
+Date: Thu, 22 Aug 2024 01:56:07 -0700
 Subject: [PATCH] support 32 bit x64 and arm for yocto
 
 Upstream-Status: Inappropriate [oe specific]
 
-Rebase to 2.14.0
+Rebase to 2.17.0
 
-Signed-off-by: Hongxu Jia <hongxu.jia@eng.windriver.com>
+Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
 ---
  tensorflow/BUILD                              |  3 --
  tensorflow/workspace2.bzl                     |  2 ++
@@ -18,10 +18,10 @@ Signed-off-by: Hongxu Jia <hongxu.jia@eng.windriver.com>
  create mode 100644 third_party/0001-cpuinfo-support-32-bit-x86.patch
 
 diff --git a/tensorflow/BUILD b/tensorflow/BUILD
-index 0918af13243..3684d9a8757 100644
+index 21ccd9dead0..e888cbb709a 100644
 --- a/tensorflow/BUILD
 +++ b/tensorflow/BUILD
-@@ -269,9 +269,6 @@ config_setting(
+@@ -276,9 +276,6 @@ config_setting(
          [],
      ),
      values = dict(
@@ -32,15 +32,15 @@ index 0918af13243..3684d9a8757 100644
      ),
      visibility = ["//visibility:public"],
 diff --git a/tensorflow/workspace2.bzl b/tensorflow/workspace2.bzl
-index 9e4c2da9fe2..0aed90f6203 100644
+index d52d1f00f8c..5892b7ad446 100644
 --- a/tensorflow/workspace2.bzl
 +++ b/tensorflow/workspace2.bzl
 @@ -160,6 +160,7 @@ def _tf_repositories():
          name = "XNNPACK",
-         sha256 = "434fe914cb52da3e66ba920082af969f527f23729fff182aecd87ac5324e9f90",
-         strip_prefix = "XNNPACK-dcbfffb80fb4f6fcfcfb5b3723854ec8797fa546",
+         sha256 = "9e1efd0e43bff4a3b089faff6b0ee466291848fd855609a99e412befdec15bb0",
+         strip_prefix = "XNNPACK-bfea23551ac47c9d71b82120b299ff6173fc9097",
 +        patch_file = ["//third_party:0001-XNNPACK-support-32-bit-x86.patch"],
-         urls = tf_mirror_urls("https://github.com/google/XNNPACK/archive/dcbfffb80fb4f6fcfcfb5b3723854ec8797fa546.zip"),
+         urls = tf_mirror_urls("https://github.com/google/XNNPACK/archive/bfea23551ac47c9d71b82120b299ff6173fc9097.zip"),
      )
      # LINT.ThenChange(//tensorflow/lite/tools/cmake/modules/xnnpack.cmake)
 @@ -182,6 +183,7 @@ def _tf_repositories():
@@ -121,5 +121,5 @@ index 00000000000..0c83cf01675
 +2.37.1
 +
 -- 
-2.42.0
+2.25.1
 
