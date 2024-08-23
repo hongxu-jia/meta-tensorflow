@@ -50,6 +50,7 @@ do_install () {
     ${STAGING_BINDIR_NATIVE}/pip3 install --disable-pip-version-check -v --no-deps \
         -t ${D}/${PYTHON_SITEPACKAGES_DIR} --no-cache-dir ${WORKDIR}/estimator_pip/*.whl
 
+    rm -rf ${D}/${PYTHON_SITEPACKAGES_DIR}tensorflow_estimator-${PV}.dist-info
 }
 
 FILES:${PN} += "${libdir}/*"
