@@ -34,7 +34,7 @@ do_unpack () {
         -t ${S} --no-cache-dir --no-deps \
          ${DL_DIR}/tensorboard-2.17.1-py3-none-any.whl
 
-    rm -rf ${S}/bin ${S}/tensorboard-2.17.1.dist-info
+    rm -rf ${S}/bin ${S}/tensorboard-2.17.1.dist-info/direct_url.json
 }
 
 do_install () {
