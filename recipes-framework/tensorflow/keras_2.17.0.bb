@@ -6,6 +6,7 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=175792518e4ac015ab6696d16c4f607e"
 SRC_URI = "git://github.com/keras-team/tf-keras.git;branch=r2.17;protocol=https \
            file://0001-customize-for-yocto.patch \
            file://0001-skip-pip-file-check.patch \
+           file://0001-Keras-version-to-2.17.patch \
           "
 
 SRCREV = "9f64291e2db56f922917185ab8c1d5cd4e962021"
