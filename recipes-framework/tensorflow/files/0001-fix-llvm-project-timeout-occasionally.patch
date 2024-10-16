@@ -1,0 +1,97 @@
+From bda6860a3457d3a690780031b391feee8e378130 Mon Sep 17 00:00:00 2001
+From: Hongxu Jia <hongxu.jia@windriver.com>
+Date: Wed, 16 Oct 2024 14:48:23 +0800
+Subject: [PATCH] fix llvm-project timeout occasionally
+
+While CPU and memory usage is hight during building, llvm-project timeout occasionally
+'''
+ERROR: An error occurred during the fetch of repository 'llvm-project':
+   Traceback (most recent call last):
+    File "bazel/output_base/external/llvm-raw/utils/bazel/configure.bzl", line 150, column 25, in _llvm_configure_impl
+        _overlay_directories(repository_ctx)
+    File "bazel/output_base/external/llvm-raw/utils/bazel/configure.bzl", line 60, column 13, in _overlay_directories
+        fail(("Failed to execute overlay script: '{cmd}'\n" +
+Error in fail: Failed to execute overlay script: 'python3 bazel/output_base/external/llvm-raw/utils/bazel/overlay_directories.py --src bazel/output_base/external/llvm-raw --overlay bazel/output_base/external/llvm-raw/utils/bazel/llvm-project-overlay --target .'
+Exited with code 256
+stdout:
+
+stderr:
+Timed out
+'''
+
+Set timeout to 600s as workaround
+
+Upstream-Status: Pending
+
+Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+---
+ .../llvm/0001-Set-timeout-to-600s.patch       | 44 +++++++++++++++++++
+ third_party/llvm/workspace.bzl                |  1 +
+ 2 files changed, 45 insertions(+)
+ create mode 100644 third_party/llvm/0001-Set-timeout-to-600s.patch
+
+diff --git a/third_party/llvm/0001-Set-timeout-to-600s.patch b/third_party/llvm/0001-Set-timeout-to-600s.patch
+new file mode 100644
+index 00000000000..c48ce980474
+--- /dev/null
++++ b/third_party/llvm/0001-Set-timeout-to-600s.patch
+@@ -0,0 +1,44 @@
++From 601ffb61604d2bb2d4ac04630175f096d031caae Mon Sep 17 00:00:00 2001
++From: Hongxu Jia <hongxu.jia@windriver.com>
++Date: Wed, 16 Oct 2024 14:43:21 +0800
++Subject: [PATCH] Set timeout to 600s
++
++While CPU and memory usage is hight during building, llvm-project timeout occasionally
++'''
++ERROR: An error occurred during the fetch of repository 'llvm-project':
++   Traceback (most recent call last):
++    File "bazel/output_base/external/llvm-raw/utils/bazel/configure.bzl", line 150, column 25, in _llvm_configure_impl
++        _overlay_directories(repository_ctx)
++    File "bazel/output_base/external/llvm-raw/utils/bazel/configure.bzl", line 60, column 13, in _overlay_directories
++        fail(("Failed to execute overlay script: '{cmd}'\n" +
++Error in fail: Failed to execute overlay script: 'python3 bazel/output_base/external/llvm-raw/utils/bazel/overlay_directories.py --src bazel/output_base/external/llvm-raw --overlay bazel/output_base/external/llvm-raw/utils/bazel/llvm-project-overlay --target .'
++Exited with code 256
++stdout:
++
++stderr:
++Timed out
++'''
++
++Set timeout to 600s as workaround
++
++Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
++---
++ utils/bazel/configure.bzl | 2 +-
++ 1 file changed, 1 insertion(+), 1 deletion(-)
++
++diff --git a/utils/bazel/configure.bzl b/utils/bazel/configure.bzl
++index 717b86d..75a0275 100644
++--- a/utils/bazel/configure.bzl
+++++ b/utils/bazel/configure.bzl
++@@ -54,7 +54,7 @@ def _overlay_directories(repository_ctx):
++         "--target",
++         ".",
++     ]
++-    exec_result = repository_ctx.execute(cmd, timeout = 20)
+++    exec_result = repository_ctx.execute(cmd, timeout = 600)
++ 
++     if exec_result.return_code != 0:
++         fail(("Failed to execute overlay script: '{cmd}'\n" +
++-- 
++2.27.0
++
+diff --git a/third_party/llvm/workspace.bzl b/third_party/llvm/workspace.bzl
+index 10601c8a766..73616d42b25 100644
+--- a/third_party/llvm/workspace.bzl
++++ b/third_party/llvm/workspace.bzl
+@@ -22,6 +22,7 @@ def repo(name):
+             "//third_party/llvm:mathextras.patch",
+             "//third_party/llvm:toolchains.patch",
+             "//third_party/llvm:zstd.patch",
++            "//third_party/llvm:0001-Set-timeout-to-600s.patch",
+         ],
+         link_files = {"//third_party/llvm:run_lit.sh": "mlir/run_lit.sh"},
+     )
+-- 
+2.27.0
+
