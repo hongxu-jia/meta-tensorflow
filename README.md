@@ -71,3 +71,10 @@ and assume ay risks associated with your exercise of permissions under the licen
 
 ## Attribution
 TensorFlow, the TensorFlow logo and any related marks are trademarks of Google Inc.
+
+## Maintainer
+See MAINTAINERS.md for detail
+layer maintainer: Hongxu Jia <hongxu.jia@windriver.com>
+
+## Send patch
+See MAINTAINERS.md for detail
