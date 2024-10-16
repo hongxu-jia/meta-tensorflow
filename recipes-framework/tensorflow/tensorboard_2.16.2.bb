@@ -22,8 +22,6 @@ RDEPENDS:${PN} += "python3 \
            python3-six \
            python3-markdown \
            python3-absl \
-           python3-google-auth \
-           python3-google-auth-oauthlib \
            python3-requests \
 "
 
