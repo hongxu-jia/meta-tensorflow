@@ -29,11 +29,11 @@ RDEPENDS:${PN} += " \
 
 do_configure:append () {
     mkdir -p ${S}/third_party/toolchains/yocto/
-    sed "s#%%CPU%%#${BAZEL_TARGET_CPU}#g" ${UNPACKDIR}/BUILD.in  > ${S}/third_party/toolchains/yocto/BUILD
+    sed "s#%%CPU%%#${BAZEL_TARGET_CPU}#g" ${WORKDIR}/BUILD.in  > ${S}/third_party/toolchains/yocto/BUILD
     chmod 644 ${S}/third_party/toolchains/yocto/BUILD
-    install -m 644 ${UNPACKDIR}/cc_config.bzl.tpl ${S}/third_party/toolchains/yocto/
-    install -m 644 ${UNPACKDIR}/yocto_compiler_configure.bzl ${S}/third_party/toolchains/yocto/
-    install -m 644 ${UNPACKDIR}/BUILD.yocto_compiler ${S}
+    install -m 644 ${WORKDIR}/cc_config.bzl.tpl ${S}/third_party/toolchains/yocto/
+    install -m 644 ${WORKDIR}/yocto_compiler_configure.bzl ${S}/third_party/toolchains/yocto/
+    install -m 644 ${WORKDIR}/BUILD.yocto_compiler ${S}
 
     CT_NAME=$(echo ${HOST_PREFIX} | rev | cut -c 2- | rev)
     SED_COMMAND="s#%%CT_NAME%%#${CT_NAME}#g"
