@@ -20,7 +20,7 @@ When sending patches please take a look at the contribution guide available
 here: https://wiki.yoctoproject.org/wiki/Contribution_Guidelines
 
 example:
-git send-email -1 -M --to yocto@yoctoproject.org  --subject-prefix=meta-tensorflow][PATCH
+git send-email -1 -M --to yocto-patches@lists.yoctoproject.org  --subject-prefix=meta-tensorflow][PATCH
 ```
 
 ### 2. Github
