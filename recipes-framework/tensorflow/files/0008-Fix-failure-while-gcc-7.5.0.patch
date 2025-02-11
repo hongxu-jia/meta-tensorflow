@@ -1,4 +1,4 @@
-From d844e0ed4cab7ca4156927a029df36279e119edc Mon Sep 17 00:00:00 2001
+From e87e5a405cc01b65cdf367de562035922a21c058 Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@windriver.com>
 Date: Mon, 27 Mar 2023 12:33:25 +0800
 Subject: [PATCH] Fix failure while gcc <= 7.5.0
@@ -29,6 +29,3 @@ index fe1b205ce1d..09db4f83531 100644
    if (ec) {
      return absl::InternalError(absl::StrFormat(
          "Unable to open file: %s, error: %s", dump_file_path, ec.message()));
--- 
-2.17.1
-

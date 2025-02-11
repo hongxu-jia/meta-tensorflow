@@ -1,4 +1,4 @@
-From c7a3e265041f9fd0d86d473338122a597d5234c5 Mon Sep 17 00:00:00 2001
+From cc522bdebaa28115662d38b655f3b9e8eee28026 Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@eng.windriver.com>
 Date: Sun, 12 Mar 2023 23:38:01 -0700
 Subject: [PATCH] add yocto toolchain to support cross compiling
@@ -72,6 +72,3 @@ index 11681ff4e29..b8fa81642bd 100644
      # TFLite crossbuild toolchain for embeddeds Linux
      arm_linux_toolchain_configure(
          name = "local_config_embedded_arm",
--- 
-2.37.1
-

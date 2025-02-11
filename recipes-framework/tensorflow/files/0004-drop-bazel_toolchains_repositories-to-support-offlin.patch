@@ -1,4 +1,4 @@
-From 6bb9c02aae20996a6e4edd8fe743a90ce8d677aa Mon Sep 17 00:00:00 2001
+From eb5149642a766dc7938acc9c6a7357f309940317 Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@windriver.com>
 Date: Sun, 18 Sep 2022 23:52:34 -0700
 Subject: [PATCH] drop bazel_toolchains_repositories to support offline build
@@ -34,6 +34,3 @@ index c3c081b19ef..445de71bb13 100644
      # Apple rules for Bazel. https://github.com/bazelbuild/rules_apple.
      # Note: We add this to fix Kokoro builds.
      # The rules below call into `rules_proto` but the hash has changed and
--- 
-2.37.1
-

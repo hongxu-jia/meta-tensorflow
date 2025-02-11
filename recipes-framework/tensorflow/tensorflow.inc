@@ -5,18 +5,17 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=4158a261ca7f2525513e31ba9c50ae98"
 DEPENDS = "bazel-native protobuf-native util-linux-native protobuf"
 SRCREV = "0db597d0d758aba578783b5bf46c889700a45085"
 SRC_URI = "git://github.com/tensorflow/tensorflow.git;branch=r2.12;protocol=https \
-           file://0001-support-musl.patch \
-           file://0001-use-local-bazel-to-workaround-bazel-paralle-issue.patch \
-           file://0001-third_party-eigen_archive-workaround-ice-failure-whi.patch \
-           file://0001-drop-bazel_toolchains_repositories-to-support-offlin.patch \
-           file://0001-drop-v2-config.patch \
-           file://0002-Replace-distutils.sysconfig.get_python_lib-with-sysc.patch \
-           file://0001-hardcode-go-SDKS.patch \
-           file://0001-Fix-failure-while-gcc-7.5.0.patch \
-           file://0001-fix-compile-error-for-gcc-13.1.patch \
-           file://0001-fix-compile-failure.patch \
-          "
-
+    file://0001-support-musl.patch \
+    file://0002-use-local-bazel-to-workaround-bazel-paralle-issue.patch \
+    file://0003-third_party-eigen_archive-workaround-ice-failure-whi.patch \
+    file://0004-drop-bazel_toolchains_repositories-to-support-offlin.patch \
+    file://0005-drop-v2-config.patch \
+    file://0006-Replace-distutils.sysconfig.get_python_lib-with-sysc.patch \
+    file://0007-hardcode-go-SDKS.patch \
+    file://0008-Fix-failure-while-gcc-7.5.0.patch \
+    file://0009-fix-compile-error-for-gcc-13.1.patch \
+    file://0010-fix-compile-failure.patch \
+"
 S = "${WORKDIR}/git"
 
 DEPENDS += " \

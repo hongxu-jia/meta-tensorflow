@@ -1,4 +1,4 @@
-From b8abee60ed3c49d496eb1427f36ec6c23e768ff6 Mon Sep 17 00:00:00 2001
+From 111aba5fda30dc301bcb72e494277d45b3337518 Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@windriver.com>
 Date: Tue, 12 Sep 2023 14:23:26 +0800
 Subject: [PATCH] fix compile failure
@@ -28,6 +28,3 @@ index d8685c4db26..e6d36a08d48 100644
  
  // If we're on gcc 4.8 or older, there's a known bug that prevents the use of
  // intrinsics when the architecture is not defined in the flags. See
--- 
-2.27.0
-

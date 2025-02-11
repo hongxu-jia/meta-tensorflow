@@ -1,4 +1,4 @@
-From 0076b9b52016c7a22c4418d25945ebc893a67b12 Mon Sep 17 00:00:00 2001
+From c40feb600abaeba1de7e736a4a4d0de71d798a44 Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@windriver.com>
 Date: Mon, 16 May 2022 00:53:00 -0700
 Subject: [PATCH] Revert "set --distinct_host_configuration=false by default
@@ -16,10 +16,10 @@ Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
  1 file changed, 2 deletions(-)
 
 diff --git a/.bazelrc b/.bazelrc
-index a71ade6950f..9f7627bb7c6 100644
+index 2ec8746e5c7..e6db7e4c586 100644
 --- a/.bazelrc
 +++ b/.bazelrc
-@@ -355,8 +355,6 @@ build:windows --features=compiler_param_file
+@@ -397,8 +397,6 @@ build:windows --features=compiler_param_file
  
  # On windows, we never cross compile
  build:windows --distinct_host_configuration=false
@@ -28,6 +28,3 @@ index a71ade6950f..9f7627bb7c6 100644
  
  # Do not risk cache corruption. See:
  # https://github.com/bazelbuild/bazel/issues/3360
--- 
-2.36.0
-

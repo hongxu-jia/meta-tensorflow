@@ -1,4 +1,4 @@
-From 2b6f5a64686ec78b4d1649ba401d06ae44b5a2d5 Mon Sep 17 00:00:00 2001
+From b0df1f017ab730b150dcfe71084620e4edf44504 Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@windriver.com>
 Date: Mon, 14 Nov 2022 15:27:41 +0800
 Subject: [PATCH] fix python3 include directory not found
@@ -41,6 +41,3 @@ index 300cbfb6c71..14248233dc1 100644
          ],
          error_msg = "Problem getting python include path.",
          error_details = ("Is the Python binary path set up right? " +
--- 
-2.27.0
-

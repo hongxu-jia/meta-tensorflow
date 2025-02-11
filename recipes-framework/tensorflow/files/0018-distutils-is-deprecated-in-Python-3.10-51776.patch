@@ -1,4 +1,4 @@
-From 79bd5c1e597ffd877822297a48d9eaa9ca3a317d Mon Sep 17 00:00:00 2001
+From 85fada9708cd38c278cc4237feb90d0c94425758 Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@windriver.com>
 Date: Mon, 16 May 2022 01:18:43 -0700
 Subject: [PATCH] `distutils` is deprecated in Python 3.10 #51776
@@ -47,6 +47,3 @@ index 300cbfb6c71..e57af9f9dc9 100644
  
  def _get_python_import_lib_name(repository_ctx, python_bin):
      """Get Python import library name (pythonXY.lib) on Windows."""
--- 
-2.36.0
-

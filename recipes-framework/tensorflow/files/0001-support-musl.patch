@@ -1,4 +1,4 @@
-From cc3c636c06bbc6ca6e81a547c9a740c4ead21f61 Mon Sep 17 00:00:00 2001
+From 9e8fe4970d6c93afda28a97b42fbdfc2b6ca2f5a Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@eng.windriver.com>
 Date: Wed, 30 Nov 2022 22:20:52 -0800
 Subject: [PATCH] support musl
@@ -45,6 +45,3 @@ index 1b62651b1be..4dc38cba6bd 100644
  #define TF_GENERATE_STACKTRACE
  #endif
  
--- 
-2.37.1
-

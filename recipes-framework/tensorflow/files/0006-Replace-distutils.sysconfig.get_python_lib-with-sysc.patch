@@ -1,7 +1,7 @@
-From 5dc007d64a9928d379851a6524a376bfdb819c6d Mon Sep 17 00:00:00 2001
+From 0e0f64ba41170ef9b603bb1e4e8fde9e5f2d8c6f Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@windriver.com>
 Date: Mon, 16 May 2022 00:17:02 -0700
-Subject: [PATCH] Replace distutils.sysconfig.get_python_lib() with 
+Subject: [PATCH] Replace distutils.sysconfig.get_python_lib() with
  sysconfig.get_path('purelib') - python 3.10 support
 
 This is part of the effort for 51776 to get python 3.10 support.
@@ -21,7 +21,7 @@ Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
  2 files changed, 4 insertions(+), 6 deletions(-)
 
 diff --git a/tensorflow/api_template.__init__.py b/tensorflow/api_template.__init__.py
-index 1ed97439b06..58904070e62 100644
+index cd3cbac7a96..217fb15514f 100644
 --- a/tensorflow/api_template.__init__.py
 +++ b/tensorflow/api_template.__init__.py
 @@ -26,7 +26,7 @@ only a placeholder to enable test cases to run. The TensorFlow build replaces
@@ -33,7 +33,7 @@ index 1ed97439b06..58904070e62 100644
  import inspect as _inspect
  import logging as _logging
  import os as _os
-@@ -122,8 +122,7 @@ _site_packages_dirs += [_p for _p in _sys.path if 'site-packages' in _p]
+@@ -115,8 +115,7 @@ _site_packages_dirs += [_p for _p in _sys.path if 'site-packages' in _p]
  if 'getsitepackages' in dir(_site):
    _site_packages_dirs += _site.getsitepackages()
  
@@ -44,7 +44,7 @@ index 1ed97439b06..58904070e62 100644
  _site_packages_dirs = list(set(_site_packages_dirs))
  
 diff --git a/tensorflow/api_template_v1.__init__.py b/tensorflow/api_template_v1.__init__.py
-index 87d9bc1f204..70e0fd70c34 100644
+index 6c42fea562f..1cee4e6bc29 100644
 --- a/tensorflow/api_template_v1.__init__.py
 +++ b/tensorflow/api_template_v1.__init__.py
 @@ -14,7 +14,7 @@
@@ -56,7 +56,7 @@ index 87d9bc1f204..70e0fd70c34 100644
  import inspect as _inspect
  import os as _os
  import site as _site
-@@ -163,8 +163,7 @@ _site_packages_dirs += [_p for _p in _sys.path if 'site-packages' in _p]
+@@ -156,8 +156,7 @@ _site_packages_dirs += [_p for _p in _sys.path if 'site-packages' in _p]
  if 'getsitepackages' in dir(_site):
    _site_packages_dirs += _site.getsitepackages()
  
@@ -66,6 +66,3 @@ index 87d9bc1f204..70e0fd70c34 100644
  
  _site_packages_dirs = list(set(_site_packages_dirs))
  
--- 
-2.36.0
-
