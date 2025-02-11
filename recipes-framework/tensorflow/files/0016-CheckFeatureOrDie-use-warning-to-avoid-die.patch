@@ -1,4 +1,4 @@
-From 6c0e8215f1e476862f42b61b7ee6029d8ba397a4 Mon Sep 17 00:00:00 2001
+From 8d182dd0c99c063b308bcfb26aad662fd38a8264 Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@windriver.com>
 Date: Mon, 16 May 2022 00:39:33 -0700
 Subject: [PATCH] CheckFeatureOrDie: use warning to avoid die

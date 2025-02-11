@@ -1,4 +1,4 @@
-From 85fada9708cd38c278cc4237feb90d0c94425758 Mon Sep 17 00:00:00 2001
+From f4bdb494b665d13b469b00e4b51e468b30268f1b Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@windriver.com>
 Date: Mon, 16 May 2022 01:18:43 -0700
 Subject: [PATCH] `distutils` is deprecated in Python 3.10 #51776
@@ -14,14 +14,14 @@ Upstream-Status: Inappropriate [oe specific]
 
 Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
 ---
- third_party/py/python_configure.bzl | 19 +------------------
- 1 file changed, 1 insertion(+), 18 deletions(-)
+ third_party/py/python_configure.bzl | 17 +----------------
+ 1 file changed, 1 insertion(+), 16 deletions(-)
 
 diff --git a/third_party/py/python_configure.bzl b/third_party/py/python_configure.bzl
-index 300cbfb6c71..e57af9f9dc9 100644
+index 14248233dc1..e57af9f9dc9 100644
 --- a/third_party/py/python_configure.bzl
 +++ b/third_party/py/python_configure.bzl
-@@ -149,24 +149,7 @@ def _check_python_bin(repository_ctx, python_bin):
+@@ -149,22 +149,7 @@ def _check_python_bin(repository_ctx, python_bin):
  
  def _get_python_include(repository_ctx, python_bin):
      """Gets the python include path."""
@@ -31,11 +31,9 @@ index 300cbfb6c71..e57af9f9dc9 100644
 -            python_bin,
 -            "-Wignore",
 -            "-c",
--            "import importlib; " +
--            "import importlib.util; " +
--            "print(importlib.import_module('distutils.sysconfig').get_python_inc() " +
--            "if importlib.util.find_spec('distutils.sysconfig') " +
--            "else importlib.import_module('sysconfig').get_path('include'))",
+-            "from __future__ import print_function;" +
+-            "import sysconfig;" +
+-            "print(sysconfig.get_path('include'))"
 -        ],
 -        error_msg = "Problem getting python include path.",
 -        error_details = ("Is the Python binary path set up right? " +

@@ -1,4 +1,4 @@
-From 2ace7a16a8033169b7ddb71a79956416644ffa3e Mon Sep 17 00:00:00 2001
+From 78979d043ffc4395b4a311aeef220cc34aac8c8d Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@windriver.com>
 Date: Thu, 23 Mar 2023 10:28:04 +0800
 Subject: [PATCH] fix XNNPACK build failure for qemuarm

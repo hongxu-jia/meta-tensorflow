@@ -1,4 +1,4 @@
-From 480271c4007031090043db9534a63acd4db997e9 Mon Sep 17 00:00:00 2001
+From 11bc5bdda19d610e2b0f7704fccf3372f27e6e1c Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@eng.windriver.com>
 Date: Sun, 12 Mar 2023 23:48:00 -0700
 Subject: [PATCH] support 32 bit x64 and arm for yocto

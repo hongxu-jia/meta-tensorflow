@@ -15,6 +15,7 @@ SRC_URI = "git://github.com/tensorflow/tensorflow.git;branch=r2.12;protocol=http
     file://0008-Fix-failure-while-gcc-7.5.0.patch \
     file://0009-fix-compile-error-for-gcc-13.1.patch \
     file://0010-fix-compile-failure.patch \
+    file://0011-fix-python3-include-directory-not-found.patch \
 "
 S = "${WORKDIR}/git"
 

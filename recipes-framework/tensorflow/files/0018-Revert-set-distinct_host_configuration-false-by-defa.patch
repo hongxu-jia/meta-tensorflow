@@ -1,4 +1,4 @@
-From c40feb600abaeba1de7e736a4a4d0de71d798a44 Mon Sep 17 00:00:00 2001
+From 07554cdcd86f1091c8e27090dce6ce3863b68e8f Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@windriver.com>
 Date: Mon, 16 May 2022 00:53:00 -0700
 Subject: [PATCH] Revert "set --distinct_host_configuration=false by default

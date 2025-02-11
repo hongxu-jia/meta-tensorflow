@@ -1,4 +1,4 @@
-From cc522bdebaa28115662d38b655f3b9e8eee28026 Mon Sep 17 00:00:00 2001
+From 8c0c0341c7db90116e970d5920cfcbc8458172d9 Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@eng.windriver.com>
 Date: Sun, 12 Mar 2023 23:38:01 -0700
 Subject: [PATCH] add yocto toolchain to support cross compiling

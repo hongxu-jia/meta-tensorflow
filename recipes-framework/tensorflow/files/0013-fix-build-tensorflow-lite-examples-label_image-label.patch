@@ -1,4 +1,4 @@
-From 0dd71f76f8384c8dec85c31f94df6bdaa9ee665e Mon Sep 17 00:00:00 2001
+From eb54003a69b626e7b46764e817426c5e7e63b95c Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@windriver.com>
 Date: Tue, 17 Aug 2021 16:00:24 +0800
 Subject: [PATCH] fix build //tensorflow/lite/examples/label_image:label_image

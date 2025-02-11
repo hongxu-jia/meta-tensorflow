@@ -1,4 +1,4 @@
-From 5e6734503d8d5bc56dfe47dd7d5d0ee50aa4832c Mon Sep 17 00:00:00 2001
+From 4b546bb68b8b1c3ebb244bd0e0b4071bb6fc3595 Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@windriver.com>
 Date: Wed, 9 Dec 2020 09:53:30 +0800
 Subject: [PATCH] label_image.lite: tweak default model location

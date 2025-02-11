@@ -1,4 +1,4 @@
-From 4b97089f7c18df8fef47cb4d825d96aa07316d35 Mon Sep 17 00:00:00 2001
+From fc0d23151539eba2beb9a33e8229e99a32453d2a Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@windriver.com>
 Date: Mon, 16 May 2022 00:36:00 -0700
 Subject: [PATCH] label_image: tweak default model location
