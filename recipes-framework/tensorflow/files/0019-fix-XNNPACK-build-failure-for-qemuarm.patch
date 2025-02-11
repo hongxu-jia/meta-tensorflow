@@ -1,4 +1,4 @@
-From c15caa4d5f133307a23114c41a9c497e5ec9da2c Mon Sep 17 00:00:00 2001
+From 2ace7a16a8033169b7ddb71a79956416644ffa3e Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@windriver.com>
 Date: Thu, 23 Mar 2023 10:28:04 +0800
 Subject: [PATCH] fix XNNPACK build failure for qemuarm
@@ -13,10 +13,10 @@ Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
  1 file changed, 209 insertions(+), 7 deletions(-)
 
 diff --git a/third_party/0001-XNNPACK-support-32-bit-x86.patch b/third_party/0001-XNNPACK-support-32-bit-x86.patch
-index 2141c37236b..ca6a38545b1 100644
+index e2c053e6f8c..89ba615a9fe 100644
 --- a/third_party/0001-XNNPACK-support-32-bit-x86.patch
 +++ b/third_party/0001-XNNPACK-support-32-bit-x86.patch
-@@ -1,22 +1,36 @@
+@@ -1,20 +1,34 @@
 -From 2345756776fa09fd95e29f96f781e15e3b18a61b Mon Sep 17 00:00:00 2001
 +From 5ba6883121e91a334cc97ee98eea6ef0afb7a314 Mon Sep 17 00:00:00 2001
  From: Hongxu Jia <hongxu.jia@windriver.com>
@@ -28,8 +28,6 @@ index 2141c37236b..ca6a38545b1 100644
  
 +Does not support 32 bit ARM with Neon DotProduct
 +
- Upstream-Status: Inappropriate [oe specific]
- 
  Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
  ---
 - BUILD.bazel | 1 -
@@ -59,7 +57,7 @@ index 2141c37236b..ca6a38545b1 100644
   config_setting(
       name = "android_x86",
       values = {
-@@ -24,6 +38,194 @@ index 27ab07c9..f223d2ab 100644
+@@ -22,6 +36,194 @@ index 27ab07c9..f223d2ab 100644
           "cpu": "x86",
       },
   )
@@ -255,6 +253,3 @@ index 2141c37236b..ca6a38545b1 100644
 -2.30.2
 +2.27.0
  
--- 
-2.27.0
-

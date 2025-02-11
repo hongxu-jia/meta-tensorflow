@@ -15,7 +15,7 @@ SRC_URI += " \
            file://yocto_compiler_configure.bzl \
           "
 SRC_URI:append:arm = " \
-           file://0001-fix-XNNPACK-build-failure-for-qemuarm.patch \
+    file://0019-fix-XNNPACK-build-failure-for-qemuarm.patch \
 "
 
 SRC_URI += "https://storage.googleapis.com/download.tensorflow.org/models/inception_v3_2016_08_28_frozen.pb.tar.gz;name=model-inv3"
