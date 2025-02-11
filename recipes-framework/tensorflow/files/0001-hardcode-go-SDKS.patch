@@ -38,7 +38,7 @@ new file mode 100644
 index 00000000000..b51d7262f4c
 --- /dev/null
 +++ b/third_party/0001-hardcode-go-SDKS.patch
-@@ -0,0 +1,49 @@
+@@ -0,0 +1,47 @@
 +From 34242e73f76eff09ee33152c58c3be650331b7ff Mon Sep 17 00:00:00 2001
 +From: Hongxu Jia <hongxu.jia@eng.windriver.com>
 +Date: Thu, 1 Dec 2022 15:07:10 +0000
@@ -52,8 +52,6 @@ index 00000000000..b51d7262f4c
 +But for Yocto, in order to support offline build ,we need to cache
 +downloaded archive, so hardcode go SDKS list files rather than
 +fetch from internet
-+
-+Upstream-Status: Inappropriate [Yocto specific]
 +
 +Signed-off-by: Hongxu Jia <hongxu.jia@eng.windriver.com>
 +---
