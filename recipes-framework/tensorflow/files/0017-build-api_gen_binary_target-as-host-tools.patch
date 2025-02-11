@@ -1,4 +1,4 @@
-From e1471b0dd1eb2c6ee152f749437cab65c2b27ef3 Mon Sep 17 00:00:00 2001
+From 4d84b9cd4580cefcb73d2a68d6ae261eda28a589 Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@eng.windriver.com>
 Date: Fri, 1 Mar 2024 00:41:25 -0800
 Subject: [PATCH] build api_gen_binary_target as host tools
@@ -44,6 +44,3 @@ index c41aeecc476..a087557ad0f 100644
          "loading_value": attr.string(mandatory = True),
          "api_packages_path": attr.output(),
      },
--- 
-2.42.0
-

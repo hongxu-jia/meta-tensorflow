@@ -1,4 +1,4 @@
-From 150a64dc59ec3a6240fa71fc018f20f1ac0f451d Mon Sep 17 00:00:00 2001
+From e750973d0c3c9e11f4e11fb1b04875a8e052de84 Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@windriver.com>
 Date: Fri, 28 Jun 2024 11:27:15 +0800
 Subject: [PATCH] Fix build with gcc-12
@@ -30,6 +30,3 @@ index 4bd4c2960e1..45e73ec3831 100644
 +        ],
 +    }),
  )
--- 
-2.27.0
-

@@ -1,4 +1,4 @@
-From 3b3b8bc65c30fb5ac2a3d5beaa424b27ceb41dc8 Mon Sep 17 00:00:00 2001
+From ed741b43579f3b543832daf66486fb8522dec9c4 Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@eng.windriver.com>
 Date: Thu, 29 Feb 2024 23:26:53 -0800
 Subject: [PATCH] eplace distutils.sysconfig.get_python_lib() with
@@ -68,6 +68,3 @@ index 6a4ab4e655f..012c54f7fed 100644
  
  _site_packages_dirs = list(set(_site_packages_dirs))
  
--- 
-2.42.0
-

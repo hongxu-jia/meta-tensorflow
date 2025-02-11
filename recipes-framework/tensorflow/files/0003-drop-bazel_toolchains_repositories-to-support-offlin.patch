@@ -1,4 +1,4 @@
-From 6bb9c02aae20996a6e4edd8fe743a90ce8d677aa Mon Sep 17 00:00:00 2001
+From 280d8828009ecdf442e98f3d9315ff62d1bb16c1 Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@windriver.com>
 Date: Sun, 18 Sep 2022 23:52:34 -0700
 Subject: [PATCH] drop bazel_toolchains_repositories to support offline build
@@ -14,7 +14,7 @@ Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
  1 file changed, 3 deletions(-)
 
 diff --git a/tensorflow/workspace0.bzl b/tensorflow/workspace0.bzl
-index c3c081b19ef..445de71bb13 100644
+index d8b53e1ef8b..2e80169790c 100644
 --- a/tensorflow/workspace0.bzl
 +++ b/tensorflow/workspace0.bzl
 @@ -2,7 +2,6 @@
@@ -25,7 +25,7 @@ index c3c081b19ef..445de71bb13 100644
  load("@build_bazel_rules_apple//apple:repositories.bzl", "apple_rules_dependencies")
  load("@build_bazel_rules_swift//swift:repositories.bzl", "swift_rules_dependencies")
  load("@build_bazel_apple_support//lib:repositories.bzl", "apple_support_dependencies")
-@@ -104,8 +103,6 @@ def workspace():
+@@ -105,8 +104,6 @@ def workspace():
          ],
      )
  
@@ -34,6 +34,3 @@ index c3c081b19ef..445de71bb13 100644
      # Apple rules for Bazel. https://github.com/bazelbuild/rules_apple.
      # Note: We add this to fix Kokoro builds.
      # The rules below call into `rules_proto` but the hash has changed and
--- 
-2.37.1
-

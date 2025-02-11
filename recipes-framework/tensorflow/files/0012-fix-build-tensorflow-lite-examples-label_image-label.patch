@@ -1,4 +1,4 @@
-From 1af9e2180f680c1b0c94fbeeaee9dc522f353d07 Mon Sep 17 00:00:00 2001
+From f06f0f718d51d3f06f807842c949eb21b7cb57ad Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@windriver.com>
 Date: Tue, 17 Aug 2021 16:00:24 +0800
 Subject: [PATCH] fix build //tensorflow/lite/examples/label_image:label_image
@@ -21,10 +21,10 @@ Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
  1 file changed, 8 insertions(+)
 
 diff --git a/tensorflow/lite/kernels/internal/BUILD b/tensorflow/lite/kernels/internal/BUILD
-index 8c714fc282d..6ea96e4f103 100644
+index 1bbf1516f82..5873cc75471 100644
 --- a/tensorflow/lite/kernels/internal/BUILD
 +++ b/tensorflow/lite/kernels/internal/BUILD
-@@ -112,6 +112,13 @@ config_setting(
+@@ -135,6 +135,13 @@ config_setting(
      },
  )
  
@@ -38,7 +38,7 @@ index 8c714fc282d..6ea96e4f103 100644
  config_setting(
      name = "haswell",
      values = {
-@@ -235,6 +242,7 @@ selects.config_setting_group(
+@@ -273,6 +280,7 @@ selects.config_setting_group(
          ":arm",
          ":arm64-v8a",
          ":armeabi-v7a",
@@ -46,6 +46,3 @@ index 8c714fc282d..6ea96e4f103 100644
          ":armhf",
          ":armv7a",
          ":ios_armv7",
--- 
-2.27.0
-

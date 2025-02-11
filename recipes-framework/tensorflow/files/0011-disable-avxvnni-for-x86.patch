@@ -1,4 +1,4 @@
-From af2df9de80e402a3632cff8e1d40a467509c7f70 Mon Sep 17 00:00:00 2001
+From 47175b6c700f31a90d49facac3b6df63846a07bb Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@windriver.com>
 Date: Mon, 18 Mar 2024 16:24:48 +0800
 Subject: [PATCH] disable avxvnni for x86
@@ -63,6 +63,3 @@ index 00000000000..e07cd9bd930
 +-- 
 +2.27.0
 +
--- 
-2.25.1
-

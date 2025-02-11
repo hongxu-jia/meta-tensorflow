@@ -1,4 +1,4 @@
-From cd7dc62667df74f9e4c8293dbc087a3ed10c8890 Mon Sep 17 00:00:00 2001
+From f05fc1268ef38b36d35397c46a49b0095270d643 Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@windriver.com>
 Date: Mon, 4 Mar 2024 17:44:35 +0800
 Subject: [PATCH] support hermetic Python
@@ -58,7 +58,7 @@ index 675709d4314..65b3fd20b4f 100644
      win_def_file = ":pywrap_tensorflow_filtered_def_file",
      deps = [
 diff --git a/tensorflow/tensorflow.bzl b/tensorflow/tensorflow.bzl
-index 45c597b3ef4..d821a60aa5f 100644
+index 51ae807cae7..a2cdbfd73fd 100644
 --- a/tensorflow/tensorflow.bzl
 +++ b/tensorflow/tensorflow.bzl
 @@ -3304,6 +3304,8 @@ def tf_python_pybind_static_deps(testonly = False):
@@ -70,6 +70,3 @@ index 45c597b3ef4..d821a60aa5f 100644
      ]
      static_deps += tsl_async_value_deps()
      static_deps += [] if not testonly else [
--- 
-2.27.0
-

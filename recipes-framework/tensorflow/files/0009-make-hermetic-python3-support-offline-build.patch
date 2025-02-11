@@ -1,4 +1,4 @@
-From e060b1fa679f809407e5597bd045105914fb1c05 Mon Sep 17 00:00:00 2001
+From fb71dd4dfd574326c29c5d8ccda5a6e3f73c942b Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@windriver.com>
 Date: Fri, 8 Mar 2024 11:31:26 +0800
 Subject: [PATCH] make hermetic python3 support offline build
@@ -32,7 +32,7 @@ index a697405110e..9b33f0cfdf1 100644
  
 diff --git a/third_party/0001-support-offline-build.patch b/third_party/0001-support-offline-build.patch
 new file mode 100644
-index 00000000000..3804e9c7152
+index 00000000000..c540a27c818
 --- /dev/null
 +++ b/third_party/0001-support-offline-build.patch
 @@ -0,0 +1,50 @@
@@ -86,6 +86,3 @@ index 00000000000..3804e9c7152
 +-- 
 +2.27.0
 +
--- 
-2.25.1
-
