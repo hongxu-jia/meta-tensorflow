@@ -24,7 +24,7 @@ new file mode 100644
 index 00000000000..523a32d78f7
 --- /dev/null
 +++ b/third_party/eigen3/0001-workaround-ice-failure-while-building-from-source-wi.patch
-@@ -0,0 +1,70 @@
+@@ -0,0 +1,68 @@
 +From 649d0b938aab1b7081c3895aa1f527d034edb735 Mon Sep 17 00:00:00 2001
 +From: Hongxu Jia <hongxu.jia@windriver.com>
 +Date: Fri, 23 Aug 2024 10:49:54 +0800
@@ -36,8 +36,6 @@ index 00000000000..523a32d78f7
 +
 +But we could not patch on native gcc,so try to workaround,
 +Refer: https://github.com/tensorflow/tensorflow/issues/25323
-+
-+Upstream-Status: Inappropriate [wr-installer specific]
 +
 +Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
 +---
