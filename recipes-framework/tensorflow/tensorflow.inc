@@ -11,19 +11,19 @@ DEPENDS = " \
 "
 SRCREV = "999767f61417203f38537361e23bcdf3273deb8f"
 SRC_URI = "git://github.com/tensorflow/tensorflow.git;branch=r2.17;protocol=https \
-           file://0001-use-local-bazel-to-workaround-bazel-paralle-issue.patch \
-           file://0001-third_party-eigen_archive-workaround-ice-failure-whi.patch \
-           file://0001-drop-bazel_toolchains_repositories-to-support-offlin.patch \
-           file://0001-drop-v2-config.patch \
-           file://0002-Replace-distutils.sysconfig.get_python_lib-with-sysc.patch \
-           file://0001-hardcode-go-SDKS.patch \
-           file://0001-fix-build-failure.patch \
-           file://0001-support-hermetic-Python.patch \
-           file://0001-make-hermetic-python3-support-offline-build.patch \
-           file://0001-Fix-build-with-gcc-12.patch \
-           file://0001-fix-patchelf-not-found.patch \
-           file://0001-fix-llvm-project-timeout-occasionally.patch \
-          "
+    file://0001-use-local-bazel-to-workaround-bazel-paralle-issue.patch \
+    file://0002-third_party-eigen_archive-workaround-ice-failure-whi.patch \
+    file://0003-drop-bazel_toolchains_repositories-to-support-offlin.patch \
+    file://0004-drop-v2-config.patch \
+    file://0005-Replace-distutils.sysconfig.get_python_lib-with-sysc.patch \
+    file://0006-hardcode-go-SDKS.patch \
+    file://0007-fix-build-failure.patch \
+    file://0008-support-hermetic-Python.patch \
+    file://0009-make-hermetic-python3-support-offline-build.patch \
+    file://0010-Fix-build-with-gcc-12.patch \
+    file://0011-fix-patchelf-not-found.patch \
+    file://0012-fix-llvm-project-timeout-occasionally.patch \
+"
 
 S = "${WORKDIR}/git"
 

@@ -1,7 +1,7 @@
 include tensorflow.inc
 
 SRC_URI += " \
-    file://0001-disable-avxvnni-and-avx512fp16-for-x86.patch \
+    file://0013-disable-avxvnni-and-avx512fp16-for-x86.patch \
 "
 
 inherit native

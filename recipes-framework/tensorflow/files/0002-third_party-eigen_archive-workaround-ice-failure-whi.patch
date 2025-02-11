@@ -1,4 +1,4 @@
-From fa4e3fc3673f19f5b5ea279807078a9c0ec3607f Mon Sep 17 00:00:00 2001
+From c81fdf3c6678d922e225659a6ad470b349cf3bae Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@windriver.com>
 Date: Mon, 16 May 2022 23:15:47 -0700
 Subject: [PATCH] third_party/eigen_archive:workaround ice failure while
@@ -14,14 +14,14 @@ Upstream-Status: Inappropriate [wr-installer specific]
 
 Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
 ---
- ...ailure-while-building-from-source-wi.patch | 70 +++++++++++++++++++
+ ...ailure-while-building-from-source-wi.patch | 68 +++++++++++++++++++
  third_party/eigen3/workspace.bzl              |  1 +
- 2 files changed, 71 insertions(+)
+ 2 files changed, 69 insertions(+)
  create mode 100644 third_party/eigen3/0001-workaround-ice-failure-while-building-from-source-wi.patch
 
 diff --git a/third_party/eigen3/0001-workaround-ice-failure-while-building-from-source-wi.patch b/third_party/eigen3/0001-workaround-ice-failure-while-building-from-source-wi.patch
 new file mode 100644
-index 00000000000..523a32d78f7
+index 00000000000..82ef62a0d9a
 --- /dev/null
 +++ b/third_party/eigen3/0001-workaround-ice-failure-while-building-from-source-wi.patch
 @@ -0,0 +1,68 @@
@@ -105,6 +105,3 @@ index 36c73565a5e..0c34110cf1b 100644
          sha256 = EIGEN_SHA256,
          strip_prefix = "eigen-{commit}".format(commit = EIGEN_COMMIT),
          urls = tf_mirror_urls("https://gitlab.com/libeigen/eigen/-/archive/{commit}/eigen-{commit}.tar.gz".format(commit = EIGEN_COMMIT)),
--- 
-2.25.1
-

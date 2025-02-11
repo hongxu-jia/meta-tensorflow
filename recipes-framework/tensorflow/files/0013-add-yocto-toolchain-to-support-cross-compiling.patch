@@ -1,4 +1,4 @@
-From 2e03e5bcd0b1e05f10f7d2d0cfede314fbfa5818 Mon Sep 17 00:00:00 2001
+From bdffcf56d9856adea10e4f65e49d70bf75f29b8c Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@eng.windriver.com>
 Date: Fri, 1 Mar 2024 00:22:22 -0800
 Subject: [PATCH] add yocto toolchain to support cross compiling
@@ -13,10 +13,10 @@ Signed-off-by: Hongxu Jia <hongxu.jia@eng.windriver.com>
  3 files changed, 23 insertions(+)
 
 diff --git a/WORKSPACE b/WORKSPACE
-index 720fee74bd2..94095bf1914 100644
+index 5c9eff6249d..87e8f1fda10 100644
 --- a/WORKSPACE
 +++ b/WORKSPACE
-@@ -40,3 +40,9 @@ tf_workspace1()
+@@ -103,3 +103,9 @@ tf_workspace1()
  load("@//tensorflow:workspace0.bzl", "tf_workspace0")
  
  tf_workspace0()
@@ -27,10 +27,10 @@ index 720fee74bd2..94095bf1914 100644
 +    build_file = "//:BUILD.yocto_compiler",
 +)
 diff --git a/tensorflow/BUILD b/tensorflow/BUILD
-index 9e724aff49b..0918af13243 100644
+index d1650039097..21ccd9dead0 100644
 --- a/tensorflow/BUILD
 +++ b/tensorflow/BUILD
-@@ -352,6 +352,15 @@ config_setting(
+@@ -359,6 +359,15 @@ config_setting(
      visibility = ["//visibility:public"],
  )
  
@@ -47,10 +47,10 @@ index 9e724aff49b..0918af13243 100644
      name = "android_arm",
      constraint_values = if_google(
 diff --git a/tensorflow/workspace2.bzl b/tensorflow/workspace2.bzl
-index 3ef4a544f1a..9e4c2da9fe2 100644
+index 43053967ca1..d52d1f00f8c 100644
 --- a/tensorflow/workspace2.bzl
 +++ b/tensorflow/workspace2.bzl
-@@ -49,6 +49,7 @@ load("//tensorflow/tools/def_file_filter:def_file_filter_configure.bzl", "def_fi
+@@ -12,6 +12,7 @@ load("//tensorflow/tools/def_file_filter:def_file_filter_configure.bzl", "def_fi
  load("//tensorflow/tools/toolchains:cpus/aarch64/aarch64_compiler_configure.bzl", "aarch64_compiler_configure")
  load("//tensorflow/tools/toolchains:cpus/arm/arm_compiler_configure.bzl", "arm_compiler_configure")
  load("//tensorflow/tools/toolchains/clang6:repo.bzl", "clang6_configure")
@@ -72,6 +72,3 @@ index 3ef4a544f1a..9e4c2da9fe2 100644
      # TFLite crossbuild toolchain for embeddeds Linux
      arm_linux_toolchain_configure(
          name = "local_config_embedded_arm",
--- 
-2.42.0
-

@@ -1,4 +1,4 @@
-From 03fdc48cea3a939b2d10fd170bef045c23b3ca5f Mon Sep 17 00:00:00 2001
+From 7148d2557430f24c461028f4728aa2898db6c7f8 Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@windriver.com>
 Date: Fri, 23 Aug 2024 14:40:35 +0800
 Subject: [PATCH] fix patchelf not found
@@ -27,6 +27,3 @@ index 01f878410e4..ef77ead6430 100644
      )
      return [DefaultInfo(files = depset(direct = [output]))]
  
--- 
-2.27.0
-
