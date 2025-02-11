@@ -1,4 +1,4 @@
-From bda6860a3457d3a690780031b391feee8e378130 Mon Sep 17 00:00:00 2001
+From 214385f13baed5e53f0d88d926f116a1bb7d973f Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@windriver.com>
 Date: Wed, 16 Oct 2024 14:48:23 +0800
 Subject: [PATCH] fix llvm-project timeout occasionally
@@ -92,6 +92,3 @@ index 10601c8a766..73616d42b25 100644
          ],
          link_files = {"//third_party/llvm:run_lit.sh": "mlir/run_lit.sh"},
      )
--- 
-2.27.0
-

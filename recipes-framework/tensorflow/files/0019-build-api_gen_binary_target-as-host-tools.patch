@@ -1,4 +1,4 @@
-From e1471b0dd1eb2c6ee152f749437cab65c2b27ef3 Mon Sep 17 00:00:00 2001
+From b1b6a5810b95eb1e20ac9d4e500f279b379817a1 Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@eng.windriver.com>
 Date: Fri, 1 Mar 2024 00:41:25 -0800
 Subject: [PATCH] build api_gen_binary_target as host tools
@@ -32,10 +32,10 @@ Signed-off-by: Hongxu Jia <hongxu.jia@eng.windriver.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/tensorflow/python/tools/api/generator/api_gen.bzl b/tensorflow/python/tools/api/generator/api_gen.bzl
-index c41aeecc476..a087557ad0f 100644
+index d066b3422e0..6298edff674 100644
 --- a/tensorflow/python/tools/api/generator/api_gen.bzl
 +++ b/tensorflow/python/tools/api/generator/api_gen.bzl
-@@ -267,7 +267,7 @@ api_gen_rule = rule(
+@@ -266,7 +266,7 @@ api_gen_rule = rule(
          "outs": attr.output_list(mandatory = True),
          "srcs": attr.label_list(allow_files = True),
          "flags": attr.string_list(),
@@ -44,6 +44,3 @@ index c41aeecc476..a087557ad0f 100644
          "loading_value": attr.string(mandatory = True),
          "api_packages_path": attr.output(),
      },
--- 
-2.42.0
-
