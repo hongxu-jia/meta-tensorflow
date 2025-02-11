@@ -1,4 +1,4 @@
-From 73fffc29b6384c2695fa221fac9067c9661af4de Mon Sep 17 00:00:00 2001
+From 294bf761d1fee1771b5b1636f00910659d6ba38a Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@windriver.com>
 Date: Mon, 19 Sep 2022 00:02:14 -0700
 Subject: [PATCH] support 32 bit x64 and arm for yocto
@@ -8,11 +8,11 @@ Upstream-Status: Inappropriate [oe specific]
 Rebase to 2.10.0
 Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
 ---
- tensorflow/BUILD                              |  3 --
+ tensorflow/BUILD                              |  3 ---
  tensorflow/workspace2.bzl                     |  2 ++
- .../0001-XNNPACK-support-32-bit-x86.patch     | 29 +++++++++++++++++++
- .../0001-cpuinfo-support-32-bit-x86.patch     | 28 ++++++++++++++++++
- 4 files changed, 59 insertions(+), 3 deletions(-)
+ .../0001-XNNPACK-support-32-bit-x86.patch     | 27 +++++++++++++++++++
+ .../0001-cpuinfo-support-32-bit-x86.patch     | 27 +++++++++++++++++++
+ 4 files changed, 56 insertions(+), 3 deletions(-)
  create mode 100644 third_party/0001-XNNPACK-support-32-bit-x86.patch
  create mode 100644 third_party/0001-cpuinfo-support-32-bit-x86.patch
 
@@ -52,7 +52,7 @@ index a49aeeb7434..c1d90686dcb 100644
      )
 diff --git a/third_party/0001-XNNPACK-support-32-bit-x86.patch b/third_party/0001-XNNPACK-support-32-bit-x86.patch
 new file mode 100644
-index 00000000000..2141c37236b
+index 00000000000..e2c053e6f8c
 --- /dev/null
 +++ b/third_party/0001-XNNPACK-support-32-bit-x86.patch
 @@ -0,0 +1,27 @@
@@ -85,7 +85,7 @@ index 00000000000..2141c37236b
 +
 diff --git a/third_party/0001-cpuinfo-support-32-bit-x86.patch b/third_party/0001-cpuinfo-support-32-bit-x86.patch
 new file mode 100644
-index 00000000000..0c83cf01675
+index 00000000000..cd6b27eaea3
 --- /dev/null
 +++ b/third_party/0001-cpuinfo-support-32-bit-x86.patch
 @@ -0,0 +1,27 @@
@@ -116,6 +116,3 @@ index 00000000000..0c83cf01675
 +-- 
 +2.37.1
 +
--- 
-2.37.1
-

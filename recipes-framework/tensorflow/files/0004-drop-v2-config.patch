@@ -1,4 +1,4 @@
-From 104224b8b30f74dabed893aa057f400ad7cd2695 Mon Sep 17 00:00:00 2001
+From 938ce13d91b6d0cbf6bc5199094629ab26431129 Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@windriver.com>
 Date: Mon, 16 May 2022 00:10:55 -0700
 Subject: [PATCH] drop v2 config
@@ -11,10 +11,10 @@ Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
  1 file changed, 3 deletions(-)
 
 diff --git a/.bazelrc b/.bazelrc
-index b6a72c1e5d3..a71ade6950f 100644
+index 9cc8c84673b..4d46f9b2a85 100644
 --- a/.bazelrc
 +++ b/.bazelrc
-@@ -138,9 +138,6 @@ build --define=with_xla_support=true
+@@ -134,9 +134,6 @@ build --define=with_xla_support=true
  # TODO(mihaimaruseac): Document this option or remove if no longer needed
  build --config=short_logs
  
@@ -24,6 +24,3 @@ index b6a72c1e5d3..a71ade6950f 100644
  # Disable AWS/HDFS support by default
  build --define=no_aws_support=true
  build --define=no_hdfs_support=true
--- 
-2.36.0
-

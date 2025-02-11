@@ -1,4 +1,4 @@
-From a37010bee0ef08a2b42c10fc6ca1f3bd793b0e6a Mon Sep 17 00:00:00 2001
+From 80ff19bdafd336108779bf110dea4ee2d115242c Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@windriver.com>
 Date: Tue, 8 Dec 2020 17:06:52 +0800
 Subject: [PATCH] support musl
@@ -45,6 +45,3 @@ index 70fcdc27042..f38fe71c917 100644
  #define TF_GENERATE_STACKTRACE
  #endif
  
--- 
-2.18.2
-

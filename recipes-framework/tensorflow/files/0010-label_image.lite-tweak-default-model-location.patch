@@ -1,4 +1,4 @@
-From dd73bef88a23d29299bc6e2f3c892ed81d65a86c Mon Sep 17 00:00:00 2001
+From 7fb242d6ecefb6c8749d18ec64af24cfee257207 Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@windriver.com>
 Date: Wed, 9 Dec 2020 09:53:30 +0800
 Subject: [PATCH] label_image.lite: tweak default model location
@@ -30,6 +30,3 @@ index 1c00edb6558..a5bcf8c64d8 100644
    int number_of_threads = 4;
    int number_of_results = 5;
    int max_profiling_buffer_entries = 1024;
--- 
-2.18.2
-

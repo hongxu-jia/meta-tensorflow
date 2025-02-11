@@ -1,19 +1,19 @@
 include tensorflow.inc
 
 SRC_URI += " \
-           file://0001-add-yocto-toolchain-to-support-cross-compiling.patch \
-           file://0001-fix-build-tensorflow-lite-examples-label_image-label.patch \
-           file://0001-label_image-tweak-default-model-location.patch \
-           file://0001-label_image.lite-tweak-default-model-location.patch \
-           file://0001-CheckFeatureOrDie-use-warning-to-avoid-die.patch \
-           file://0001-support-32-bit-x64-and-arm-for-yocto.patch \
-           file://0001-Revert-set-distinct_host_configuration-false-by-defa.patch \
-           file://0001-distutils-is-deprecated-in-Python-3.10-cross.patch \
-           file://BUILD.in \
-           file://BUILD.yocto_compiler \
-           file://cc_config.bzl.tpl \
-           file://yocto_compiler_configure.bzl \
-          "
+    file://0007-add-yocto-toolchain-to-support-cross-compiling.patch \
+    file://0008-fix-build-tensorflow-lite-examples-label_image-label.patch \
+    file://0009-label_image-tweak-default-model-location.patch \
+    file://0010-label_image.lite-tweak-default-model-location.patch \
+    file://0011-CheckFeatureOrDie-use-warning-to-avoid-die.patch \
+    file://0012-support-32-bit-x64-and-arm-for-yocto.patch \
+    file://0013-Revert-set-distinct_host_configuration-false-by-defa.patch \
+    file://0014-distutils-is-deprecated-in-Python-3.10-51776.patch \
+    file://BUILD.in \
+    file://BUILD.yocto_compiler \
+    file://cc_config.bzl.tpl \
+    file://yocto_compiler_configure.bzl \
+"
 
 SRC_URI += "https://storage.googleapis.com/download.tensorflow.org/models/inception_v3_2016_08_28_frozen.pb.tar.gz;name=model-inv3"
 SRC_URI[model-inv3.md5sum] = "a904ddf15593d03c7dd786d552e22d73"

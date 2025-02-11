@@ -5,14 +5,13 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=4158a261ca7f2525513e31ba9c50ae98"
 DEPENDS = "bazel-native protobuf-native util-linux-native protobuf"
 SRCREV = "359c3cdfc5fabac82b3c70b3b6de2b0a8c16874f"
 SRC_URI = "git://github.com/tensorflow/tensorflow.git;branch=r2.10;protocol=https \
-           file://0001-support-musl.patch \
-           file://0001-use-local-bazel-to-workaround-bazel-paralle-issue.patch \
-           file://0001-third_party-eigen_archive-workaround-ice-failure-whi.patch \
-           file://0001-drop-bazel_toolchains_repositories-to-support-offlin.patch \
-           file://0001-drop-v2-config.patch \
-           file://0002-Replace-distutils.sysconfig.get_python_lib-with-sysc.patch \
-          "
-
+    file://0001-support-musl.patch \
+    file://0002-use-local-bazel-to-workaround-bazel-paralle-issue.patch \
+    file://0003-third_party-eigen_archive-workaround-ice-failure-whi.patch \
+    file://0004-drop-v2-config.patch \
+    file://0005-drop-bazel_toolchains_repositories-to-support-offlin.patch \
+    file://0006-Replace-distutils.sysconfig.get_python_lib-with-sysc.patch \
+"
 S = "${WORKDIR}/git"
 
 DEPENDS += " \

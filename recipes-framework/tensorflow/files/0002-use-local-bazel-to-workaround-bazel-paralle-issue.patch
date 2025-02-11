@@ -1,4 +1,4 @@
-From bbdf1bbca17f8bce98e32b25aa9bfadc8f465f24 Mon Sep 17 00:00:00 2001
+From 856e20e86e771224963d5791d57c8f6e802b1450 Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@windriver.com>
 Date: Sun, 15 May 2022 23:59:17 -0700
 Subject: [PATCH] use local bazel to workaround bazel paralle issue
@@ -12,10 +12,10 @@ Signed-off-by: Julien STEPHAN <jstephan@baylibre.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/configure.py b/configure.py
-index dae3dce89d3..979f00f3633 100644
+index bf338bdda22..034e7c7c67f 100644
 --- a/configure.py
 +++ b/configure.py
-@@ -475,7 +475,7 @@ def check_bazel_version(min_version, max_version):
+@@ -420,7 +420,7 @@ def retrieve_bazel_version():
    Returns:
      The bazel version detected.
    """
@@ -24,6 +24,3 @@ index dae3dce89d3..979f00f3633 100644
    if bazel_executable is None:
      bazel_executable = which('bazelisk')
      if bazel_executable is None:
--- 
-2.36.0
-
