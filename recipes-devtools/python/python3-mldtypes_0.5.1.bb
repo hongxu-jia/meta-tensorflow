@@ -22,5 +22,7 @@ RDEPENDS:${PN} = " \
     python3-numpy \
 "
 
+CCACHE_DISABLE = "1"
+
 BBCLASSEXTEND = "native"
 INSANE_SKIP = "pep517-backend"
