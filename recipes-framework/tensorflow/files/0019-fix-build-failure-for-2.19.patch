@@ -1,0 +1,79 @@
+From 469cb6be17bd591ad84ac2b9b3350696180466c8 Mon Sep 17 00:00:00 2001
+From: Hongxu Jia <hongxu.jia@windriver.com>
+Date: Sat, 15 Mar 2025 06:17:46 +0000
+Subject: [PATCH 19/21] fix build failure for 2.19
+
+Upstream-Status: Inappropriate [oe specific]
+
+Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+---
+ tensorflow/BUILD                      | 13 +++++++++++++
+ tensorflow/compiler/tf2tensorrt/BUILD |  1 +
+ tensorflow/python/BUILD               |  1 +
+ tensorflow/tensorflow.bzl             |  2 ++
+ 4 files changed, 17 insertions(+)
+
+diff --git a/tensorflow/BUILD b/tensorflow/BUILD
+index 17cec29b1f9..e6815552ef5 100644
+--- a/tensorflow/BUILD
++++ b/tensorflow/BUILD
+@@ -135,6 +135,19 @@ PACKAGE_STATIC_DEPS = [
+     "@ducc//:__subpackages__",
+     "@pybind11//:__subpackages__",
+     "@python_x86_64-unknown-linux-gnu//:__subpackages__",
++    "@cuda_cudart//:__subpackages__",
++    "@cuda_cublas//:__subpackages__",
++    "@cuda_cccl//:__subpackages__",
++    "@cuda_nvtx//:__subpackages__",
++    "@cuda_nvcc//:__subpackages__",
++    "@cuda_cusolver//:__subpackages__",
++    "@cuda_cufft//:__subpackages__",
++    "@cuda_cusparse//:__subpackages__",
++    "@cuda_curand//:__subpackages__",
++    "@cuda_cupti//:__subpackages__",
++    "@cuda_nvml//:__subpackages__",
++    "@cuda_nvjitlink//:__subpackages__",
++    "@shardy//:__subpackages__",
+ ] + tsl_async_value_deps()
+ 
+ package(
+diff --git a/tensorflow/compiler/tf2tensorrt/BUILD b/tensorflow/compiler/tf2tensorrt/BUILD
+index 26031381521..dc233729dbf 100644
+--- a/tensorflow/compiler/tf2tensorrt/BUILD
++++ b/tensorflow/compiler/tf2tensorrt/BUILD
+@@ -1094,6 +1094,7 @@ pybind_extension(
+         "@local_tsl//tsl:__subpackages__",
+         "@local_xla//xla:__subpackages__",
+         "@python_x86_64-unknown-linux-gnu//:__subpackages__",
++        "@local_tsl//:__subpackages__",
+     ],
+     deps = [
+         ":common_utils",
+diff --git a/tensorflow/python/BUILD b/tensorflow/python/BUILD
+index d79d3f204ee..d73a7793c79 100644
+--- a/tensorflow/python/BUILD
++++ b/tensorflow/python/BUILD
+@@ -756,6 +756,7 @@ pywrap_tensorflow_macro(
+         "@local_xla//xla:__subpackages__",
+         "@pypi_numpy//:__subpackages__",
+         "@python_x86_64-unknown-linux-gnu//:__subpackages__",
++        "@local_tsl//:__subpackages__",
+     ] + tsl_async_value_deps(),
+     win_def_file = ":pywrap_tensorflow_filtered_def_file",
+     deps = [
+diff --git a/tensorflow/tensorflow.bzl b/tensorflow/tensorflow.bzl
+index e2c01533dba..76c240d3141 100644
+--- a/tensorflow/tensorflow.bzl
++++ b/tensorflow/tensorflow.bzl
+@@ -3435,6 +3435,8 @@ def tf_python_pybind_static_deps(testonly = False):
+         "@local_tsl//tsl:__subpackages__",
+         "@python_x86_64-unknown-linux-gnu//:__subpackages__",
+         "@pypi_numpy//:__subpackages__",
++        "@local_tsl//:__subpackages__",
++        "@local_xla//:__subpackages__",
+     ]
+     static_deps += tsl_async_value_deps()
+     static_deps += [] if not testonly else [
+-- 
+2.25.1
+

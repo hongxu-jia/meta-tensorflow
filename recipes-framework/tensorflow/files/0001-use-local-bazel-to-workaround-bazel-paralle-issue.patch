@@ -1,26 +1,32 @@
-From ed14f6a3bb1f9ca907e4b7df4b49a94d8d028903 Mon Sep 17 00:00:00 2001
+From 5ea351cd6bc662ebcee2e322f89b55fba2d0b452 Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@windriver.com>
-Date: Sun, 15 May 2022 23:59:17 -0700
-Subject: [PATCH] use local bazel to workaround bazel paralle issue
+Date: Fri, 14 Mar 2025 20:47:13 -0700
+Subject: [PATCH 01/21] use local bazel to workaround bazel paralle issue
 
 Upstream-Status: Inappropriate [oe specific]
 
 Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
 Signed-off-by: Julien STEPHAN <jstephan@baylibre.com>
+
+Rebase to 2.19
+Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
 ---
  configure.py | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/configure.py b/configure.py
-index 0081eeabf66..0cd34f56e66 100644
+index ec04fcfdd0c..5d39e4163a4 100644
 --- a/configure.py
 +++ b/configure.py
-@@ -423,7 +423,7 @@ def retrieve_bazel_version():
+@@ -420,7 +420,7 @@ def retrieve_bazel_version():
    Returns:
      The bazel version detected.
    """
--  bazel_executable = which('bazel')
+-  bazel_executable = shutil.which('bazel')
 +  bazel_executable = "%%WORKDIR%%/bazel/bazel"
    if bazel_executable is None:
-     bazel_executable = which('bazelisk')
+     bazel_executable = shutil.which('bazelisk')
      if bazel_executable is None:
+-- 
+2.25.1
+

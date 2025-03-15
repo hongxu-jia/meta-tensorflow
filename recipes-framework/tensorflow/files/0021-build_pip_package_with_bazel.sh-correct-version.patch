@@ -1,0 +1,43 @@
+From 14683f97b5b1bf9d9bf0c8dce31d617c9bb3889e Mon Sep 17 00:00:00 2001
+From: Hongxu Jia <hongxu.jia@windriver.com>
+Date: Sat, 15 Mar 2025 09:55:16 +0000
+Subject: [PATCH 21/21] build_pip_package_with_bazel.sh: correct version
+
+Due to commit[Update libtpu installation index path][1], grep "_VERSION = "
+does not accurate
+
+$ grep "_VERSION = " "./tensorflow/tools/pip_package/setup.py"
+_VERSION = '2.19.0'
+LATEST_RELEASE_LIBTPU_VERSION = '0.0.10'
+NEXT_LIBTPU_VERSION = '0.0.11'
+...
+|packaging.version.InvalidVersion: Invalid version: '2.19.0\n0.0.10\n0.0.11'
+...
+
+Use "^_VERSION = " to instead
+
+[1] https://github.com/tensorflow/tensorflow/commit/993392ca2f63be3a344603409e27a39b284c3e36
+
+Upstream-Status: Pending
+
+Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+---
+ .../lite/tools/pip_package/build_pip_package_with_bazel.sh      | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tensorflow/lite/tools/pip_package/build_pip_package_with_bazel.sh b/tensorflow/lite/tools/pip_package/build_pip_package_with_bazel.sh
+index 8528dd4b5ec..0a7e2e93f10 100755
+--- a/tensorflow/lite/tools/pip_package/build_pip_package_with_bazel.sh
++++ b/tensorflow/lite/tools/pip_package/build_pip_package_with_bazel.sh
+@@ -20,7 +20,7 @@ PYTHON="${CI_BUILD_PYTHON:-python3}"
+ VERSION_SUFFIX=${VERSION_SUFFIX:-}
+ export TENSORFLOW_DIR="${SCRIPT_DIR}/../../../.."
+ TENSORFLOW_LITE_DIR="${TENSORFLOW_DIR}/tensorflow/lite"
+-TENSORFLOW_VERSION=$(grep "_VERSION = " "${TENSORFLOW_DIR}/tensorflow/tools/pip_package/setup.py" | cut -d= -f2 | sed "s/[ '-]//g")
++TENSORFLOW_VERSION=$(grep "^_VERSION = " "${TENSORFLOW_DIR}/tensorflow/tools/pip_package/setup.py" | cut -d= -f2 | sed "s/[ '-]//g")
+ export PACKAGE_VERSION="${TENSORFLOW_VERSION}${VERSION_SUFFIX}"
+ export PROJECT_NAME=${WHEEL_PROJECT_NAME:-tflite_runtime}
+ BUILD_DIR="${SCRIPT_DIR}/gen/tflite_pip/${PYTHON}"
+-- 
+2.25.1
+

@@ -1,7 +1,7 @@
-From 7148d2557430f24c461028f4728aa2898db6c7f8 Mon Sep 17 00:00:00 2001
+From 83b45279d16ce25d3134c2549c76dcf3624f6868 Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@windriver.com>
-Date: Fri, 23 Aug 2024 14:40:35 +0800
-Subject: [PATCH] fix patchelf not found
+Date: Fri, 14 Mar 2025 21:20:49 -0700
+Subject: [PATCH 10/21] fix patchelf not found
 
 Set use_default_shell_env=True [1] use the default shell environment
 PATH to provide command patchelf
@@ -10,20 +10,24 @@ PATH to provide command patchelf
 
 Upstream-Status: Inappropriate [wr-installer specific]
 
+Rebase  to 2.19
 Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
 ---
  tensorflow/tools/pip_package/utils/tf_wheel.bzl | 1 +
  1 file changed, 1 insertion(+)
 
 diff --git a/tensorflow/tools/pip_package/utils/tf_wheel.bzl b/tensorflow/tools/pip_package/utils/tf_wheel.bzl
-index 01f878410e4..ef77ead6430 100644
+index 057779e946e..01effece9d2 100644
 --- a/tensorflow/tools/pip_package/utils/tf_wheel.bzl
 +++ b/tensorflow/tools/pip_package/utils/tf_wheel.bzl
-@@ -57,6 +57,7 @@ def _tf_wheel_impl(ctx):
+@@ -119,6 +119,7 @@ def _tf_wheel_impl(ctx):
          inputs = srcs + headers + xla_aot,
-         outputs = [output],
+         outputs = [output_file],
          executable = executable,
 +        use_default_shell_env = True,
      )
-     return [DefaultInfo(files = depset(direct = [output]))]
+     return [DefaultInfo(files = depset(direct = [output_file]))]
  
+-- 
+2.25.1
+

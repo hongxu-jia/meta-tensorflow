@@ -1,7 +1,7 @@
-From 3d3d77f9b7db2f6c21a7f1249753bfa3b0714246 Mon Sep 17 00:00:00 2001
+From ff606e220c830fc7a848372cd1e703994c8b8423 Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@windriver.com>
 Date: Mon, 16 May 2022 00:36:00 -0700
-Subject: [PATCH] label_image: tweak default model location
+Subject: [PATCH 14/21] label_image: tweak default model location
 
 Upstream-Status: Inappropriate [oe specific]
 
@@ -30,10 +30,10 @@ index 4b7b79a7291..9bb182c8993 100644
    input_width = 299
    input_mean = 0
 diff --git a/tensorflow/examples/label_image/main.cc b/tensorflow/examples/label_image/main.cc
-index 7a287a7ff3d..d2609041a6a 100644
+index b45127e53a3..a3e21709ce7 100644
 --- a/tensorflow/examples/label_image/main.cc
 +++ b/tensorflow/examples/label_image/main.cc
-@@ -294,11 +294,11 @@ int main(int argc, char* argv[]) {
+@@ -297,11 +297,11 @@ int main(int argc, char* argv[]) {
    // They define where the graph and input data is located, and what kind of
    // input the model expects. If you train your own model, or use something
    // other than inception_v3, then you'll need to update these.
@@ -48,3 +48,6 @@ index 7a287a7ff3d..d2609041a6a 100644
    int32_t input_width = 299;
    int32_t input_height = 299;
    float input_mean = 0;
+-- 
+2.25.1
+

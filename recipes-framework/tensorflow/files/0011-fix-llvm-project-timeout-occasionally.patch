@@ -1,7 +1,7 @@
-From 214385f13baed5e53f0d88d926f116a1bb7d973f Mon Sep 17 00:00:00 2001
+From af8cc2dcef0bf3adcb98acb1d432f2f8c8fd108b Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@windriver.com>
 Date: Wed, 16 Oct 2024 14:48:23 +0800
-Subject: [PATCH] fix llvm-project timeout occasionally
+Subject: [PATCH 11/21] fix llvm-project timeout occasionally
 
 While CPU and memory usage is hight during building, llvm-project timeout occasionally
 '''
@@ -81,7 +81,7 @@ index 00000000000..c48ce980474
 +2.27.0
 +
 diff --git a/third_party/llvm/workspace.bzl b/third_party/llvm/workspace.bzl
-index 10601c8a766..73616d42b25 100644
+index dc3ceaddaea..dfd9104b22c 100644
 --- a/third_party/llvm/workspace.bzl
 +++ b/third_party/llvm/workspace.bzl
 @@ -22,6 +22,7 @@ def repo(name):
@@ -92,3 +92,6 @@ index 10601c8a766..73616d42b25 100644
          ],
          link_files = {"//third_party/llvm:run_lit.sh": "mlir/run_lit.sh"},
      )
+-- 
+2.25.1
+

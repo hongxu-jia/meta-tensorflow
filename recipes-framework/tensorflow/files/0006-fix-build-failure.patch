@@ -1,7 +1,7 @@
-From abef350ce8de5b62e64bd653b16f885a3b9c430a Mon Sep 17 00:00:00 2001
+From 070c20a48baa430740b127e05d840ae4d8781606 Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@windriver.com>
 Date: Mon, 4 Mar 2024 15:07:58 +0800
-Subject: [PATCH] fix build failure
+Subject: [PATCH 06/21] fix build failure
 
 ...
 ERROR: /buildarea/raid5/hjia/wrlinux-24/build_master-wr_ts_intel_2024030114/build/tmp-glibc/work/x86_64-linux/tensorflow-native/2.16.0/git/tensorflow/BUILD:1173:21: in cc_shared_library rule //tensorflow:libtensorflow_framework.so.2.16.0:
@@ -36,10 +36,10 @@ Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
  1 file changed, 3 insertions(+)
 
 diff --git a/tensorflow/BUILD b/tensorflow/BUILD
-index fb87fda9f82..5d6390c6907 100644
+index 0a74d6a9613..7f5e0172c59 100644
 --- a/tensorflow/BUILD
 +++ b/tensorflow/BUILD
-@@ -132,6 +132,9 @@ PACKAGE_STATIC_DEPS = [
+@@ -129,6 +129,9 @@ PACKAGE_STATIC_DEPS = [
      "@triton//:__subpackages__",
      "@local_tsl//:__subpackages__",
      "@local_xla//:__subpackages__",
@@ -49,3 +49,6 @@ index fb87fda9f82..5d6390c6907 100644
  ] + tsl_async_value_deps()
  
  package(
+-- 
+2.25.1
+

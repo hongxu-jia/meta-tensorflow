@@ -1,27 +1,27 @@
-From 379a2f377fb18139a28a90ed87fdb8da7bb160cd Mon Sep 17 00:00:00 2001
+From af21da31255daa2aac1f09e81b449c234c6e2bbb Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@windriver.com>
-Date: Thu, 22 Aug 2024 01:56:07 -0700
-Subject: [PATCH] support 32 bit x64 and arm for yocto
+Date: Fri, 14 Mar 2025 21:37:30 -0700
+Subject: [PATCH 17/21] support 32 bit x64 and arm for yocto
 
 Upstream-Status: Inappropriate [oe specific]
 
-Rebase to 2.17.0
+Rebase to 2.19
 
 Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
 ---
  tensorflow/BUILD                              |  3 ---
- tensorflow/workspace2.bzl                     |  2 ++
+ tensorflow/workspace2.bzl                     |  3 ++-
  .../0001-XNNPACK-support-32-bit-x86.patch     | 27 +++++++++++++++++++
  .../0001-cpuinfo-support-32-bit-x86.patch     | 27 +++++++++++++++++++
- 4 files changed, 56 insertions(+), 3 deletions(-)
+ 4 files changed, 56 insertions(+), 4 deletions(-)
  create mode 100644 third_party/0001-XNNPACK-support-32-bit-x86.patch
  create mode 100644 third_party/0001-cpuinfo-support-32-bit-x86.patch
 
 diff --git a/tensorflow/BUILD b/tensorflow/BUILD
-index 21ccd9dead0..e888cbb709a 100644
+index c7d4410cbbd..17cec29b1f9 100644
 --- a/tensorflow/BUILD
 +++ b/tensorflow/BUILD
-@@ -276,9 +276,6 @@ config_setting(
+@@ -273,9 +273,6 @@ config_setting(
          [],
      ),
      values = dict(
@@ -32,23 +32,24 @@ index 21ccd9dead0..e888cbb709a 100644
      ),
      visibility = ["//visibility:public"],
 diff --git a/tensorflow/workspace2.bzl b/tensorflow/workspace2.bzl
-index d52d1f00f8c..5892b7ad446 100644
+index 48b5b385211..652f271d2e6 100644
 --- a/tensorflow/workspace2.bzl
 +++ b/tensorflow/workspace2.bzl
-@@ -160,6 +160,7 @@ def _tf_repositories():
+@@ -164,6 +164,7 @@ def _tf_repositories():
          name = "XNNPACK",
-         sha256 = "9e1efd0e43bff4a3b089faff6b0ee466291848fd855609a99e412befdec15bb0",
-         strip_prefix = "XNNPACK-bfea23551ac47c9d71b82120b299ff6173fc9097",
+         sha256 = "435a5360d1c30b5130270afff32b398b239713e97f1aa7ea1e0a02c6c5247e17",
+         strip_prefix = "XNNPACK-6a834a09c53765bea56b8aea9a644a90564fe3a5",
 +        patch_file = ["//third_party:0001-XNNPACK-support-32-bit-x86.patch"],
-         urls = tf_mirror_urls("https://github.com/google/XNNPACK/archive/bfea23551ac47c9d71b82120b299ff6173fc9097.zip"),
+         urls = tf_mirror_urls("https://github.com/google/XNNPACK/archive/6a834a09c53765bea56b8aea9a644a90564fe3a5.zip"),
      )
      # LINT.ThenChange(//tensorflow/lite/tools/cmake/modules/xnnpack.cmake)
-@@ -182,6 +183,7 @@ def _tf_repositories():
+@@ -194,7 +195,7 @@ def _tf_repositories():
          name = "cpuinfo",
-         strip_prefix = "cpuinfo-ef634603954d88d2643d5809011288b890ac126e",
-         sha256 = "e07512a11e1c71687359a133f49d60583d7465b737fe5dbe11f461c9aaa72a2b",
-+        patch_file = ["//third_party:0001-cpuinfo-support-32-bit-x86.patch"],
-         urls = tf_mirror_urls("https://github.com/pytorch/cpuinfo/archive/ef634603954d88d2643d5809011288b890ac126e.zip"),
+         sha256 = "4bf314b3f04db2fd984fef38a7e278e702b74297ef0af592b73296edba02b9d4",
+         strip_prefix = "cpuinfo-8a1772a0c5c447df2d18edf33ec4603a8c9c04a6",
+-        patch_file = ["//third_party/cpuinfo:cpuinfo_ppc64le_support.patch"],
++        patch_file = ["//third_party/cpuinfo:cpuinfo_ppc64le_support.patch", "//third_party:0001-cpuinfo-support-32-bit-x86.patch"],
+         urls = tf_mirror_urls("https://github.com/pytorch/cpuinfo/archive/8a1772a0c5c447df2d18edf33ec4603a8c9c04a6.zip"),
      )
  
 diff --git a/third_party/0001-XNNPACK-support-32-bit-x86.patch b/third_party/0001-XNNPACK-support-32-bit-x86.patch
@@ -117,3 +118,6 @@ index 00000000000..cd6b27eaea3
 +-- 
 +2.37.1
 +
+-- 
+2.25.1
+
