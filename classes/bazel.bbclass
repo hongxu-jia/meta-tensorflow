@@ -100,6 +100,9 @@ build --spawn_strategy=standalone --genrule_strategy=standalone
 test --verbose_failures --verbose_test_summary
 test --spawn_strategy=standalone --genrule_strategy=standalone
 
+build --linkopt=-znoexecstack
+build --host_linkopt=-znoexecstack
+
 build --linkopt=-Wl,--no-as-needed
 build --host_linkopt=-Wl,--no-as-needed
 
