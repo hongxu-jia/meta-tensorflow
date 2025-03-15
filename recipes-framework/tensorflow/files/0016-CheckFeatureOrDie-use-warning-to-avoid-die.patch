@@ -1,7 +1,7 @@
-From 6cdd81bb4d7d699ac049b7024f432f2d185dfb20 Mon Sep 17 00:00:00 2001
+From 1e8c86efa405e738cf0d166d1ffc08b2cad180e1 Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@windriver.com>
 Date: Mon, 16 May 2022 00:39:33 -0700
-Subject: [PATCH] CheckFeatureOrDie: use warning to avoid die
+Subject: [PATCH 16/21] CheckFeatureOrDie: use warning to avoid die
 
 Run 32-bit tensorflow on qemux86-64, it broke at CheckFeatureOrDie,
 use warning to workaround.
@@ -36,3 +36,6 @@ index 748dc21090a..ecc9504864d 100644
    }
  }
  
+-- 
+2.25.1
+

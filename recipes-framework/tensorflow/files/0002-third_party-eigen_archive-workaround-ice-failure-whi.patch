@@ -1,7 +1,7 @@
-From c81fdf3c6678d922e225659a6ad470b349cf3bae Mon Sep 17 00:00:00 2001
+From 8ee3c4b846567938ca9369177be74fa8b8d8f178 Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@windriver.com>
 Date: Mon, 16 May 2022 23:15:47 -0700
-Subject: [PATCH] third_party/eigen_archive:workaround ice failure while
+Subject: [PATCH 02/21] third_party/eigen_archive:workaround ice failure while
  building from source with gcc 7.3.1
 
 The root cause is gcc ice issue:
@@ -94,7 +94,7 @@ index 00000000000..82ef62a0d9a
 +2.27.0
 +
 diff --git a/third_party/eigen3/workspace.bzl b/third_party/eigen3/workspace.bzl
-index 36c73565a5e..0c34110cf1b 100644
+index f06eca368c1..40bdebd6796 100644
 --- a/third_party/eigen3/workspace.bzl
 +++ b/third_party/eigen3/workspace.bzl
 @@ -14,6 +14,7 @@ def repo():
@@ -105,3 +105,6 @@ index 36c73565a5e..0c34110cf1b 100644
          sha256 = EIGEN_SHA256,
          strip_prefix = "eigen-{commit}".format(commit = EIGEN_COMMIT),
          urls = tf_mirror_urls("https://gitlab.com/libeigen/eigen/-/archive/{commit}/eigen-{commit}.tar.gz".format(commit = EIGEN_COMMIT)),
+-- 
+2.25.1
+

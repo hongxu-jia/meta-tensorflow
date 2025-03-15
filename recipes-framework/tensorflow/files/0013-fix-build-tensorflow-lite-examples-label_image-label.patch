@@ -1,8 +1,8 @@
-From 055e12414a27fbf60e083e1d40e13f17d68d928d Mon Sep 17 00:00:00 2001
+From 8c8f8475ed29f1d160820b38ef89330413746814 Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@windriver.com>
 Date: Tue, 17 Aug 2021 16:00:24 +0800
-Subject: [PATCH] fix build //tensorflow/lite/examples/label_image:label_image
- failure
+Subject: [PATCH 13/21] fix build
+ //tensorflow/lite/examples/label_image:label_image failure
 
 It caused undefined reference neon_tensor_utils failure
 ...
@@ -21,7 +21,7 @@ Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
  1 file changed, 8 insertions(+)
 
 diff --git a/tensorflow/lite/kernels/internal/BUILD b/tensorflow/lite/kernels/internal/BUILD
-index 11292aeb2bb..1746336cd1d 100644
+index 2a1f510c131..90710e7751e 100644
 --- a/tensorflow/lite/kernels/internal/BUILD
 +++ b/tensorflow/lite/kernels/internal/BUILD
 @@ -135,6 +135,13 @@ config_setting(
@@ -38,7 +38,7 @@ index 11292aeb2bb..1746336cd1d 100644
  config_setting(
      name = "haswell",
      values = {
-@@ -273,6 +280,7 @@ selects.config_setting_group(
+@@ -287,6 +294,7 @@ selects.config_setting_group(
          ":arm",
          ":arm64-v8a",
          ":armeabi-v7a",
@@ -46,3 +46,6 @@ index 11292aeb2bb..1746336cd1d 100644
          ":armhf",
          ":armv7a",
          ":ios_armv7",
+-- 
+2.25.1
+

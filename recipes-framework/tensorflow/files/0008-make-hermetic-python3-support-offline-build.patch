@@ -1,0 +1,115 @@
+From 919814dff64170b58084e20fc55cebcb8226a3d1 Mon Sep 17 00:00:00 2001
+From: Hongxu Jia <hongxu.jia@windriver.com>
+Date: Fri, 14 Mar 2025 21:17:31 -0700
+Subject: [PATCH 08/21] make hermetic python3 support offline build
+
+If environment TS_DL_DIR is set, download python whl from local archive other then
+python index
+
+If environment TS_DL_DIR is set, save python whl to local dir
+
+Upstream-Status: Inappropriate [Yocto specific]
+
+Rebase to 2.19
+Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+---
+ third_party/0001-support-offline-build.patch  | 51 +++++++++++++++++++
+ third_party/py/python_init_rules.bzl          |  2 +-
+ .../xla/third_party/py/python_init_rules.bzl  |  2 +-
+ .../tsl/third_party/py/python_init_rules.bzl  |  2 +-
+ 4 files changed, 54 insertions(+), 3 deletions(-)
+ create mode 100644 third_party/0001-support-offline-build.patch
+
+diff --git a/third_party/0001-support-offline-build.patch b/third_party/0001-support-offline-build.patch
+new file mode 100644
+index 00000000000..f30e9a453a6
+--- /dev/null
++++ b/third_party/0001-support-offline-build.patch
+@@ -0,0 +1,51 @@
++From 7cb07f8c690ab460ccf8a12acb52ff6e174cf480 Mon Sep 17 00:00:00 2001
++From: Hongxu Jia <hongxu.jia@windriver.com>
++Date: Fri, 14 Mar 2025 21:13:10 -0700
++Subject: [PATCH] make hermetic python3 support offline build
++
++If environment TS_DL_DIR is set, download python whl from local archive other then
++python index
++
++If environment TS_DL_DIR is set, save python whl to local dir
++
++Upstream-Status: Inappropriate [Yocto specific]
++
++Rebase to 2.19
++Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
++---
++ python/private/pypi/whl_installer/wheel_installer.py | 12 ++++++++++++
++ 1 file changed, 12 insertions(+)
++
++diff --git a/python/private/pypi/whl_installer/wheel_installer.py b/python/private/pypi/whl_installer/wheel_installer.py
++index ef8181c..d886266 100644
++--- a/python/private/pypi/whl_installer/wheel_installer.py
+++++ b/python/private/pypi/whl_installer/wheel_installer.py
++@@ -173,6 +173,11 @@ def main() -> None:
++         + deserialized_args["extra_pip_args"]
++     )
++ 
+++    # Look for archives(*.whl) in the directory
+++    if os.environ.get('TS_DL_DIR'):
+++        dl_dir_pip = os.environ.get('TS_DL_DIR')
+++        pip_args.extend(["-f", dl_dir_pip])
+++
++     requirement_file = NamedTemporaryFile(mode="wb", delete=False)
++     try:
++         requirement_file.write(args.requirement.encode("utf-8"))
++@@ -195,6 +200,13 @@ def main() -> None:
++             if e.errno != errno.ENOENT:
++                 raise
++ 
+++    # Save archives(*.whl) to the directory
+++    if os.environ.get('TS_DL_DIR'):
+++        try:
+++            subprocess.run(f"ls {dl_dir_pip}/$(ls *.whl) 2>/dev/null || cp -f *.whl {dl_dir_pip}", check=True, env=env, shell=True)
+++        except OSError as e:
+++            raise
+++
++     whl = Path(next(iter(glob.glob("*.whl"))))
++ 
++     with open("whl_file.json", "w") as f:
++-- 
++2.25.1
++
+diff --git a/third_party/py/python_init_rules.bzl b/third_party/py/python_init_rules.bzl
+index 796ae3d92d9..bfb750ac72d 100644
+--- a/third_party/py/python_init_rules.bzl
++++ b/third_party/py/python_init_rules.bzl
+@@ -9,5 +9,5 @@ def python_init_rules():
+         strip_prefix = "rules_python-0.39.0",
+         url = "https://github.com/bazelbuild/rules_python/releases/download/0.39.0/rules_python-0.39.0.tar.gz",
+         patch_args = ["-p1"],
+-        patches = [Label("//third_party/py:rules_python.patch")],
++        patches = ["//third_party/py:rules_python.patch", "//third_party:0001-support-offline-build.patch"],
+     )
+diff --git a/third_party/xla/third_party/py/python_init_rules.bzl b/third_party/xla/third_party/py/python_init_rules.bzl
+index 796ae3d92d9..bfb750ac72d 100644
+--- a/third_party/xla/third_party/py/python_init_rules.bzl
++++ b/third_party/xla/third_party/py/python_init_rules.bzl
+@@ -9,5 +9,5 @@ def python_init_rules():
+         strip_prefix = "rules_python-0.39.0",
+         url = "https://github.com/bazelbuild/rules_python/releases/download/0.39.0/rules_python-0.39.0.tar.gz",
+         patch_args = ["-p1"],
+-        patches = [Label("//third_party/py:rules_python.patch")],
++        patches = ["//third_party/py:rules_python.patch", "//third_party:0001-support-offline-build.patch"],
+     )
+diff --git a/third_party/xla/third_party/tsl/third_party/py/python_init_rules.bzl b/third_party/xla/third_party/tsl/third_party/py/python_init_rules.bzl
+index 796ae3d92d9..bfb750ac72d 100644
+--- a/third_party/xla/third_party/tsl/third_party/py/python_init_rules.bzl
++++ b/third_party/xla/third_party/tsl/third_party/py/python_init_rules.bzl
+@@ -9,5 +9,5 @@ def python_init_rules():
+         strip_prefix = "rules_python-0.39.0",
+         url = "https://github.com/bazelbuild/rules_python/releases/download/0.39.0/rules_python-0.39.0.tar.gz",
+         patch_args = ["-p1"],
+-        patches = [Label("//third_party/py:rules_python.patch")],
++        patches = ["//third_party/py:rules_python.patch", "//third_party:0001-support-offline-build.patch"],
+     )
+-- 
+2.25.1
+

@@ -1,0 +1,42 @@
+From 0b3f0f175f473d1efd8b6b66aafcdc2e7318f87b Mon Sep 17 00:00:00 2001
+From: Hongxu Jia <hongxu.jia@windriver.com>
+Date: Sat, 15 Mar 2025 08:36:02 +0000
+Subject: [PATCH 20/21] tensorflow/compiler/mlir/lite: fix
+ tensorflow_lite_quantize fail to build with gcc 13
+
+...
+|In file included from /usr/include/c++/13/memory:78,
+|from tensorflow/compiler/mlir/lite/transforms/default_quant_params.cc:16:
+|/usr/include/c++/13/bits/unique_ptr.h: In instantiation of 'std::__detail::__unique_ptr_t<_Tp> std::make_unique(_Args&& ...) [with _Tp = mlir::TFL::{anonymous}::DefaultQuantParamsPass; _Args = {const mlir::TFL::DefaultQuantParamsPassOptions&}; __detail::__unique_ptr_t<_Tp> = __detail::__unique_ptr_tmlir::TFL::{anonymous}::DefaultQuantParamsPass]':
+|tensorflow/compiler/mlir/lite/transforms/default_quant_params.cc:249:50: required from here
+/usr/include/c++/13/bits/unique_ptr.h:1070:30: error: call of overloaded 'DefaultQuantParamsPass(const mlir::TFL::DefaultQuantParamsPassOptions&)' is ambiguous
+...
+
+See https://github.com/tensorflow/tensorflow/issues/84977 for details
+
+Upstream-Status: Pending
+
+Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+---
+ .../compiler/mlir/lite/transforms/default_quant_params.cc    | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/tensorflow/compiler/mlir/lite/transforms/default_quant_params.cc b/tensorflow/compiler/mlir/lite/transforms/default_quant_params.cc
+index f1b602a6763..ee5abf3899f 100644
+--- a/tensorflow/compiler/mlir/lite/transforms/default_quant_params.cc
++++ b/tensorflow/compiler/mlir/lite/transforms/default_quant_params.cc
+@@ -246,7 +246,10 @@ std::unique_ptr<OperationPass<func::FuncOp>> CreateDefaultQuantParamsPass(
+ 
+ std::unique_ptr<OperationPass<func::FuncOp>> CreateDefaultQuantParamsPass(
+     const DefaultQuantParamsPassOptions &options) {
+-  return std::make_unique<DefaultQuantParamsPass>(options);
++  return std::make_unique<DefaultQuantParamsPass>(
++      options.default_min_,
++      options.default_max_,
++      options.is_signed_);
+ }
+ 
+ std::unique_ptr<OperationPass<func::FuncOp>> CreateDefaultQuantParamsPass() {
+-- 
+2.25.1
+

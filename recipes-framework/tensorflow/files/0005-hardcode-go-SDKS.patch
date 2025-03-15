@@ -1,7 +1,7 @@
-From 8d8146e906a302b3a0811b10d9b22befe0b2e392 Mon Sep 17 00:00:00 2001
+From abba5dba853303ba7cc65104f1c8c1ac1fe607ed Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@eng.windriver.com>
 Date: Thu, 1 Dec 2022 23:10:37 +0800
-Subject: [PATCH] hardcode go SDKS
+Subject: [PATCH 05/21] hardcode go SDKS
 
 If sdks was unspecified, download a full list of files.
 Even if version was specified, we need to download the file list
@@ -22,10 +22,10 @@ Signed-off-by: Hongxu Jia <hongxu.jia@eng.windriver.com>
  create mode 100644 third_party/0001-hardcode-go-SDKS.patch
 
 diff --git a/tensorflow/workspace2.bzl b/tensorflow/workspace2.bzl
-index fd29dff05f3..43053967ca1 100644
+index 5d75ffd4a6d..146e7353c3e 100644
 --- a/tensorflow/workspace2.bzl
 +++ b/tensorflow/workspace2.bzl
-@@ -805,6 +805,7 @@ def _tf_repositories():
+@@ -808,6 +808,7 @@ def _tf_repositories():
      #   - patch upb so that it's compatible with Bazel 6.0, the latest version of upb doesn't work with the old grpc version.
      tf_http_archive(
          name = "io_bazel_rules_go",
@@ -86,3 +86,6 @@ index 00000000000..b66926be35d
 +-- 
 +2.32.0
 +
+-- 
+2.25.1
+

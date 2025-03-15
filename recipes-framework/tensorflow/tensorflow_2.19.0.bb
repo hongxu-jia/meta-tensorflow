@@ -1,13 +1,16 @@
 include tensorflow.inc
 
 SRC_URI += " \
-    file://0013-add-yocto-toolchain-to-support-cross-compiling.patch \
-    file://0014-fix-build-tensorflow-lite-examples-label_image-label.patch \
-    file://0015-label_image-tweak-default-model-location.patch \
-    file://0016-label_image.lite-tweak-default-model-location.patch \
-    file://0017-CheckFeatureOrDie-use-warning-to-avoid-die.patch \
-    file://0018-support-32-bit-x64-and-arm-for-yocto.patch \
-    file://0019-build-api_gen_binary_target-as-host-tools.patch \
+    file://0012-add-yocto-toolchain-to-support-cross-compiling.patch \
+    file://0013-fix-build-tensorflow-lite-examples-label_image-label.patch \
+    file://0014-label_image-tweak-default-model-location.patch \
+    file://0015-label_image.lite-tweak-default-model-location.patch \
+    file://0016-CheckFeatureOrDie-use-warning-to-avoid-die.patch \
+    file://0017-support-32-bit-x64-and-arm-for-yocto.patch \
+    file://0018-build-api_gen_binary_target-as-host-tools.patch \
+    file://0019-fix-build-failure-for-2.19.patch \
+    file://0020-tensorflow-compiler-mlir-lite-fix-tensorflow_lite_qu.patch \
+    file://0021-build_pip_package_with_bazel.sh-correct-version.patch \
     file://BUILD.in \
     file://BUILD.yocto_compiler \
     file://cc_config.bzl.tpl \
@@ -83,7 +86,6 @@ do_compile () {
         --host_crosstool_top=@bazel_tools//tools/cpp:toolchain \
         --verbose_failures \
         --copt -DTF_LITE_DISABLE_X86_NEON \
-        --define tflite_with_xnnpack=false \
         --repo_env=TF_PYTHON_VERSION=3.12 \
         //tensorflow:libtensorflow.so \
         //tensorflow:libtensorflow_cc.so \
@@ -180,7 +182,7 @@ python __anonymous() {
         msg += "    DISTRO_FEATURES:append = ' tensorflow'\n"
         msg += "    DISTRO_FEATURES_NATIVE:append = ' tensorflow'\n"
         msg += "    DISTRO_FEATURES_NATIVESDK:append = ' tensorflow'\n"
-        msg += "It will apply python3 3.10.6 recipe"
+        msg += "It will apply python3 3.12 recipe"
         raise bb.parse.SkipPackage(msg)
 
     if d.getVar("PYTHON_BASEVERSION") != "3.12":

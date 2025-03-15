@@ -1,7 +1,9 @@
 include tensorflow.inc
 
 SRC_URI += " \
-    file://0013-disable-avxvnni-and-avx512fp16-for-x86.patch \
+    file://0012-disable-avxvnni-and-avx512fp16-for-x86.patch \
+    file://0019-fix-build-failure-for-2.19.patch \
+    file://0020-tensorflow-compiler-mlir-lite-fix-tensorflow_lite_qu.patch \
 "
 
 inherit native

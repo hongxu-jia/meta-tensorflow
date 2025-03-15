@@ -1,7 +1,7 @@
-From 60ebef697006bf3a1d00bbb625e2006ad6799a39 Mon Sep 17 00:00:00 2001
+From 946ca754cb9d0284ec8fdbc3ae21e2c9f503832a Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@windriver.com>
 Date: Wed, 9 Dec 2020 09:53:30 +0800
-Subject: [PATCH] label_image.lite: tweak default model location
+Subject: [PATCH 15/21] label_image.lite: tweak default model location
 
 Upstream-Status: Inappropriate [oe specific]
 
@@ -30,3 +30,6 @@ index db55265b7e0..44c41ef48a8 100644
    int number_of_threads = 4;
    int number_of_results = 5;
    int max_profiling_buffer_entries = 1024;
+-- 
+2.25.1
+

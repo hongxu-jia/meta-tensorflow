@@ -1,6 +1,6 @@
-From ad2f365ca2bd70cceef3648300c45bd403764887 Mon Sep 17 00:00:00 2001
+From de2ce94a7b3b9d2475c98858257c9abe7a41819c Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@windriver.com>
-Date: Tue, 15 Oct 2024 14:25:30 +0800
+Date: Fri, 14 Mar 2025 21:46:17 -0700
 Subject: [PATCH] disable avxvnni and avx512fp16 for x86
 
 If host gcc is too old to support option -mavxvnni, the compile failed
@@ -15,6 +15,7 @@ for native build
 
 Upstream-Status: Inappropriate [Yocto specific]
 
+Rebase to 2.19
 Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
 ---
  tensorflow/workspace2.bzl                     |  1 +
@@ -23,24 +24,24 @@ Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
  create mode 100644 third_party/0001-disable-avxvnni-and-avx512fp16.patch
 
 diff --git a/tensorflow/workspace2.bzl b/tensorflow/workspace2.bzl
-index 43053967ca1..c48e09f2e38 100644
+index 146e7353c3e..b356c665fb6 100644
 --- a/tensorflow/workspace2.bzl
 +++ b/tensorflow/workspace2.bzl
-@@ -152,6 +152,7 @@ def _tf_repositories():
+@@ -156,6 +156,7 @@ def _tf_repositories():
          name = "XNNPACK",
-         sha256 = "9e1efd0e43bff4a3b089faff6b0ee466291848fd855609a99e412befdec15bb0",
-         strip_prefix = "XNNPACK-bfea23551ac47c9d71b82120b299ff6173fc9097",
+         sha256 = "435a5360d1c30b5130270afff32b398b239713e97f1aa7ea1e0a02c6c5247e17",
+         strip_prefix = "XNNPACK-6a834a09c53765bea56b8aea9a644a90564fe3a5",
 +        patch_file = ["//third_party:0001-disable-avxvnni-and-avx512fp16.patch"],
-         urls = tf_mirror_urls("https://github.com/google/XNNPACK/archive/bfea23551ac47c9d71b82120b299ff6173fc9097.zip"),
+         urls = tf_mirror_urls("https://github.com/google/XNNPACK/archive/6a834a09c53765bea56b8aea9a644a90564fe3a5.zip"),
      )
      # LINT.ThenChange(//tensorflow/lite/tools/cmake/modules/xnnpack.cmake)
 diff --git a/third_party/0001-disable-avxvnni-and-avx512fp16.patch b/third_party/0001-disable-avxvnni-and-avx512fp16.patch
 new file mode 100644
-index 00000000000..1c0d952070e
+index 00000000000..b08793892a4
 --- /dev/null
 +++ b/third_party/0001-disable-avxvnni-and-avx512fp16.patch
 @@ -0,0 +1,53 @@
-+From 2e531e646757951cc799cf8a1f5f16409b1025ab Mon Sep 17 00:00:00 2001
++From b76589ac2c2cd8dd56913dd21ab3c74653b7f8c5 Mon Sep 17 00:00:00 2001
 +From: Hongxu Jia <hongxu.jia@windriver.com>
 +Date: Tue, 15 Oct 2024 15:05:44 +0800
 +Subject: [PATCH] disable avxvnni and avx512fp16
@@ -51,10 +52,10 @@ index 00000000000..1c0d952070e
 + 1 file changed, 4 insertions(+), 4 deletions(-)
 +
 +diff --git a/BUILD.bazel b/BUILD.bazel
-+index b645c9d..f12debf 100644
++index a5ce1d0..05d6660 100644
 +--- a/BUILD.bazel
 ++++ b/BUILD.bazel
-+@@ -4477,7 +4477,7 @@ alias(
++@@ -1834,7 +1834,7 @@ alias(
 + selects.config_setting_group(
 +     name = "avx512vnnigfni_enabled_by_default",
 +     match_any = [
@@ -63,7 +64,7 @@ index 00000000000..1c0d952070e
 +     ],
 + )
 + 
-+@@ -4493,7 +4493,7 @@ alias(
++@@ -1850,7 +1850,7 @@ alias(
 + selects.config_setting_group(
 +     name = "avx512amx_enabled_by_default",
 +     match_any = [
@@ -72,7 +73,7 @@ index 00000000000..1c0d952070e
 +     ],
 + )
 + 
-+@@ -4510,7 +4510,7 @@ alias(
++@@ -1867,7 +1867,7 @@ alias(
 + selects.config_setting_group(
 +     name = "avx512fp16_enabled_by_default",
 +     match_any = [
@@ -81,7 +82,7 @@ index 00000000000..1c0d952070e
 +     ],
 + )
 + 
-+@@ -4527,7 +4527,7 @@ alias(
++@@ -1883,7 +1883,7 @@ alias(
 + selects.config_setting_group(
 +     name = "avxvnni_enabled_by_default",
 +     match_any = [
@@ -93,3 +94,6 @@ index 00000000000..1c0d952070e
 +-- 
 +2.25.1
 +
+-- 
+2.25.1
+

@@ -1,7 +1,7 @@
-From 311bfb81a750a7689b8ac48ee23f1add7f8ce1e2 Mon Sep 17 00:00:00 2001
+From e9292d3cd7aa826b9e268c47e8d642631abc3428 Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@windriver.com>
 Date: Mon, 4 Mar 2024 17:44:35 +0800
-Subject: [PATCH] support hermetic Python
+Subject: [PATCH 07/21] support hermetic Python
 
 Due to commit [e85860e8382 use hermetic Python in Tensorflow. See
 ci/official/requirements_updater/README.md for details.] applied
@@ -19,10 +19,10 @@ Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
  4 files changed, 8 insertions(+)
 
 diff --git a/tensorflow/BUILD b/tensorflow/BUILD
-index 5d6390c6907..d1650039097 100644
+index 7f5e0172c59..94c9a9721ac 100644
 --- a/tensorflow/BUILD
 +++ b/tensorflow/BUILD
-@@ -135,6 +135,9 @@ PACKAGE_STATIC_DEPS = [
+@@ -132,6 +132,9 @@ PACKAGE_STATIC_DEPS = [
      "@riegeli//:__subpackages__",
      "@org_brotli//:__subpackages__",
      "@net_zstd//:__subpackages__",
@@ -33,10 +33,10 @@ index 5d6390c6907..d1650039097 100644
  
  package(
 diff --git a/tensorflow/compiler/tf2tensorrt/BUILD b/tensorflow/compiler/tf2tensorrt/BUILD
-index 498aa0f91e4..30434cf8f49 100644
+index 777ee26c975..26031381521 100644
 --- a/tensorflow/compiler/tf2tensorrt/BUILD
 +++ b/tensorflow/compiler/tf2tensorrt/BUILD
-@@ -1097,6 +1097,7 @@ pybind_extension(
+@@ -1093,6 +1093,7 @@ pybind_extension(
          "@zlib//:__subpackages__",
          "@local_tsl//tsl:__subpackages__",
          "@local_xla//xla:__subpackages__",
@@ -45,10 +45,10 @@ index 498aa0f91e4..30434cf8f49 100644
      deps = [
          ":common_utils",
 diff --git a/tensorflow/python/BUILD b/tensorflow/python/BUILD
-index c3f9a377e01..4212ebb4f1e 100644
+index 8a781badc68..d79d3f204ee 100644
 --- a/tensorflow/python/BUILD
 +++ b/tensorflow/python/BUILD
-@@ -743,6 +743,8 @@ pywrap_tensorflow_macro(
+@@ -754,6 +754,8 @@ pywrap_tensorflow_macro(
          "@zlib//:__subpackages__",
          "@local_tsl//tsl:__subpackages__",
          "@local_xla//xla:__subpackages__",
@@ -58,10 +58,10 @@ index c3f9a377e01..4212ebb4f1e 100644
      win_def_file = ":pywrap_tensorflow_filtered_def_file",
      deps = [
 diff --git a/tensorflow/tensorflow.bzl b/tensorflow/tensorflow.bzl
-index 6e656b861be..4ae1a96f905 100644
+index 34193f2580b..e2c01533dba 100644
 --- a/tensorflow/tensorflow.bzl
 +++ b/tensorflow/tensorflow.bzl
-@@ -3316,6 +3316,8 @@ def tf_python_pybind_static_deps(testonly = False):
+@@ -3433,6 +3433,8 @@ def tf_python_pybind_static_deps(testonly = False):
          "@upb//:__subpackages__",
          "@zlib//:__subpackages__",
          "@local_tsl//tsl:__subpackages__",
@@ -70,3 +70,6 @@ index 6e656b861be..4ae1a96f905 100644
      ]
      static_deps += tsl_async_value_deps()
      static_deps += [] if not testonly else [
+-- 
+2.25.1
+
