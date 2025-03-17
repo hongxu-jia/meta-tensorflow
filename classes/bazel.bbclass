@@ -137,7 +137,9 @@ EOF
 
     for binary in build-runfiles daemonize linux-sandbox process-wrapper; do
         # Modify interpreter for bazel built-in binaries
-        patchelf-uninative --set-interpreter "${UNINATIVE_LOADER}" ${BAZEL_DIR}/user_root/install/*/$binary
+        if which patchelf-uninative; then
+            patchelf-uninative --set-interpreter "${UNINATIVE_LOADER}" ${BAZEL_DIR}/user_root/install/*/$binary
+        fi
 
         # Set modification time somewhere in the future to avoid "corrupt installation: file PATH is missing or modified"
         # in this case modification is required for successful build
