@@ -1,0 +1,41 @@
+From e29ae76ea0e3b30dd3a4c9fc353ba88b5feb4b83 Mon Sep 17 00:00:00 2001
+From: Hongxu Jia <hongxu.jia@windriver.com>
+Date: Mon, 17 Mar 2025 22:34:22 +0800
+Subject: [PATCH] do not patch .so files for linux
+
+After binutils was upgraded to 2.44, the patched dynamic
+library broke while tensorflow loading
+...
++ python3 -c 'import tensorflow'
+[libprotobuf ERROR external/com_google_protobuf/src/google/protobuf/descriptor_database.cc:560] Invalid file descriptor data passed to EncodedDescriptorDatabase::Add().
+[libprotobuf FATAL external/com_google_protobuf/src/google/protobuf/descriptor.cc:1986] CHECK failed: GeneratedDatabase()->Add(encoded_file_descriptor, size):
+terminate called after throwing an instance of 'google::protobuf::FatalException'
+  what():  CHECK failed: GeneratedDatabase()->Add(encoded_file_descriptor, size):
+t.sh: line 4:  2212 Aborted                 (core dumped) python3 -c "import tensorflow"
+...
+
+Patch .so files for linux
+
+Upstream-Status: Inappropriate [oe specific]
+
+Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+---
+ tensorflow/tools/pip_package/build_pip_package.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tensorflow/tools/pip_package/build_pip_package.py b/tensorflow/tools/pip_package/build_pip_package.py
+index 4809d5ec7a7..cbe479991b3 100644
+--- a/tensorflow/tools/pip_package/build_pip_package.py
++++ b/tensorflow/tools/pip_package/build_pip_package.py
+@@ -295,7 +295,7 @@ def prepare_wheel_srcs(
+ 
+   if not is_windows():
+     rename_libtensorflow(os.path.join(srcs_dir, "tensorflow"), version)
+-  if not is_macos() and not is_windows():
++  if not is_macos() and not is_windows() and not sys.platform.startswith("linux"):
+     patch_so(srcs_dir)
+ 
+ 
+-- 
+2.34.1
+

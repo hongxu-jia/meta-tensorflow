@@ -11,6 +11,7 @@ SRC_URI += " \
     file://0019-fix-build-failure-for-2.19.patch \
     file://0020-tensorflow-compiler-mlir-lite-fix-tensorflow_lite_qu.patch \
     file://0021-build_pip_package_with_bazel.sh-correct-version.patch \
+    file://0001-do-not-patch-.so-files-for-linux.patch \
     file://BUILD.in \
     file://BUILD.yocto_compiler \
     file://cc_config.bzl.tpl \
