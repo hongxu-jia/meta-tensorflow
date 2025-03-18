@@ -137,3 +137,4 @@ python __anonymous() {
 }
 
 COMPATIBLE_HOST:arm = "null"
+COMPATIBLE_HOST:x86 = "null"
