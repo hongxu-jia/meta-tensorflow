@@ -1,0 +1,146 @@
+From 73d7b97c01d2ce17e1fbbac1a422aa4730097c33 Mon Sep 17 00:00:00 2001
+From: Hongxu Jia <hongxu.jia@windriver.com>
+Date: Tue, 18 Mar 2025 16:40:51 +0800
+Subject: [PATCH] fix compile XNNPACK failed for aarch64
+
+Upstream-Status: Pending
+
+Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+---
+ tensorflow/workspace2.bzl                     |   2 +-
+ ...0001-fix-compile-failure-for-aarch64.patch | 110 ++++++++++++++++++
+ 2 files changed, 111 insertions(+), 1 deletion(-)
+ create mode 100644 third_party/0001-fix-compile-failure-for-aarch64.patch
+
+diff --git a/tensorflow/workspace2.bzl b/tensorflow/workspace2.bzl
+index 652f271d2e6..7a7bbe286ca 100644
+--- a/tensorflow/workspace2.bzl
++++ b/tensorflow/workspace2.bzl
+@@ -164,7 +164,7 @@ def _tf_repositories():
+         name = "XNNPACK",
+         sha256 = "435a5360d1c30b5130270afff32b398b239713e97f1aa7ea1e0a02c6c5247e17",
+         strip_prefix = "XNNPACK-6a834a09c53765bea56b8aea9a644a90564fe3a5",
+-        patch_file = ["//third_party:0001-XNNPACK-support-32-bit-x86.patch"],
++        patch_file = ["//third_party:0001-XNNPACK-support-32-bit-x86.patch", "//third_party:0001-fix-compile-failure-for-aarch64.patch"],
+         urls = tf_mirror_urls("https://github.com/google/XNNPACK/archive/6a834a09c53765bea56b8aea9a644a90564fe3a5.zip"),
+     )
+     # LINT.ThenChange(//tensorflow/lite/tools/cmake/modules/xnnpack.cmake)
+diff --git a/third_party/0001-fix-compile-failure-for-aarch64.patch b/third_party/0001-fix-compile-failure-for-aarch64.patch
+new file mode 100644
+index 00000000000..cb0716f10c4
+--- /dev/null
++++ b/third_party/0001-fix-compile-failure-for-aarch64.patch
+@@ -0,0 +1,110 @@
++From 37486c6b81d0298cfcbb8879253936e6c8f93b2c Mon Sep 17 00:00:00 2001
++From: Hongxu Jia <hongxu.jia@windriver.com>
++Date: Tue, 18 Mar 2025 16:06:46 +0800
++Subject: [PATCH] fix compile failure for aarch64
++
++Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
++---
++ src/f16-maxpool/f16-maxpool-9p8x-minmax-neonfp16arith-c8.c  | 4 ++--
++ .../f16-pavgpool-9p8x-minmax-neonfp16arith-c8.c             | 6 +++---
++ src/f16-pavgpool/f16-pavgpool-9x-minmax-neonfp16arith-c8.c  | 6 +++---
++ src/u8-maxpool/u8-maxpool-9p8x-minmax-neon-c16.c            | 4 ++--
++ src/u8-vclamp/u8-vclamp-neon-u64.c                          | 4 ++--
++ 5 files changed, 12 insertions(+), 12 deletions(-)
++
++diff --git a/src/f16-maxpool/f16-maxpool-9p8x-minmax-neonfp16arith-c8.c b/src/f16-maxpool/f16-maxpool-9p8x-minmax-neonfp16arith-c8.c
++index f4ce992..dd14a0c 100644
++--- a/src/f16-maxpool/f16-maxpool-9p8x-minmax-neonfp16arith-c8.c
+++++ b/src/f16-maxpool/f16-maxpool-9p8x-minmax-neonfp16arith-c8.c
++@@ -25,8 +25,8 @@ void xnn_f16_maxpool_minmax_ukernel_9p8x__neonfp16arith_c8(
++   assert(kernel_elements != 0);
++   assert(channels != 0);
++ 
++-  const float16x8_t voutput_min = vreinterpretq_f16_u16(vld1q_dup_u16(&params->scalar.min));
++-  const float16x8_t voutput_max = vreinterpretq_f16_u16(vld1q_dup_u16(&params->scalar.max));
+++  const float16x8_t voutput_min = vreinterpretq_f16_u16(vld1q_dup_u16((const uint16_t*)&params->scalar.min));
+++  const float16x8_t voutput_max = vreinterpretq_f16_u16(vld1q_dup_u16((const uint16_t*)&params->scalar.max));
++   do {
++     uint16_t* o = (uint16_t*) output;
++     {
++diff --git a/src/f16-pavgpool/f16-pavgpool-9p8x-minmax-neonfp16arith-c8.c b/src/f16-pavgpool/f16-pavgpool-9p8x-minmax-neonfp16arith-c8.c
++index 29b6fa8..3cc6daf 100644
++--- a/src/f16-pavgpool/f16-pavgpool-9p8x-minmax-neonfp16arith-c8.c
+++++ b/src/f16-pavgpool/f16-pavgpool-9p8x-minmax-neonfp16arith-c8.c
++@@ -28,8 +28,8 @@ void xnn_f16_pavgpool_minmax_ukernel_9p8x__neonfp16arith_c8(
++   assert(kernel_elements > 9);
++   assert(channels != 0);
++ 
++-  const float16x8_t voutput_min = vreinterpretq_f16_u16(vld1q_dup_u16(&params->scalar.min));
++-  const float16x8_t voutput_max = vreinterpretq_f16_u16(vld1q_dup_u16(&params->scalar.max));
+++  const float16x8_t voutput_min = vreinterpretq_f16_u16(vld1q_dup_u16((const uint16_t*)&params->scalar.min));
+++  const float16x8_t voutput_max = vreinterpretq_f16_u16(vld1q_dup_u16((const uint16_t*)&params->scalar.max));
++ 
++   do {
++     {
++@@ -236,7 +236,7 @@ void xnn_f16_pavgpool_minmax_ukernel_9p8x__neonfp16arith_c8(
++         i7 = (const uint16_t*) ((uintptr_t) i7 + input_offset);
++       }
++ 
++-      const float16x8_t vmultiplier = vreinterpretq_f16_u16(vld1q_dup_u16(multiplier)); multiplier = (const xnn_float16*) multiplier + 1;
+++      const float16x8_t vmultiplier = vreinterpretq_f16_u16(vld1q_dup_u16((const uint16_t*)multiplier)); multiplier = (const xnn_float16*) multiplier + 1;
++ 
++       size_t c = channels;
++       const uint16_t* b = (const uint16_t*) buffer;
++diff --git a/src/f16-pavgpool/f16-pavgpool-9x-minmax-neonfp16arith-c8.c b/src/f16-pavgpool/f16-pavgpool-9x-minmax-neonfp16arith-c8.c
++index 79206c0..74b3da6 100644
++--- a/src/f16-pavgpool/f16-pavgpool-9x-minmax-neonfp16arith-c8.c
+++++ b/src/f16-pavgpool/f16-pavgpool-9x-minmax-neonfp16arith-c8.c
++@@ -28,8 +28,8 @@ void xnn_f16_pavgpool_minmax_ukernel_9x__neonfp16arith_c8(
++   assert(kernel_elements <= 9);
++   assert(channels != 0);
++ 
++-  const float16x8_t voutput_min = vreinterpretq_f16_u16(vld1q_dup_u16(&params->scalar.min));
++-  const float16x8_t voutput_max = vreinterpretq_f16_u16(vld1q_dup_u16(&params->scalar.max));
+++  const float16x8_t voutput_min = vreinterpretq_f16_u16(vld1q_dup_u16((const uint16_t*)&params->scalar.min));
+++  const float16x8_t voutput_max = vreinterpretq_f16_u16(vld1q_dup_u16((const uint16_t*)&params->scalar.max));
++ 
++   do {
++     const uint16_t* i0 = (const uint16_t*) input[0];
++@@ -103,7 +103,7 @@ void xnn_f16_pavgpool_minmax_ukernel_9x__neonfp16arith_c8(
++       i8 = (const uint16_t*) ((uintptr_t) i8 + input_offset);
++     }
++ 
++-    const float16x8_t vmultiplier = vreinterpretq_f16_u16(vld1q_dup_u16(multiplier)); multiplier = (const xnn_float16*) multiplier + 1;
+++    const float16x8_t vmultiplier = vreinterpretq_f16_u16(vld1q_dup_u16((const uint16_t*)multiplier)); multiplier = (const xnn_float16*) multiplier + 1;
++ 
++     size_t c = channels;
++     while (c >= 8) {
++diff --git a/src/u8-maxpool/u8-maxpool-9p8x-minmax-neon-c16.c b/src/u8-maxpool/u8-maxpool-9p8x-minmax-neon-c16.c
++index 2fb7c3f..322201b 100644
++--- a/src/u8-maxpool/u8-maxpool-9p8x-minmax-neon-c16.c
+++++ b/src/u8-maxpool/u8-maxpool-9p8x-minmax-neon-c16.c
++@@ -28,8 +28,8 @@ void xnn_u8_maxpool_minmax_ukernel_9p8x__neon_c16(
++   assert(kernel_elements != 0);
++   assert(channels != 0);
++ 
++-  const uint8x16_t voutput_max = vld1q_dup_u8(&params->scalar.max);
++-  const uint8x16_t voutput_min = vld1q_dup_u8(&params->scalar.min);
+++  const uint8x16_t voutput_max = vld1q_dup_u8((uint8_t const *)&params->scalar.max);
+++  const uint8x16_t voutput_min = vld1q_dup_u8((uint8_t const *)&params->scalar.min);
++   do {
++     uint8_t* o = output;
++     {
++diff --git a/src/u8-vclamp/u8-vclamp-neon-u64.c b/src/u8-vclamp/u8-vclamp-neon-u64.c
++index c75f8d6..7387563 100644
++--- a/src/u8-vclamp/u8-vclamp-neon-u64.c
+++++ b/src/u8-vclamp/u8-vclamp-neon-u64.c
++@@ -21,8 +21,8 @@ void xnn_u8_vclamp_ukernel__neon_u64(
++   assert(input != NULL);
++   assert(output != NULL);
++ 
++-  const uint8x16_t voutput_max = vld1q_dup_u8(&params->scalar.max);
++-  const uint8x16_t voutput_min = vld1q_dup_u8(&params->scalar.min);
+++  const uint8x16_t voutput_max = vld1q_dup_u8((uint8_t const *)&params->scalar.max);
+++  const uint8x16_t voutput_min = vld1q_dup_u8((uint8_t const *)&params->scalar.min);
++ 
++   for (; batch >= 64; batch -= 64) {
++     uint8x16_t vacc0 = vld1q_u8(input); input += 16;
++-- 
++2.34.1
++
+-- 
+2.34.1
+
