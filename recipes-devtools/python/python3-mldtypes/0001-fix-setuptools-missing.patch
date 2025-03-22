@@ -1,0 +1,30 @@
+From 1d24be92b58f2a72fc8e53b5a7e09b4dbcca0795 Mon Sep 17 00:00:00 2001
+From: Hongxu Jia <hongxu.jia@windriver.com>
+Date: Fri, 21 Mar 2025 20:49:35 -0700
+Subject: [PATCH] fix setuptools missing
+
+|ERROR Missing dependencies:
+|    setuptools~=75.7.0
+
+Upstream-Status: Inappropriate [oe specific]
+
+Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+---
+ pyproject.toml | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/pyproject.toml b/pyproject.toml
+index c040eb3..881a99b 100644
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -52,7 +52,6 @@ requires = [
+     # We build against the most recent supported NumPy 2.0 release;
+     # see https://github.com/numpy/numpy/issues/27265
+     "numpy~=2.0",
+-    "setuptools~=75.7.0",
+ ]
+ build-backend = "setuptools.build_meta"
+ 
+-- 
+2.25.1
+
