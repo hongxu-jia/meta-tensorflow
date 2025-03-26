@@ -181,23 +181,21 @@ python __anonymous() {
         msg += "\nDetails: https://github.com/tensorflow/tensorflow/issues/16364"
         bb.warn(msg)
 
-
     if not bb.utils.contains("DISTRO_FEATURES", "tensorflow", True, False, d):
         msg = "\nThe official TensorFlow is tested and supported under Python 3.12\n"
         msg += "Please add the following to local.conf\n"
         msg += "    DISTRO_FEATURES:append = ' tensorflow'\n"
         msg += "    DISTRO_FEATURES_NATIVE:append = ' tensorflow'\n"
         msg += "    DISTRO_FEATURES_NATIVESDK:append = ' tensorflow'\n"
-        msg += "It will apply python3 3.12 recipe"
         raise bb.parse.SkipPackage(msg)
 
-    if d.getVar("PYTHON_BASEVERSION") != "3.12":
-        msg = "\nThe official TensorFlow is tested and supported under Python 3.12\n"
+    if d.getVar("PYTHON_BASEVERSION") != "3.13":
+        msg = "\nThe official TensorFlow is tested and supported under Python 3.13\n"
         msg += "Please add the following to local.conf\n"
-        msg += "    PYTHON_BASEVERSION:class-target = '3.12'\n"
-        msg += "    PYTHON_BASEVERSION:class-native = '3.12'\n"
-        msg += "    PYTHON_BASEVERSION:class-nativesdk = '3.12'\n"
-        msg += "It will apply python3 modules for 3.12"
+        msg += "    PYTHON_BASEVERSION:class-target = '3.13'\n"
+        msg += "    PYTHON_BASEVERSION:class-native = '3.13'\n"
+        msg += "    PYTHON_BASEVERSION:class-nativesdk = '3.13'\n"
+        msg += "It will apply python3 modules for 3.13"
         raise bb.parse.SkipPackage(msg)
 }
 
