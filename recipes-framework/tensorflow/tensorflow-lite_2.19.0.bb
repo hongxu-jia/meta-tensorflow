@@ -11,6 +11,7 @@ SRC_URI += " \
     file://0019-fix-build-failure-for-2.19.patch \
     file://0020-tensorflow-compiler-mlir-lite-fix-tensorflow_lite_qu.patch \
     file://0021-build_pip_package_with_bazel.sh-correct-version.patch \
+    file://0001-Add-hermetic-PYTHON-3.13-requirements-lock-file-in-T.patch \
     file://BUILD.in \
     file://BUILD.yocto_compiler \
     file://cc_config.bzl.tpl \
@@ -74,7 +75,7 @@ do_compile () {
     ${BAZEL} build \
         ${CUSTOM_BAZEL_FLAGS} \
         --copt -DTF_LITE_DISABLE_X86_NEON --copt -DMESA_EGL_NO_X11_HEADERS \
-        --repo_env=TF_PYTHON_VERSION=3.12 \
+        --repo_env=TF_PYTHON_VERSION=3.13 \
         tensorflow/lite:libtensorflowlite.so \
         tensorflow/lite/tools/benchmark:benchmark_model \
         //tensorflow/lite/examples/label_image:label_image \

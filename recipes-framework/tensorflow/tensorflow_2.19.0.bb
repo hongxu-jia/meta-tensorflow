@@ -12,6 +12,7 @@ SRC_URI += " \
     file://0020-tensorflow-compiler-mlir-lite-fix-tensorflow_lite_qu.patch \
     file://0021-build_pip_package_with_bazel.sh-correct-version.patch \
     file://0001-do-not-patch-.so-files-for-linux.patch \
+    file://0001-Add-hermetic-PYTHON-3.13-requirements-lock-file-in-T.patch \
     file://BUILD.in \
     file://BUILD.yocto_compiler \
     file://cc_config.bzl.tpl \
@@ -91,7 +92,7 @@ do_compile () {
         --host_crosstool_top=@bazel_tools//tools/cpp:toolchain \
         --verbose_failures \
         --copt -DTF_LITE_DISABLE_X86_NEON \
-        --repo_env=TF_PYTHON_VERSION=3.12 \
+        --repo_env=TF_PYTHON_VERSION=3.13 \
         //tensorflow:libtensorflow.so \
         //tensorflow:libtensorflow_cc.so \
         //tensorflow:libtensorflow_framework.so \

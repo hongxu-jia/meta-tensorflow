@@ -4,6 +4,7 @@ SRC_URI += " \
     file://0012-disable-avxvnni-and-avx512fp16-for-x86.patch \
     file://0019-fix-build-failure-for-2.19.patch \
     file://0020-tensorflow-compiler-mlir-lite-fix-tensorflow_lite_qu.patch \
+    file://0001-Add-hermetic-PYTHON-3.13-requirements-lock-file-in-T.patch \
 "
 
 inherit native
@@ -29,7 +30,7 @@ do_compile () {
         -c opt \
         --subcommands --explain=${T}/explain.log \
         --verbose_explanations --verbose_failures \
-        --repo_env=TF_PYTHON_VERSION=3.12 \
+        --repo_env=TF_PYTHON_VERSION=3.13 \
         --verbose_failures \
         //tensorflow/tools/pip_package:wheel
 }
