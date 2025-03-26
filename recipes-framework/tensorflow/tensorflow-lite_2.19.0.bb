@@ -12,6 +12,7 @@ SRC_URI += " \
     file://0020-tensorflow-compiler-mlir-lite-fix-tensorflow_lite_qu.patch \
     file://0021-build_pip_package_with_bazel.sh-correct-version.patch \
     file://0001-Add-hermetic-PYTHON-3.13-requirements-lock-file-in-T.patch \
+    file://0001-support-python-3.33.patch \
     file://BUILD.in \
     file://BUILD.yocto_compiler \
     file://cc_config.bzl.tpl \
@@ -116,7 +117,7 @@ do_install() {
     install -d ${D}/${PYTHON_SITEPACKAGES_DIR}
     ${STAGING_BINDIR_NATIVE}/pip3 install --disable-pip-version-check -v \
         -t ${D}/${PYTHON_SITEPACKAGES_DIR} --no-cache-dir --no-deps \
-        ${S}/tensorflow/lite/tools/pip_package/gen/tflite_pip/python3/dist/tflite_runtime-${PV}*.whl
+        ${S}/tensorflow/lite/tools/pip_package/gen/tflite_pip/python3/dist/tflite_runtime-${PV}*cp313*.whl
 
     rm -rf ${D}${PYTHON_SITEPACKAGES_DIR}/tflite_runtime-${PV}.dist-info
 

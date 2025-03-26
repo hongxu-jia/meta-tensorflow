@@ -1,0 +1,87 @@
+From 27edd4d7142d5e0ade3941b3c946b875a199334d Mon Sep 17 00:00:00 2001
+From: Hongxu Jia <hongxu.jia@windriver.com>
+Date: Wed, 26 Mar 2025 00:41:51 -0700
+Subject: [PATCH] support python 3.33
+
+_PyArg_NoKeywords related upstream commit [1]
+_PyObject_VisitManagedDict/_PyObject_ClearManagedDict related upstream commit [2]
+
+tensorflow/python/eager/pywrap_tensor.cc:689:8: error: '_PyArg_NoKeywords' was not declared in this scope
+  689 |   if (!_PyArg_NoKeywords("copy_to_device", kwds)) return nullptr;
+      |        ^~~~~~~~~~~~~~~~~
+
+[1] https://github.com/python/cpython/commit/be5e8a010341c4d2d28ef53a1baed402ee06466e
+[2] https://github.com/python/cpython/commit/fc2cb86d210555d509debaeefd370d5331cd9d93
+
+Upstream-Status: Pending
+
+Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+---
+ tensorflow/python/eager/pywrap_tensor.cc | 35 ++++++++++++++++++++++--
+ 1 file changed, 33 insertions(+), 2 deletions(-)
+
+diff --git a/tensorflow/python/eager/pywrap_tensor.cc b/tensorflow/python/eager/pywrap_tensor.cc
+index 5bfa389e..2e44351f 100644
+--- a/tensorflow/python/eager/pywrap_tensor.cc
++++ b/tensorflow/python/eager/pywrap_tensor.cc
+@@ -47,6 +47,33 @@ limitations under the License.
+ #include "tensorflow/python/lib/core/pybind11_status.h"
+ #include "tensorflow/python/lib/core/safe_pyobject_ptr.h"
+ 
++
++#if PY_VERSION_HEX > 0x030C0000
++/* For type constructors that don't take keyword args
++ *
++ * Sets a TypeError and returns 0 if the args/kwargs is
++ * not empty, returns 1 otherwise
++ */
++static int
++_PyArg_NoKeywords(const char *funcname, PyObject *kwargs)
++{
++    if (kwargs == NULL) {
++        return 1;
++    }
++    if (!PyDict_CheckExact(kwargs)) {
++        PyErr_BadInternalCall();
++        return 0;
++    }
++    if (PyDict_GET_SIZE(kwargs) == 0) {
++        return 1;
++    }
++
++    PyErr_Format(PyExc_TypeError, "%.200s() takes no keyword arguments",
++                    funcname);
++    return 0;
++}
++#endif //PY_VERSION_HEX > 0x030C0000
++
+ // forward declare
+ struct EagerTensor;
+ namespace tensorflow {
+@@ -873,8 +900,10 @@ static int EagerTensor_traverse(PyObject* self, visitproc visit, void* arg) {
+ #if PY_VERSION_HEX < 0x030C0000  // < Python 3.12
+   PyObject*& dict = *_PyObject_GetDictPtr(self);
+   Py_VISIT(dict);
+-#else
++#elif PY_VERSION_HEX == 0x030C0000
+   _PyObject_VisitManagedDict(self, visit, arg);
++#else
++  PyObject_VisitManagedDict(self, visit, arg);
+ #endif  // PY_VERSION_HEX < 0x030C0000
+   Py_VISIT(((EagerTensor*)self)->handle_data);
+   Py_VISIT(((EagerTensor*)self)->tensor_shape);
+@@ -896,8 +925,10 @@ extern int EagerTensor_clear(PyObject* self) {
+ #if PY_VERSION_HEX < 0x030C0000  // < Python 3.12
+   PyObject*& dict = *_PyObject_GetDictPtr(self);
+   Py_CLEAR(dict);
+-#else
++#elif PY_VERSION_HEX == 0x030C0000
+   _PyObject_ClearManagedDict(self);
++#else
++  PyObject_ClearManagedDict(self);
+ #endif  // PY_VERSION_HEX < 0x030C0000
+ 
+   Py_CLEAR(((EagerTensor*)self)->handle_data);
+-- 
+2.25.1
+

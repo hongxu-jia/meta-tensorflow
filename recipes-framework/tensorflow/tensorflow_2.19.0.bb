@@ -13,6 +13,7 @@ SRC_URI += " \
     file://0021-build_pip_package_with_bazel.sh-correct-version.patch \
     file://0001-do-not-patch-.so-files-for-linux.patch \
     file://0001-Add-hermetic-PYTHON-3.13-requirements-lock-file-in-T.patch \
+    file://0001-support-python-3.33.patch \
     file://BUILD.in \
     file://BUILD.yocto_compiler \
     file://cc_config.bzl.tpl \
@@ -137,7 +138,7 @@ do_install() {
     install -d ${D}/${PYTHON_SITEPACKAGES_DIR}
     ${STAGING_BINDIR_NATIVE}/pip3 install --disable-pip-version-check -v \
         -t ${D}/${PYTHON_SITEPACKAGES_DIR} --no-cache-dir --no-deps \
-         ${S}/bazel-bin/tensorflow/tools/pip_package/wheel_house/tensorflow-${PV}*.whl
+         ${S}/bazel-bin/tensorflow/tools/pip_package/wheel_house/tensorflow-${PV}*cp313*.whl
 
     (
         cd ${D}${PYTHON_SITEPACKAGES_DIR}/bin;

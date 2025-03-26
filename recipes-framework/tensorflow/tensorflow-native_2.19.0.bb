@@ -5,6 +5,7 @@ SRC_URI += " \
     file://0019-fix-build-failure-for-2.19.patch \
     file://0020-tensorflow-compiler-mlir-lite-fix-tensorflow_lite_qu.patch \
     file://0001-Add-hermetic-PYTHON-3.13-requirements-lock-file-in-T.patch \
+    file://0001-support-python-3.33.patch \
 "
 
 inherit native
@@ -40,7 +41,7 @@ do_install() {
     install -d ${D}/${PYTHON_SITEPACKAGES_DIR}
     ${STAGING_BINDIR_NATIVE}/pip3 install --disable-pip-version-check -v --no-deps \
         -t ${D}/${PYTHON_SITEPACKAGES_DIR} --no-cache-dir \
-         ${S}/bazel-bin/tensorflow/tools/pip_package/wheel_house/tensorflow-${PV}*.whl
+         ${S}/bazel-bin/tensorflow/tools/pip_package/wheel_house/tensorflow-${PV}*cp313*.whl
 
     install -d ${D}${sbindir}
     (
