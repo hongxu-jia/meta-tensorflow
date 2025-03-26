@@ -11,6 +11,7 @@ DEPENDS = " \
 "
 SRCREV = "e36baa302922ea3c7131b302c2996bd2051ee5c4"
 SRC_URI = "git://github.com/tensorflow/tensorflow.git;branch=r2.19;protocol=https \
+    file://0001-support-gcc-15.patch \
     file://0001-use-local-bazel-to-workaround-bazel-paralle-issue.patch \
     file://0002-third_party-eigen_archive-workaround-ice-failure-whi.patch \
     file://0003-drop-bazel_toolchains_repositories-to-support-offlin.patch \
