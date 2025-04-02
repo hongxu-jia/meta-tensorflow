@@ -94,6 +94,7 @@ do_compile () {
         --verbose_failures \
         --copt -DTF_LITE_DISABLE_X86_NEON \
         --repo_env=TF_PYTHON_VERSION=3.13 \
+        --define tflite_with_xnnpack=false \
         //tensorflow:libtensorflow.so \
         //tensorflow:libtensorflow_cc.so \
         //tensorflow:libtensorflow_framework.so \

@@ -1,0 +1,53 @@
+From 68cfb42ba5a1ce243160a7403523b52383fa7233 Mon Sep 17 00:00:00 2001
+From: Hongxu Jia <hongxu.jia@windriver.com>
+Date: Wed, 2 Apr 2025 13:04:12 +0800
+Subject: [PATCH] lite: fix compile failure without XNNPACK engine
+
+Due to commit [1] applied, when building TensorFlow Lite with Bazel,
+add `--define tflite_with_xnnpack=false`, compile failed without XNNPACK engine
+...
+|tensorflow/lite/tools/delegates/xnnpack_delegate_provider.cc:87:29:
+error: 'XNNPackDelegateOptionsDefault' is not a member of 'tflite::evaluation'
+|   87 |     auto opts = evaluation::XNNPackDelegateOptionsDefault();
+...
+
+Do not call evaluation::XNNPackDelegateOptionsDefault() if XNNPACK engine
+is not used
+
+[1] https://github.com/tensorflow/tensorflow/commit/daca3fd175da0c3e10f2350d9c77e436119a815a
+
+Upstream-Status: Pending
+
+Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+---
+ .../lite/tools/delegates/xnnpack_delegate_provider.cc      | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/tensorflow/lite/tools/delegates/xnnpack_delegate_provider.cc b/tensorflow/lite/tools/delegates/xnnpack_delegate_provider.cc
+index c6cbcf8e7aa..9085ccdc8c8 100644
+--- a/tensorflow/lite/tools/delegates/xnnpack_delegate_provider.cc
++++ b/tensorflow/lite/tools/delegates/xnnpack_delegate_provider.cc
+@@ -84,6 +84,12 @@ void XnnpackDelegateProvider::LogParams(const ToolParams& params,
+ TfLiteDelegatePtr XnnpackDelegateProvider::CreateTfLiteDelegate(
+     const ToolParams& params) const {
+   if (params.Get<bool>("use_xnnpack")) {
++#ifdef TFLITE_WITHOUT_XNNPACK
++    return evaluation::CreateXNNPACKDelegate(
++        params.Get<int32_t>("num_threads"),
++        params.Get<bool>("xnnpack_force_fp16"),
++        params.Get<std::string>("xnnpack_weight_cache_file_path").c_str());
++#else
+     auto opts = evaluation::XNNPackDelegateOptionsDefault();
+     opts.num_threads = params.Get<int32_t>("num_threads");
+     // Note that we don't want to use the thread pool for num_threads == 1.
+@@ -100,6 +106,7 @@ TfLiteDelegatePtr XnnpackDelegateProvider::CreateTfLiteDelegate(
+       opts.weight_cache_file_path = path.c_str();
+     }
+     return evaluation::CreateXNNPACKDelegate(&opts);
++#endif
+   }
+   return CreateNullDelegate();
+ }
+-- 
+2.34.1
+

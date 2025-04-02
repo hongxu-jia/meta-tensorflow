@@ -77,6 +77,7 @@ do_compile () {
         ${CUSTOM_BAZEL_FLAGS} \
         --copt -DTF_LITE_DISABLE_X86_NEON --copt -DMESA_EGL_NO_X11_HEADERS \
         --repo_env=TF_PYTHON_VERSION=3.13 \
+        --define tflite_with_xnnpack=false \
         tensorflow/lite:libtensorflowlite.so \
         tensorflow/lite/tools/benchmark:benchmark_model \
         //tensorflow/lite/examples/label_image:label_image \
