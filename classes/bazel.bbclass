@@ -7,8 +7,8 @@ inherit bazel-base
 
 BAZEL_DIR ?= "${WORKDIR}/bazel"
 BAZEL_OUTPUTBASE_DIR ?= "${BAZEL_DIR}/output_base"
-export USER="unused-bazel-user"
-export BAZEL_STARTUP_OPTIONS="--output_user_root=${BAZEL_DIR}/user_root \
+export USER = "unused-bazel-user"
+export BAZEL_STARTUP_OPTIONS = "--output_user_root=${BAZEL_DIR}/user_root \
                    --output_base=${BAZEL_OUTPUTBASE_DIR} \
                    --bazelrc=${S}/bazelrc \
                    --batch  \
@@ -153,7 +153,7 @@ PSEUDO_IGNORE_PATHS .= ",${WORKDIR}/bazel"
 
 inherit unsupportarch
 
-export YOCTO_NATIVE_SYSROOT="${BAZEL_OUTPUTBASE_DIR}/external/yocto_compiler/recipe-sysroot-native"
+export YOCTO_NATIVE_SYSROOT = "${BAZEL_OUTPUTBASE_DIR}/external/yocto_compiler/recipe-sysroot-native"
 
 do_rm_work[prefuncs] += "clean_bazel"
 do_clean[prefuncs] += "clean_bazel"

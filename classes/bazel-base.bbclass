@@ -1,4 +1,4 @@
-export JAVA_HOME="${STAGING_LIBDIR_NATIVE}/jvm/openjdk-11-native"
+export JAVA_HOME = "${STAGING_LIBDIR_NATIVE}/jvm/openjdk-11-native"
 
 # %25 of total number of local CPU cores
 BAZEL_JOBS ??= "HOST_CPUS*.25"
