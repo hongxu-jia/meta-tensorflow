@@ -11,7 +11,6 @@ SRC_URI += " \
     file://0019-fix-build-failure-for-2.19.patch \
     file://0020-tensorflow-compiler-mlir-lite-fix-tensorflow_lite_qu.patch \
     file://0021-build_pip_package_with_bazel.sh-correct-version.patch \
-    file://0001-do-not-patch-.so-files-for-linux.patch \
     file://0001-Add-hermetic-PYTHON-3.13-requirements-lock-file-in-T.patch \
     file://0001-support-python-3.33.patch \
     file://BUILD.in \
