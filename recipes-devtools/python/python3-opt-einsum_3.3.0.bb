@@ -14,6 +14,6 @@ PYPI_SRC_URI = "https://files.pythonhosted.org/packages/source/o/${PYPI_PACKAGE}
 SRC_URI += " \
     file://0001-Use-ConfigParser-instead-of-SafeConfigParser.patch \
 "
-S = "${WORKDIR}/${SRCNAME}-${PV}"
+S = "${UNPACKDIR}/${SRCNAME}-${PV}"
 
 BBCLASSEXTEND = "native"

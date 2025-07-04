@@ -9,7 +9,7 @@ SRC_URI = " \
     https://github.com/ojdkbuild/contrib_jdk11u-ci/releases/download/jdk-11.0.15%2B10/jdk-11.0.15-ojdkbuild-linux-x64.zip \
 "
 
-S = "${WORKDIR}/jdk-11.0.15-ojdkbuild-linux-x64"
+S = "${UNPACKDIR}/jdk-11.0.15-ojdkbuild-linux-x64"
 
 do_patch[noexec] = "1"
 do_configure[noexec] = "1"
