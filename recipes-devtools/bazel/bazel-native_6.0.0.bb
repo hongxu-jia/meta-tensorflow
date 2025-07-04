@@ -25,8 +25,7 @@ DEPENDS = "coreutils-native \
            openjdk-11-native \
           "
 
-S = "${WORKDIR}/sources"
-UNPACKDIR = "${S}"
+S = "${UNPACKDIR}"
 
 inherit bazel-base
 
