@@ -29,8 +29,6 @@ SRC_URI = "git://github.com/tensorflow/tensorflow.git;branch=r2.19;protocol=http
     file://0001-third_party-tf_runtime-fix-compile-failure.patch \
 "
 
-S = "${WORKDIR}/git"
-
 DEPENDS += " \
     python3 \
     python3-requests-native \

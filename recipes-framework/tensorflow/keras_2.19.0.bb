@@ -9,7 +9,6 @@ SRC_URI = "git://github.com/keras-team/tf-keras.git;branch=r2.19;protocol=https 
           "
 
 SRCREV = "a697e6a2238224a89e5cf53fb86fd4808b1b9133"
-S = "${WORKDIR}/git"
 
 inherit python3native bazel
 

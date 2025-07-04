@@ -7,7 +7,6 @@ SRC_URI = "git://github.com/tensorflow/estimator.git;branch=r2.15;protocol=https
            file://0001-customize-for-yocto.patch \
           "
 SRCREV = "b5f91f8e4113396f0a5f090d6a52d676271caf48"
-S = "${WORKDIR}/git"
 
 inherit python3native bazel
 
