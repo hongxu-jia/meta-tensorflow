@@ -25,6 +25,7 @@ SRC_URI = "git://github.com/tensorflow/tensorflow.git;branch=r2.19;protocol=http
     file://0010-fix-patchelf-not-found.patch \
     file://0011-fix-llvm-project-timeout-occasionally.patch \
     file://0001-do-not-patch-.so-files-for-linux.patch \
+    file://0001-third_party-ducc-fix-ambiguous-failure.patch \
 "
 
 S = "${WORKDIR}/git"
