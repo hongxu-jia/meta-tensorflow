@@ -149,8 +149,6 @@ EOF
 
 EXPORT_FUNCTIONS do_configure
 
-PSEUDO_IGNORE_PATHS .= ",${WORKDIR}/bazel"
-
 inherit unsupportarch
 
 export YOCTO_NATIVE_SYSROOT = "${BAZEL_OUTPUTBASE_DIR}/external/yocto_compiler/recipe-sysroot-native"
