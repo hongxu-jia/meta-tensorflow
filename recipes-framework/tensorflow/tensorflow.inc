@@ -71,3 +71,6 @@ do_compile:append() {
     chmod a+w ${BAZEL_DIR}/output_base/execroot/org_tensorflow/bazel-out/*/bin/tensorflow/lite/python/schema_py_srcs_no_include_all || true
     chmod a+w ${BAZEL_DIR}/output_base/execroot/org_tensorflow/bazel-out/*/bin/tensorflow/tools/pip_package/wheel_house || true
 }
+
+DEBUG_OPTIMIZATION:remove:aarch64 = "${@oe.utils.conditional('PACKAGE_ARCH','cortexa53',' -Og','',d)}"
+DEBUG_OPTIMIZATION:append:aarch64 = "${@oe.utils.conditional('PACKAGE_ARCH','cortexa53',' -O','',d)}"
