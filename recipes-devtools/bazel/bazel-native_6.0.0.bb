@@ -12,6 +12,7 @@ SRC_URI = "https://github.com/bazelbuild/bazel/releases/download/${PV}/bazel-${P
            file://0001-cutsomize-native-toolchains-for-Yocto.patch \
            file://0001-fix-compile-failure-on-gcc-13.patch \
            file://1f2b3ed4ac717b814d02a0d125f160ddabe78003.patch \
+           file://include_stdint.patch \
 "
 
 inherit python3native
