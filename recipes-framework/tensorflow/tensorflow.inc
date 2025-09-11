@@ -65,6 +65,17 @@ export TS_DL_DIR
 
 do_compile[network] = "1"
 
+REMOVE_NVIDIA_FILE ?= "1"
+remove_nvidia_files() {
+    if [ "${REMOVE_NVIDIA_FILE}" != "0" ]; then
+        # licenses(["restricted"])  # NVIDIA proprietary license
+        rm -f ${S}/third_party/nccl/hermetic/cuda_nccl.BUILD.tpl
+        # Many files in this direcgory with the restriced license tag from Nvidia
+        rm -rf  ${S}/third_party/gpus/cuda/hermetic/
+    fi
+}
+do_unpack[postfuncs] += "remove_nvidia_files"
+
 # Missing write permission prevents the WORKDIR to be deleted, e.g. when recipe becames unreachable
 do_compile:append() {
     chmod a+w ${BAZEL_DIR}/output_base/execroot/org_tensorflow/bazel-out/*/bin/tensorflow/lite/python/conversion_metadata_schema_py_srcs_no_include_all || true
