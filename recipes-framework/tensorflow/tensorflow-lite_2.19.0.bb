@@ -114,6 +114,29 @@ do_install() {
         ${D}${datadir}/label_image
 
 
+    # install the headers also
+    cd ${S}
+    for header in `find ./tensorflow/lite -type f -name *.h`; do
+        install -D -m 0644 $header ${D}${includedir}/$header
+    done
+
+    for header in `find ./tensorflow/compiler/mlir -type f -name *.h`; do
+        install -D -m 0644 $header ${D}${includedir}/$header
+    done
+
+    for header in `find ./tensorflow/core/public -type f -name *.h`; do
+        install -D -m 0644 $header ${D}${includedir}/$header
+    done
+    cd -
+
+    cd ${WORKDIR}/bazel/output_base/external/flatbuffers/include
+    for header in `find ./flatbuffers -type f`; do
+        install -D -m 0644 $header ${D}${includedir}/$header
+    done
+    cd -
+
+    # header installation done
+
     #echo "Installing pip package"
     install -d ${D}/${PYTHON_SITEPACKAGES_DIR}
     ${STAGING_BINDIR_NATIVE}/pip3 install --disable-pip-version-check -v \
