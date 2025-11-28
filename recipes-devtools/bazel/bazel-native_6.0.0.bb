@@ -15,6 +15,9 @@ SRC_URI = "https://github.com/bazelbuild/bazel/releases/download/${PV}/bazel-${P
            file://include_stdint.patch \
 "
 
+UPSTREAM_CHECK_URI = "https://github.com/bazelbuild/bazel/releases/"
+UPSTREAM_CHECK_REGEX = "releases/tag/v?(?P<pver>\d+(\.\d+)+)$"
+
 inherit python3native
 
 INHIBIT_SYSROOT_STRIP = "1"
