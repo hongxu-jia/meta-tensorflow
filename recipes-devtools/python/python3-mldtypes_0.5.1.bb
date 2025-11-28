@@ -13,6 +13,9 @@ PYPI_SRC_URI = "https://files.pythonhosted.org/packages/32/49/6e67c334872d2c114d
 SRC_URI += "file://0001-fix-setuptools-missing.patch"
 S = "${UNPACKDIR}/${SRCNAME}-${PV}"
 
+UPSTREAM_CHECK_PYPI_PACKAGE = "ml_dtypes"
+UPSTREAM_CHECK_URI = "https://pypi.org/simple/${UPSTREAM_CHECK_PYPI_PACKAGE}/"
+
 DEPENDS = " \
     python3-pybind11-native \
     python3-numpy-native \
