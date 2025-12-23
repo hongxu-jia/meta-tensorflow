@@ -1,0 +1,33 @@
+From 26efc0555710a00ffb76deb6048637cd1309c183 Mon Sep 17 00:00:00 2001
+From: Hongxu Jia <hongxu.jia@windriver.com>
+Date: Tue, 23 Dec 2025 13:35:04 +0800
+Subject: [PATCH] fix compile failed
+
+|tensorflow/lite/toco/graph_transformations/resolve_tensorflow_matmul.cc:177:48: error: ignoring return value of 'constexpr __gnu_cxx::__normal_iterator<_Iterator, _Container> __gnu_cxx::__normal_iterator<_Iterator, _Container>::operator+(difference_type) const [with _Iterator = std::unique_ptr<toco::Operator>*; _Container = std::vector<std::unique_ptr<toco::Operator> >; difference_type = long int]', declared with attribute 'nodiscard' [-Werror=unused-result]
+|  177 |   model->operators.emplace(matmul_it, fc_op) + 1;
+
+Remove useless `+ 1';
+
+Upstream-Status: Pending
+
+Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+---
+ .../toco/graph_transformations/resolve_tensorflow_matmul.cc     | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tensorflow/lite/toco/graph_transformations/resolve_tensorflow_matmul.cc b/tensorflow/lite/toco/graph_transformations/resolve_tensorflow_matmul.cc
+index ccca3f7a..e961891d 100644
+--- a/tensorflow/lite/toco/graph_transformations/resolve_tensorflow_matmul.cc
++++ b/tensorflow/lite/toco/graph_transformations/resolve_tensorflow_matmul.cc
+@@ -174,7 +174,7 @@ TransposeOperator* FindTransposeOpWithInput(const Model& model,
+   fc_op->outputs = matmul_op->outputs;
+ 
+   // Insert the newly constructed FullyConnectedOperator.
+-  model->operators.emplace(matmul_it, fc_op) + 1;
++  model->operators.emplace(matmul_it, fc_op);
+ 
+   // Find the op producing the array passed to this MatMul
+   auto previous_op_it = model->operators.begin();
+-- 
+2.34.1
+

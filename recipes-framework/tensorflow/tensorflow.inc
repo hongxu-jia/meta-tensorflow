@@ -27,6 +27,7 @@ SRC_URI = "git://github.com/tensorflow/tensorflow.git;branch=r2.19;protocol=http
     file://0001-do-not-patch-.so-files-for-linux.patch \
     file://0001-third_party-ducc-fix-ambiguous-failure.patch \
     file://0001-third_party-tf_runtime-fix-compile-failure.patch \
+    file://0001-fix-compile-failed.patch \
 "
 
 DEPENDS += " \
