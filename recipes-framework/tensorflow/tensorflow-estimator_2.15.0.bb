@@ -24,7 +24,7 @@ DEPENDS += " \
     python3-astunparse-native \
     flatbuffers-native \
     tensorflow-native \
-    keras-native \
+    tf-keras-native \
 "
 
 do_compile () {

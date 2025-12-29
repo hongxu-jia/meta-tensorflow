@@ -53,7 +53,7 @@ RDEPENDS:python3-tensorflow += " \
     python3-mldtypes \
     python3-pybind11 \
     tensorflow-estimator \
-    keras \
+    tf-keras \
 "
 
 do_configure:append () {
