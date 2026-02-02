@@ -164,6 +164,23 @@ python __anonymous() {
         msg += "\n(such as qemumips), since upstream does not support big-endian very well."
         msg += "\nDetails: https://github.com/tensorflow/tensorflow/issues/16364"
         bb.warn(msg)
+
+    if not bb.utils.contains("DISTRO_FEATURES", "tensorflow", True, False, d):
+        msg = "\nThe official TensorFlow is tested and supported under Python 3.13\n"
+        msg += "Please add the following to local.conf\n"
+        msg += "    DISTRO_FEATURES:append = ' tensorflow'\n"
+        msg += "    DISTRO_FEATURES_NATIVE:append = ' tensorflow'\n"
+        msg += "    DISTRO_FEATURES_NATIVESDK:append = ' tensorflow'\n"
+        raise bb.parse.SkipPackage(msg)
+
+    if d.getVar("PYTHON_BASEVERSION") != "3.13":
+        msg = "\nThe official TensorFlow is tested and supported under Python 3.13\n"
+        msg += "Please add the following to local.conf\n"
+        msg += "    PYTHON_BASEVERSION:class-target = '3.13'\n"
+        msg += "    PYTHON_BASEVERSION:class-native = '3.13'\n"
+        msg += "    PYTHON_BASEVERSION:class-nativesdk = '3.13'\n"
+        msg += "It will apply python3 modules for 3.13"
+        raise bb.parse.SkipPackage(msg)
 }
 
 COMPATIBLE_HOST:arm = "null"

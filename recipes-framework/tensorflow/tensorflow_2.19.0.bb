@@ -182,7 +182,7 @@ python __anonymous() {
         bb.warn(msg)
 
     if not bb.utils.contains("DISTRO_FEATURES", "tensorflow", True, False, d):
-        msg = "\nThe official TensorFlow is tested and supported under Python 3.12\n"
+        msg = "\nThe official TensorFlow is tested and supported under Python 3.13\n"
         msg += "Please add the following to local.conf\n"
         msg += "    DISTRO_FEATURES:append = ' tensorflow'\n"
         msg += "    DISTRO_FEATURES_NATIVE:append = ' tensorflow'\n"
