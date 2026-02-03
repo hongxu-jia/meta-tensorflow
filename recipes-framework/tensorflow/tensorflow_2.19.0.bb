@@ -52,6 +52,7 @@ RDEPENDS:python3-tensorflow += " \
     python3-flatbuffers \
     python3-mldtypes \
     python3-pybind11 \
+    python3-requests \
     tensorflow-estimator \
     tf-keras \
 "
