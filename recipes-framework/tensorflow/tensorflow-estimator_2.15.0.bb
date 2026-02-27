@@ -8,7 +8,7 @@ SRC_URI = "git://github.com/tensorflow/estimator.git;branch=r2.15;protocol=https
           "
 SRCREV = "b5f91f8e4113396f0a5f090d6a52d676271caf48"
 
-inherit python3native bazel
+inherit python3native bazel tensorflow_ver
 
 DEPENDS += " \
     python3-pip-native \
