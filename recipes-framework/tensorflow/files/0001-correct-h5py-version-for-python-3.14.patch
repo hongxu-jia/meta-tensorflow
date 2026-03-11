@@ -1,0 +1,28 @@
+From c5cac23197ae35f0714fbba034738724898e02fc Mon Sep 17 00:00:00 2001
+From: Hongxu Jia <hongxu.jia@windriver.com>
+Date: Fri, 20 Mar 2026 14:30:44 +0800
+Subject: [PATCH] correct h5py version for python 3.14
+
+Upstream-Status: Pending
+
+Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+---
+ tensorflow/tools/pip_package/setup.py.tpl | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tensorflow/tools/pip_package/setup.py.tpl b/tensorflow/tools/pip_package/setup.py.tpl
+index 9480a3d3..f591d395 100644
+--- a/tensorflow/tools/pip_package/setup.py.tpl
++++ b/tensorflow/tools/pip_package/setup.py.tpl
+@@ -126,7 +126,7 @@ REQUIRED_PACKAGES = [
+     'keras >= 3.12.0',
+     'numpy >= 1.26.0',
+     # Starting with 3.15, only MacOS 14 and 15 are supported.
+-    'h5py >= 3.11.0, < 3.15.0',
++    'h5py > 3.15.0',
+     'ml_dtypes >= 0.5.1, < 1.0.0',
+ ]
+ 
+-- 
+2.34.1
+

@@ -1,0 +1,36 @@
+From 203536dbe9dbb5ba874f0febf21a93c773723645 Mon Sep 17 00:00:00 2001
+From: Hongxu Jia <hongxu.jia@windriver.com>
+Date: Mon, 23 Mar 2026 16:11:32 +0800
+Subject: [PATCH] set x83_64 to arch of whl
+
+Yocto will extract whl at do_install, explicitly set x86_64 otherwise
+extract failed for aarch64 target on x86_64 host
+
+Upstream-Status: Inappropriate [Yocto specific]
+
+Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+---
+ tensorflow/tools/pip_package/BUILD | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
+
+diff --git a/tensorflow/tools/pip_package/BUILD b/tensorflow/tools/pip_package/BUILD
+index 3437fa02..04bfc895 100644
+--- a/tensorflow/tools/pip_package/BUILD
++++ b/tensorflow/tools/pip_package/BUILD
+@@ -324,12 +324,7 @@ tf_wheel(
+         "@platforms//os:windows": "win",
+         "@platforms//os:linux": "linux",
+     }),
+-    platform_tag = select({
+-        "@platforms//cpu:aarch64": "arm64",
+-        "@platforms//cpu:arm64": "arm64",
+-        "@platforms//cpu:x86_64": "x86_64",
+-        "@platforms//cpu:ppc": "ppc64le",
+-    }),
++    platform_tag = "x86_64",
+     source_files = [
+         "MANIFEST.in",
+         "//tensorflow/tools/pip_package:THIRD_PARTY_NOTICES.txt",
+-- 
+2.34.1
+

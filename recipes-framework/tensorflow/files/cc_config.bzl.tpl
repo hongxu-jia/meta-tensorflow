@@ -145,7 +145,6 @@ def _impl(ctx):
                             "-D__TIMESTAMP__=\"redacted\"",
                             "-D__TIME__=\"redacted\"",
                             "-no-canonical-prefixes",
-                            "-fno-canonical-system-headers",
                         ],
                     ),
                 ],
@@ -265,7 +264,6 @@ def _impl(ctx):
                             "-lstdc++",
                             "-Wl,-z,relro,-z,now",
                             "-no-canonical-prefixes",
-                            "-pass-exit-codes",
                             "-Wl,--build-id=md5",
                             "-Wl,--hash-style=gnu",
                         ],
@@ -340,19 +338,11 @@ def _impl(ctx):
         tool_path(name = "compat-ld", path = "/bin/false"),
         tool_path(
             name = "cpp",
-            path = "%{YOCTO_COMPILER_PATH}%/recipe-sysroot-native/usr/bin/%{CT_NAME}%/%{CT_NAME}%-cpp",
-        ),
-        tool_path(
-            name = "dwp",
-            path = "%{YOCTO_COMPILER_PATH}%/recipe-sysroot-native/usr/bin/%{CT_NAME}%/%{CT_NAME}%-dwp",
+            path = "%{YOCTO_COMPILER_PATH}%/recipe-sysroot-native/usr/bin/%{CT_NAME}%/%{CT_NAME}%-clang",
         ),
         tool_path(
             name = "gcc",
-            path = "%{YOCTO_COMPILER_PATH}%/recipe-sysroot-native/usr/bin/%{CT_NAME}%/%{CT_NAME}%-gcc",
-        ),
-        tool_path(
-            name = "gcov",
-            path = "%{YOCTO_COMPILER_PATH}%/recipe-sysroot-native/usr/bin/%{CT_NAME}%/%{CT_NAME}%-gcov",
+            path = "%{YOCTO_COMPILER_PATH}%/recipe-sysroot-native/usr/bin/%{CT_NAME}%/%{CT_NAME}%-clang",
         ),
         tool_path(
             name = "ld",
@@ -360,19 +350,19 @@ def _impl(ctx):
         ),
         tool_path(
             name = "nm",
-            path = "%{YOCTO_COMPILER_PATH}%/recipe-sysroot-native/usr/bin/%{CT_NAME}%/%{CT_NAME}%-nm",
+            path = "%{YOCTO_COMPILER_PATH}%/recipe-sysroot-native/usr/bin/%{CT_NAME}%/%{CT_NAME}%-llvm-nm",
         ),
         tool_path(
             name = "objcopy",
-            path = "%{YOCTO_COMPILER_PATH}%/recipe-sysroot-native/usr/bin/%{CT_NAME}%/%{CT_NAME}%-objcopy",
+            path = "%{YOCTO_COMPILER_PATH}%/recipe-sysroot-native/usr/bin/%{CT_NAME}%/%{CT_NAME}%-llvm-objcopy",
         ),
         tool_path(
             name = "objdump",
-            path = "%{YOCTO_COMPILER_PATH}%/recipe-sysroot-native/usr/bin/%{CT_NAME}%/%{CT_NAME}%-objdump",
+            path = "%{YOCTO_COMPILER_PATH}%/recipe-sysroot-native/usr/bin/%{CT_NAME}%/%{CT_NAME}%-llvm-objdump",
         ),
         tool_path(
             name = "strip",
-            path = "%{YOCTO_COMPILER_PATH}%/recipe-sysroot-native/usr/bin/%{CT_NAME}%/%{CT_NAME}%-strip",
+            path = "%{YOCTO_COMPILER_PATH}%/recipe-sysroot-native/usr/bin/%{CT_NAME}%/%{CT_NAME}%-llvm-strip",
         ),
     ]
 

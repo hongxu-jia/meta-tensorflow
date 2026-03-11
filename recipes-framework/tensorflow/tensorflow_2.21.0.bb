@@ -2,25 +2,17 @@ include tensorflow.inc
 
 SRC_URI += " \
     file://0012-add-yocto-toolchain-to-support-cross-compiling.patch \
-    file://0013-fix-build-tensorflow-lite-examples-label_image-label.patch \
     file://0014-label_image-tweak-default-model-location.patch \
     file://0015-label_image.lite-tweak-default-model-location.patch \
-    file://0016-CheckFeatureOrDie-use-warning-to-avoid-die.patch \
-    file://0017-support-32-bit-x64-and-arm-for-yocto.patch \
     file://0018-build-api_gen_binary_target-as-host-tools.patch \
-    file://0019-fix-build-failure-for-2.19.patch \
-    file://0020-tensorflow-compiler-mlir-lite-fix-tensorflow_lite_qu.patch \
-    file://0021-build_pip_package_with_bazel.sh-correct-version.patch \
-    file://0001-Add-hermetic-PYTHON-3.13-requirements-lock-file-in-T.patch \
-    file://0001-support-python-3.33.patch \
+    file://0001-use-external-toolchains.patch \
     file://BUILD.in \
     file://BUILD.yocto_compiler \
     file://cc_config.bzl.tpl \
     file://yocto_compiler_configure.bzl \
 "
 SRC_URI:append:aarch64 = " \
-   file://0001-fix-compile-XNNPACK-failed-for-aarch64.patch \
-   file://0001-tensorflow-BUILD-fix-build-failure-for-aarch64.patch \
+    file://0001-support-cross-compile-for-target-aarch64.patch \
 "
 
 SRC_URI += "https://storage.googleapis.com/download.tensorflow.org/models/inception_v3_2016_08_28_frozen.pb.tar.gz;name=model-inv3"
@@ -53,8 +45,9 @@ RDEPENDS:python3-tensorflow += " \
     python3-mldtypes \
     python3-pybind11 \
     python3-requests \
-    tensorflow-estimator \
-    tf-keras \
+    python3-keras \
+    python3-rich \
+    python3-optree \
 "
 
 do_configure:append () {
@@ -78,6 +71,8 @@ do_configure:append () {
     ./configure
 }
 
+TOOLCHAIN = "clang"
+
 TF_TARGET_EXTRA ??= ""
 do_compile () {
     export CT_NAME=$(echo ${HOST_PREFIX} | rev | cut -c 2- | rev)
@@ -90,13 +85,11 @@ do_compile () {
         --verbose_explanations --verbose_failures \
         --crosstool_top=@local_config_yocto_compiler//:toolchain \
         --host_crosstool_top=@bazel_tools//tools/cpp:toolchain \
+        --platforms=@local_config_yocto_compiler//:linux_${BAZEL_TARGET_CPU} \
         --verbose_failures \
         --copt -DTF_LITE_DISABLE_X86_NEON \
-        --repo_env=TF_PYTHON_VERSION=3.13 \
+        --repo_env=TF_PYTHON_VERSION=3.14 \
         --define tflite_with_xnnpack=false \
-        //tensorflow:libtensorflow.so \
-        //tensorflow:libtensorflow_cc.so \
-        //tensorflow:libtensorflow_framework.so \
         //tensorflow/tools/benchmark:benchmark_model \
         //tensorflow/tools/pip_package:wheel \
         tensorflow/examples/label_image/... \
@@ -106,10 +99,6 @@ do_compile () {
 
 do_install() {
     install -d ${D}${libdir}
-    install -m 644 ${S}/bazel-bin/tensorflow/libtensorflow.so \
-        ${D}${libdir}
-    install -m 644 ${S}/bazel-bin/tensorflow/libtensorflow_cc.so \
-        ${D}${libdir}
 
     install -d ${D}${sbindir}
     install -m 755 ${S}/bazel-bin/tensorflow/tools/benchmark/benchmark_model \
@@ -138,7 +127,7 @@ do_install() {
     install -d ${D}/${PYTHON_SITEPACKAGES_DIR}
     ${STAGING_BINDIR_NATIVE}/pip3 install --disable-pip-version-check -v \
         -t ${D}/${PYTHON_SITEPACKAGES_DIR} --no-cache-dir --no-deps \
-         ${S}/bazel-bin/tensorflow/tools/pip_package/wheel_house/tensorflow-${PV}*cp313*.whl
+         ${S}/bazel-bin/tensorflow/tools/pip_package/wheel_house/tensorflow-${PV}*cp314*.whl
 
     (
         cd ${D}${PYTHON_SITEPACKAGES_DIR}/bin;
@@ -148,6 +137,7 @@ do_install() {
         done
 
         mv ${D}${PYTHON_SITEPACKAGES_DIR}/tensorflow/libtensorflow_framework.so*  ${D}${libdir}
+        mv ${D}${PYTHON_SITEPACKAGES_DIR}/tensorflow/libtensorflow_cc.so*  ${D}${libdir}
 
         rm -rf ${D}${PYTHON_SITEPACKAGES_DIR}/tensorflow-${PV}.dist-info
     )
@@ -161,7 +151,7 @@ INSANE_SKIP:${PN} += "dev-so \
 PACKAGE_BEFORE_PN += "libtensorflow-c libtensorflow-framework label-image label-image-lite python3-tensorflow"
 
 RDEPENDS:label-image += "libtensorflow-framework"
-RDEPENDS:python3-tensorflow += "libtensorflow-framework"
+RDEPENDS:python3-tensorflow += "libtensorflow-framework libtensorflow-c"
 RDEPENDS:${PN} += "libtensorflow-c libtensorflow-framework label-image label-image-lite python3-tensorflow"
 
 ALLOW_EMPTY:${PN} = "1"
@@ -169,8 +159,8 @@ ALLOW_EMPTY:${PN} = "1"
 PRIVATE_LIBS:python3-tensorflow = "libtensorflow_cc.so.2"
 
 FILES:python3-tensorflow += "${libdir}/* ${datadir}/* ${sbindir}/*"
-FILES:libtensorflow-c = "${libdir}/libtensorflow.so ${libdir}/libtensorflow_cc.so"
-FILES:libtensorflow-framework = "${libdir}/libtensorflow.so ${libdir}/libtensorflow_framework.so*"
+FILES:libtensorflow-c = "${libdir}/libtensorflow_cc.so*"
+FILES:libtensorflow-framework = "${libdir}/libtensorflow_framework.so*"
 FILES:label-image = "${sbindir}/label_image"
 FILES:label-image-lite = "${sbindir}/label_image.lite"
 

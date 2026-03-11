@@ -1,0 +1,28 @@
+From 87cff6a2e5e5c8f72243f4cdb947b95e3c33dd03 Mon Sep 17 00:00:00 2001
+From: Hongxu Jia <hongxu.jia@windriver.com>
+Date: Fri, 20 Mar 2026 17:29:31 +0800
+Subject: [PATCH] do not use pywrap rules
+
+The lite does not require it
+
+Upstream-Status: Pending
+Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+---
+ .bazelrc | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/.bazelrc b/.bazelrc
+index cc8ca5e3..90790235 100644
+--- a/.bazelrc
++++ b/.bazelrc
+@@ -92,7 +92,6 @@ common --define=allow_oversize_protos=true
+ common --spawn_strategy=standalone
+ common -c opt
+ 
+-common --repo_env=USE_PYWRAP_RULES=True
+ common --copt=-DGRPC_BAZEL_BUILD
+ common --host_copt=-DGRPC_BAZEL_BUILD
+ common --action_env=GRPC_BAZEL_RUNTIME=1
+-- 
+2.34.1
+

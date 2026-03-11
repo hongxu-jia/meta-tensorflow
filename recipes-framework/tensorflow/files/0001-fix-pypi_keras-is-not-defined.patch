@@ -1,0 +1,33 @@
+From f6db063151ad23a39c86fbbda8c1de8dbbb8f72c Mon Sep 17 00:00:00 2001
+From: Hongxu Jia <hongxu.jia@windriver.com>
+Date: Mon, 16 Mar 2026 15:02:46 +0800
+Subject: [PATCH] fix '@@pypi_keras' is not defined
+
+|tmp/work/x86_64-linux/tensorflow-native/2.21.0/sources/tensorflow-2.21.0/
+tensorflow/BUILD:1729:18: no such package '@@pypi_keras//': The repository
+'@@pypi_keras' could not be resolved: Repository '@@pypi_keras' is not defined
+and referenced by '//tensorflow:tensorflow_py_no_contrib
+
+Upstream-Status: Pending
+
+Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+---
+ tensorflow/BUILD | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tensorflow/BUILD b/tensorflow/BUILD
+index da5ba2a8..07061a29 100644
+--- a/tensorflow/BUILD
++++ b/tensorflow/BUILD
+@@ -1742,7 +1742,7 @@ py_strict_library(
+         "//tensorflow/lite/python/authoring",
+         "//tensorflow/python:no_contrib",
+         "//tensorflow/python/profiler:profiler_client",
+-        "@pypi_keras//:pkg",
++        "@pypi//keras_nightly",
+         "@pypi//protobuf",
+     ],
+ )
+-- 
+2.34.1
+

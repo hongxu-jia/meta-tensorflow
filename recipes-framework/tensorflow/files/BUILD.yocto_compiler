@@ -3,7 +3,7 @@ package(default_visibility = ['//visibility:public'])
 filegroup(
   name = 'gcc',
   srcs = [
-    'recipe-sysroot-native/usr/bin/%%CT_NAME%%/%%CT_NAME%%-gcc',
+    'recipe-sysroot-native/usr/bin/%%CT_NAME%%/%%CT_NAME%%-clang',
   ],
 )
 
@@ -24,35 +24,35 @@ filegroup(
 filegroup(
   name = 'nm',
   srcs = [
-    'recipe-sysroot-native/usr/bin/%%CT_NAME%%/%%CT_NAME%%-nm',
+    'recipe-sysroot-native/usr/bin/%%CT_NAME%%/%%CT_NAME%%-llvm-nm',
   ],
 )
 
 filegroup(
   name = 'objcopy',
   srcs = [
-    'recipe-sysroot-native/usr/bin/%%CT_NAME%%/%%CT_NAME%%-objcopy',
+    'recipe-sysroot-native/usr/bin/%%CT_NAME%%/%%CT_NAME%%-llvm-objcopy',
   ],
 )
 
 filegroup(
   name = 'objdump',
   srcs = [
-    'recipe-sysroot-native/usr/bin/%%CT_NAME%%/%%CT_NAME%%-objdump',
+    'recipe-sysroot-native/usr/bin/%%CT_NAME%%/%%CT_NAME%%-llvm-objdump',
   ],
 )
 
 filegroup(
   name = 'strip',
   srcs = [
-    'recipe-sysroot-native/usr/bin/%%CT_NAME%%/%%CT_NAME%%-strip',
+    'recipe-sysroot-native/usr/bin/%%CT_NAME%%/%%CT_NAME%%-llvm-strip',
   ],
 )
 
 filegroup(
   name = 'as',
   srcs = [
-    'recipe-sysroot-native/usr/bin/%%CT_NAME%%/%%CT_NAME%%-as',
+    'recipe-sysroot-native/usr/bin/%%CT_NAME%%/%%CT_NAME%%-llvm-as',
   ],
 )
 
@@ -61,8 +61,6 @@ filegroup(
   srcs = glob([
     'recipe-sysroot-native/usr/include/**',
     'recipe-sysroot-native/usr/lib/%%CT_NAME%%/**',
-    'recipe-sysroot-native/usr/lib/%%CT_NAME%%/gcc/**',
-    'recipe-sysroot-native/usr/libexec/%%CT_NAME%%/**',
     'recipe-sysroot/usr/include/**',
   ]),
 )

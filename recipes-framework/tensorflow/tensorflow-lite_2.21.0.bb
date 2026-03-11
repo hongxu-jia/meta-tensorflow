@@ -2,25 +2,18 @@ include tensorflow.inc
 
 SRC_URI += " \
     file://0012-add-yocto-toolchain-to-support-cross-compiling.patch \
-    file://0013-fix-build-tensorflow-lite-examples-label_image-label.patch \
     file://0014-label_image-tweak-default-model-location.patch \
     file://0015-label_image.lite-tweak-default-model-location.patch \
-    file://0016-CheckFeatureOrDie-use-warning-to-avoid-die.patch \
-    file://0017-support-32-bit-x64-and-arm-for-yocto.patch \
     file://0018-build-api_gen_binary_target-as-host-tools.patch \
-    file://0019-fix-build-failure-for-2.19.patch \
-    file://0020-tensorflow-compiler-mlir-lite-fix-tensorflow_lite_qu.patch \
-    file://0021-build_pip_package_with_bazel.sh-correct-version.patch \
-    file://0001-Add-hermetic-PYTHON-3.13-requirements-lock-file-in-T.patch \
-    file://0001-support-python-3.33.patch \
+    file://0001-use-external-toolchains.patch \
+    file://0001-do-not-use-pywrap-rules.patch \
     file://BUILD.in \
     file://BUILD.yocto_compiler \
     file://cc_config.bzl.tpl \
     file://yocto_compiler_configure.bzl \
 "
 SRC_URI:append:aarch64 = " \
-   file://0001-fix-compile-XNNPACK-failed-for-aarch64.patch \
-   file://0001-tensorflow-BUILD-fix-build-failure-for-aarch64.patch \
+   file://0001-support-cross-compile-for-target-aarch64.patch \
 "
 
 SRC_URI += "https://storage.googleapis.com/download.tensorflow.org/models/inception_v3_2016_08_28_frozen.pb.tar.gz;name=model-inv3"
@@ -58,6 +51,8 @@ do_configure:append () {
     ./configure
 }
 
+TOOLCHAIN = "clang"
+
 TF_TARGET_EXTRA ??= ""
 
 export CUSTOM_BAZEL_FLAGS = " \
@@ -67,6 +62,7 @@ export CUSTOM_BAZEL_FLAGS = " \
     --cpu=${BAZEL_TARGET_CPU} \
     --crosstool_top=@local_config_yocto_compiler//:toolchain \
     --host_crosstool_top=@bazel_tools//tools/cpp:toolchain \
+    --platforms=@local_config_yocto_compiler//:linux_${BAZEL_TARGET_CPU} \
 "
 
 do_compile () {
@@ -76,7 +72,7 @@ do_compile () {
     ${BAZEL} build \
         ${CUSTOM_BAZEL_FLAGS} \
         --copt -DTF_LITE_DISABLE_X86_NEON --copt -DMESA_EGL_NO_X11_HEADERS \
-        --repo_env=TF_PYTHON_VERSION=3.13 \
+        --repo_env=TF_PYTHON_VERSION=3.14 \
         --define tflite_with_xnnpack=false \
         tensorflow/lite:libtensorflowlite.so \
         tensorflow/lite/tools/benchmark:benchmark_model \
@@ -92,7 +88,6 @@ do_install() {
     install -d ${D}${libdir}
     install -m 644 ${S}/bazel-bin/tensorflow/lite/libtensorflowlite.so \
         ${D}${libdir}
-
     install -d ${D}${sbindir}
     install -m 755 ${S}/bazel-bin/tensorflow/lite/tools/benchmark/benchmark_model \
         ${D}${sbindir}
@@ -141,7 +136,7 @@ do_install() {
     install -d ${D}/${PYTHON_SITEPACKAGES_DIR}
     ${STAGING_BINDIR_NATIVE}/pip3 install --disable-pip-version-check -v \
         -t ${D}/${PYTHON_SITEPACKAGES_DIR} --no-cache-dir --no-deps \
-        ${S}/tensorflow/lite/tools/pip_package/gen/tflite_pip/python3/dist/tflite_runtime-${PV}*cp313*.whl
+        ${S}/tensorflow/lite/tools/pip_package/gen/tflite_pip/python3/dist/tflite_runtime-${PV}*cp31*.whl
 
     rm -rf ${D}${PYTHON_SITEPACKAGES_DIR}/tflite_runtime-${PV}.dist-info
 
