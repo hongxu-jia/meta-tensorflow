@@ -1,6 +1,6 @@
-From 34c4dc1a10140addf75d3503d4b9f427303fe212 Mon Sep 17 00:00:00 2001
+From 3459b53f52abe448158954adf1370c2485085450 Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@windriver.com>
-Date: Mon, 14 Dec 2020 16:45:31 +0800
+Date: Wed, 11 Mar 2026 01:44:26 -0700
 Subject: [PATCH] add Yocto native sysroot dir to the default Bazel toolchain
 
 While using the default Bazel C++ toolchain to build Yocto native tools
@@ -14,19 +14,19 @@ If not set YOCTO_NATIVE_SYSROOT, use NOT_SET_YOCTO_NATIVE_SYSROOT
 to replace as a warning
 
 Upstream-Status: Inappropriate [oe specific]
-
+Rebase tot 7.7.0
 Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
 ---
  tools/cpp/unix_cc_configure.bzl | 3 +++
  1 file changed, 3 insertions(+)
 
 diff --git a/tools/cpp/unix_cc_configure.bzl b/tools/cpp/unix_cc_configure.bzl
-index d48485b..0d297bf 100755
+index bbbba7e50d..69bea13b3a 100644
 --- a/tools/cpp/unix_cc_configure.bzl
 +++ b/tools/cpp/unix_cc_configure.bzl
-@@ -443,6 +443,9 @@ def configure_unix_toolchain(repository_ctx, cpu_value, overriden_tools):
-             paths["@bazel_tools//tools/cpp:generate_system_module_map.sh"],
-         ))
+@@ -573,6 +573,9 @@ def configure_unix_toolchain(repository_ctx, cpu_value, overriden_tools):
+         if "-fno-cxx-modules" not in result.stderr:
+             extra_flags_per_feature["use_module_maps"] = ["-Xclang", "-fno-cxx-modules"]
  
 +    # Customize for Yocto
 +    builtin_include_directories.append(get_env_var(repository_ctx,"YOCTO_NATIVE_SYSROOT", "NOT_SET_YOCTO_NATIVE_SYSROOT"))
@@ -35,5 +35,5 @@ index d48485b..0d297bf 100755
      repository_ctx.template(
          "BUILD",
 -- 
-2.18.2
+2.49.0
 
