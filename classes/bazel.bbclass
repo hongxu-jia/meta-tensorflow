@@ -1,5 +1,5 @@
 DEPENDS += "bazel-native \
-           openjdk-11-native \
+           openjdk-21-native \
           "
 DEPENDS:append:class-target = " python3"
 

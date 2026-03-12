@@ -22,7 +22,7 @@ CCACHE_DISABLE = "1"
 
 DEPENDS = "coreutils-native \
            zip-native \
-           openjdk-11-native \
+           openjdk-21-native \
           "
 
 S = "${UNPACKDIR}"
