@@ -30,7 +30,7 @@ S = "${UNPACKDIR}"
 inherit bazel-base
 
 EXTRA_BAZEL_ARGS = " \
-    --host_javabase=@local_jdk//:jdk \
+    --tool_java_runtime_version=local_jdk \
     --python_path=python3 \
     --distdir=${TS_DL_DIR} \
     ${@oe.utils.conditional("BAZEL_JOBS", "", "", "--jobs=${BAZEL_JOBS}", d )} \
@@ -40,6 +40,7 @@ EXTRA_BAZEL_ARGS = " \
 
 do_compile[network] = "1"
 do_compile () {
+    BAZEL_DEV_VERSION_OVERRIDE="7.7.0" \
     TMPDIR="${TMPDIR}/bazel" \
     VERBOSE=yes \
     EXTRA_BAZEL_ARGS="${EXTRA_BAZEL_ARGS}" \
