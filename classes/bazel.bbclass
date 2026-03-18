@@ -100,9 +100,6 @@ build --spawn_strategy=standalone --genrule_strategy=standalone
 test --verbose_failures --verbose_test_summary
 test --spawn_strategy=standalone --genrule_strategy=standalone
 
-build --linkopt=-znoexecstack
-build --host_linkopt=-znoexecstack
-
 build --linkopt=-Wl,--no-as-needed
 build --host_linkopt=-Wl,--no-as-needed
 
@@ -156,6 +153,11 @@ export YOCTO_NATIVE_SYSROOT = "${BAZEL_OUTPUTBASE_DIR}/external/yocto_compiler/r
 do_rm_work[prefuncs] += "clean_bazel"
 do_clean[prefuncs] += "clean_bazel"
 clean_bazel() {
+    #  Assure to run `rm -rf ${BAZEL_DIR}' could work
+    if [ -d ${BAZEL_DIR} ]; then
+        chmod -R +w ${BAZEL_DIR}
+    fi
+
     if [ -d ${S} ]; then
         cd ${S}
         if [ -e ${BAZEL} ] && [ -e ${S}/bazelrc ]; then
@@ -165,4 +167,8 @@ clean_bazel() {
     rm ${BAZEL_DIR} -rf
 }
 
+do_compile:append() {
+    #  Assure to run `rm -rf ${BAZEL_DIR}' could work
+    chmod -R +w ${BAZEL_DIR}
+}
 do_compile[network] = "1"
