@@ -1,7 +1,5 @@
 BAZEL_TARGET_CPU ??= ""
-BAZEL_TARGET_CPU:x86 = "x86"
 BAZEL_TARGET_CPU:x86-64 = "k8"
-BAZEL_TARGET_CPU:arm = "arm"
 BAZEL_TARGET_CPU:aarch64 = "aarch64"
 
 python __anonymous() {
