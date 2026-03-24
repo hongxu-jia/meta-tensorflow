@@ -1,6 +1,6 @@
-From d8b929a5a9d0aa63e709a78af38d7bdaa58a016e Mon Sep 17 00:00:00 2001
+From f9f5feee6779c1a9841d4a3b744fc7eff3802178 Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@windriver.com>
-Date: Mon, 14 Jul 2025 16:13:33 +0800
+Date: Thu, 5 Mar 2026 23:40:00 -0800
 Subject: [PATCH] third_party/tf_runtime: fix compile failure
 
 ...
@@ -15,7 +15,7 @@ external/tf_runtime/include/tfrt/support/forward_decls.h:28:1: note: 'int64_t' i
 ...
 
 Upstream-Status: Pending
-
+Rebase to 2.21
 Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
 ---
  .../tf_runtime/0001-fix-compile-failure.patch | 36 +++++++++++++++++++
@@ -66,12 +66,12 @@ index 00000000000..c05ea5b41e7
 +2.34.1
 +
 diff --git a/third_party/tf_runtime/workspace.bzl b/third_party/tf_runtime/workspace.bzl
-index 69fc0f81f6f..460641dde06 100644
+index 5c8ec13c6f4..3a9a88d3acc 100644
 --- a/third_party/tf_runtime/workspace.bzl
 +++ b/third_party/tf_runtime/workspace.bzl
 @@ -18,7 +18,7 @@ def repo():
-             "@tsl": "@local_tsl",
-             "@xla": "@local_xla",
+             "@tsl": "@tsl",
+             "@xla": "@xla",
          },
 -        # A patch file can be provided for atomic commits to both TF and TFRT.
 -        # The job that bumps the TFRT_COMMIT also resets patch_file to 'None'.
@@ -81,5 +81,5 @@ index 69fc0f81f6f..460641dde06 100644
 +        ],
      )
 -- 
-2.34.1
+2.49.0
 

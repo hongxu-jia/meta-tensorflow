@@ -1,11 +1,11 @@
-From a8439d8d6dc9877d6196eec2065fffab1b74af86 Mon Sep 17 00:00:00 2001
+From 28eb8559b29424eb10dde0fcdec9da1aba26b52c Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@windriver.com>
-Date: Fri, 14 Mar 2025 21:27:41 -0700
-Subject: [PATCH 12/21] add yocto toolchain to support cross compiling
+Date: Tue, 10 Mar 2026 23:54:19 -0700
+Subject: [PATCH] add yocto toolchain to support cross compiling
 
 Upstream-Status: Inappropriate [oe specific]
 
-Rebase to 2.19
+Rebase to 2.21
 Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
 ---
  WORKSPACE                 | 7 +++++++
@@ -14,13 +14,13 @@ Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
  3 files changed, 24 insertions(+)
 
 diff --git a/WORKSPACE b/WORKSPACE
-index 0171c60db38..d6872677ce9 100644
+index 4813611b836..a1fd88befe9 100644
 --- a/WORKSPACE
 +++ b/WORKSPACE
-@@ -117,3 +117,10 @@ load(
+@@ -193,3 +193,10 @@ load(
+ nvshmem_redist_init_repository(
+     nvshmem_redistributions = NVSHMEM_REDISTRIBUTIONS,
  )
- 
- nccl_configure(name = "local_config_nccl")
 +
 +new_local_repository(
 +    name = "yocto_compiler",
@@ -29,10 +29,10 @@ index 0171c60db38..d6872677ce9 100644
 +)
 +
 diff --git a/tensorflow/BUILD b/tensorflow/BUILD
-index 94c9a9721ac..c7d4410cbbd 100644
+index da5ba2a8093..b2b6e6081de 100644
 --- a/tensorflow/BUILD
 +++ b/tensorflow/BUILD
-@@ -356,6 +356,15 @@ config_setting(
+@@ -390,6 +390,15 @@ config_setting(
      visibility = ["//visibility:public"],
  )
  
@@ -47,20 +47,20 @@ index 94c9a9721ac..c7d4410cbbd 100644
 +
  config_setting(
      name = "android_arm",
-     constraint_values = if_google(
+     constraint_values =
 diff --git a/tensorflow/workspace2.bzl b/tensorflow/workspace2.bzl
-index 146e7353c3e..48b5b385211 100644
+index 5e634efe5e1..57575f83125 100644
 --- a/tensorflow/workspace2.bzl
 +++ b/tensorflow/workspace2.bzl
-@@ -12,6 +12,7 @@ load("//tensorflow/tools/def_file_filter:def_file_filter_configure.bzl", "def_fi
- load("//tensorflow/tools/toolchains:cpus/aarch64/aarch64_compiler_configure.bzl", "aarch64_compiler_configure")
- load("//tensorflow/tools/toolchains:cpus/arm/arm_compiler_configure.bzl", "arm_compiler_configure")
- load("//tensorflow/tools/toolchains/clang6:repo.bzl", "clang6_configure")
+@@ -44,6 +44,7 @@ load("@xla//tools/def_file_filter:def_file_filter_configure.bzl", "def_file_filt
+ load("@xla//tools/toolchains:cpus/aarch64/aarch64_compiler_configure.bzl", "aarch64_compiler_configure")
+ load("@xla//tools/toolchains:cpus/arm/arm_compiler_configure.bzl", "arm_compiler_configure")
+ load("@xla//tools/toolchains/clang6:repo.bzl", "clang6_configure")
 +load("//third_party/toolchains/yocto:yocto_compiler_configure.bzl", "yocto_compiler_configure")
- load("//tensorflow/tools/toolchains/embedded/arm-linux:arm_linux_toolchain_configure.bzl", "arm_linux_toolchain_configure")
- load("//tensorflow/tools/toolchains/remote:configure.bzl", "remote_execution_configure")
- load("//tensorflow/tools/toolchains/remote_config:configs.bzl", "initialize_rbe_configs")
-@@ -131,6 +132,13 @@ def _tf_toolchains():
+ load("@xla//tools/toolchains/embedded/arm-linux:arm_linux_toolchain_configure.bzl", "arm_linux_toolchain_configure")
+ load("@xla//tools/toolchains/remote:configure.bzl", "remote_execution_configure")
+ load("@xla//tools/toolchains/remote_config:configs.bzl", "initialize_rbe_configs")
+@@ -153,6 +154,13 @@ def _tf_toolchains():
      # Load aarch64 toolchain
      aarch64_compiler_configure()
  
@@ -75,5 +75,5 @@ index 146e7353c3e..48b5b385211 100644
      arm_linux_toolchain_configure(
          name = "local_config_embedded_arm",
 -- 
-2.25.1
+2.49.0
 
