@@ -8,6 +8,9 @@ SRC_URI[sha256sum] = "8ab06a50fb9bf9666dd0fe5dfb4676fa2b0ac0f31ecff72a6c3af8e22c
 
 inherit pypi python_setuptools_build_meta
 
+SRC_URI += " \
+    file://0001-skip-setuptools-testing.patch \
+"
 PYPI_PACKAGE = "ml_dtypes"
 
 UPSTREAM_CHECK_PYPI_PACKAGE = "${PYPI_PACKAGE}"

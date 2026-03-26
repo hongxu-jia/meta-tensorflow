@@ -1,0 +1,30 @@
+From 409a2e91f8f2c16d60b829a5076dac915f4b67de Mon Sep 17 00:00:00 2001
+From: Hongxu Jia <hongxu.jia@windriver.com>
+Date: Thu, 26 Mar 2026 12:34:53 +0800
+Subject: [PATCH] skip setuptools testing
+
+The version of setuptools in Yocto is newer than 80.9.0,
+skip setuptools testing to workaround
+
+Upstream-Status: Inappropriate [Yocto specific]
+
+Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+---
+ pyproject.toml | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/pyproject.toml b/pyproject.toml
+index e22fea8..28f636a 100644
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -52,7 +52,6 @@ requires = [
+     # We build against the most recent supported NumPy 2.0 release;
+     # see https://github.com/numpy/numpy/issues/27265
+     "numpy~=2.0",
+-    "setuptools~=80.9.0",
+ ]
+ build-backend = "setuptools.build_meta"
+ 
+-- 
+2.34.1
+
