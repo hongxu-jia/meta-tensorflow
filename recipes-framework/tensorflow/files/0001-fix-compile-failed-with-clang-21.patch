@@ -1,0 +1,67 @@
+From e5ad17546bef703c07a98ff61eaef98b0e29c16c Mon Sep 17 00:00:00 2001
+From: Hongxu Jia <hongxu.jia@windriver.com>
+Date: Thu, 26 Mar 2026 05:54:09 +0000
+Subject: [PATCH] fix compile failed with clang 21
+
+|external/boringssl/src/crypto/fipsmodule/../internal.h:857:10: error: returning 'const void *' from a function with result type 'void *' discards qualifiers [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
+|  857 |   return memchr(s, c, n);
+|      |          ^~~~~~~~~~~~~~~
+
+Upstream-Status: Pending
+Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+---
+ tensorflow/workspace2.bzl                     |  1 +
+ ...001-fix-compile-failed-with-clang-21.patch | 29 +++++++++++++++++++
+ 2 files changed, 30 insertions(+)
+ create mode 100644 third_party/systemlibs/0001-fix-compile-failed-with-clang-21.patch
+
+diff --git a/tensorflow/workspace2.bzl b/tensorflow/workspace2.bzl
+index 574c5916..6c7e19cb 100644
+--- a/tensorflow/workspace2.bzl
++++ b/tensorflow/workspace2.bzl
+@@ -520,6 +520,7 @@ def _tf_repositories():
+         sha256 = "9dc53f851107eaf87b391136d13b815df97ec8f76dadb487b58b2fc45e624d2c",
+         strip_prefix = "boringssl-c00d7ca810e93780bd0c8ee4eea28f4f2ea4bcdc",
+         system_build_file = "//third_party/systemlibs:boringssl.BUILD",
++        patch_file = ["//third_party/systemlibs:0001-fix-compile-failed-with-clang-21.patch"],
+         urls = tf_mirror_urls("https://github.com/google/boringssl/archive/c00d7ca810e93780bd0c8ee4eea28f4f2ea4bcdc.tar.gz"),
+     )
+ 
+diff --git a/third_party/systemlibs/0001-fix-compile-failed-with-clang-21.patch b/third_party/systemlibs/0001-fix-compile-failed-with-clang-21.patch
+new file mode 100644
+index 00000000..d0c87359
+--- /dev/null
++++ b/third_party/systemlibs/0001-fix-compile-failed-with-clang-21.patch
+@@ -0,0 +1,29 @@
++From 26830458775739de40de9445f556cf80575b147b Mon Sep 17 00:00:00 2001
++From: Hongxu Jia <hongxu.jia@windriver.com>
++Date: Thu, 26 Mar 2026 13:50:15 +0800
++Subject: [PATCH] fix compile failed with clang 21
++
++|external/boringssl/src/crypto/fipsmodule/../internal.h:857:10: error: returning 'const void *' from a function with result type 'void *' discards qualifiers [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
++|  857 |   return memchr(s, c, n);
++|      |          ^~~~~~~~~~~~~~~
++
++Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
++---
++ BUILD | 1 +
++ 1 file changed, 1 insertion(+)
++
++diff --git a/BUILD b/BUILD
++index 2067864..b927300 100644
++--- a/BUILD
+++++ b/BUILD
++@@ -85,6 +85,7 @@ gcc_copts = [
++     "-Wwrite-strings",
++     "-Wshadow",
++     "-fno-common",
+++    "-Wno-incompatible-pointer-types-discards-qualifiers",
++ ]
++ gcc_copts_c11 = [
++     "-std=c11",
++-- 
++2.34.1
++
+-- 
+2.34.1
+
