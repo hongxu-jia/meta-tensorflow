@@ -14,6 +14,7 @@ SRC_URI = "git://github.com/tensorflow/tensorflow.git;branch=r2.21;protocol=http
     file://0001-Add-support-for-Python-3.14-to-TensorFlow-build-conf.patch \
     file://0001-Update-grpcio-to-1.78.0-for-Python-3.14.patch \
     file://0001-Update-requirements_lock_3_14.txt.patch \
+    file://0001-Update-whl-for-python3-3.14.patch \
     file://0001-correct-h5py-version-for-python-3.14.patch \
     file://0001-lite-fix-compile-failure-without-XNNPACK-engine.patch \
     file://0001-use-local-bazel-to-workaround-bazel-paralle-issue.patch \
