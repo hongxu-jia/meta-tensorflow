@@ -123,13 +123,6 @@ do_install() {
         install -D -m 0644 $header ${D}${includedir}/$header
     done
     cd -
-
-    cd ${WORKDIR}/bazel/output_base/external/flatbuffers/include
-    for header in `find ./flatbuffers -type f`; do
-        install -D -m 0644 $header ${D}${includedir}/$header
-    done
-    cd -
-
     # header installation done
 
     #echo "Installing pip package"
