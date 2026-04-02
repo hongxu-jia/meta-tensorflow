@@ -8,7 +8,7 @@ SRC_URI = "https://github.com/bazelbuild/bazel/releases/download/${PV}/bazel-${P
            file://0001-HttpDownloader-save-download-tarball-to-distdir.patch \
            file://0001-fix-unzip-command-not-found.patch \
            file://0001-add-Yocto-native-sysroot-dir-to-the-default-Bazel-to.patch \
-           file://0001-cutsomize-native-toolchains-for-Yocto.patch \
+           file://0001-customize-native-toolchains-for-Yocto.patch \
 "
 
 UPSTREAM_CHECK_URI = "https://github.com/bazelbuild/bazel/releases/"

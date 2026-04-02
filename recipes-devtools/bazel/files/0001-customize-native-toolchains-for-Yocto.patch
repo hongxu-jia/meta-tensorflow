@@ -1,7 +1,7 @@
 From f0c6f3420acdbfd22e06603ca3bbeae3e7d98fc2 Mon Sep 17 00:00:00 2001
 From: Hongxu Jia <hongxu.jia@windriver.com>
 Date: Wed, 11 Mar 2026 01:48:31 -0700
-Subject: [PATCH] cutsomize native toolchains for Yocto
+Subject: [PATCH] customize native toolchains for Yocto
 
 Yocto use environment HOSTTOOLS_DIR to provide native toolchains,
 explicitly set it rather than detect
