@@ -85,11 +85,11 @@ def bazel_get_flags(d):
 
     if d.getVar("BAZEL_JOBS"):
         flags += "# From BAZEL_JOBS\n"
-        flags += "build --jobs=%s --local_cpu_resources=%s\n" % (d.getVar("BAZEL_JOBS"), d.getVar("BAZEL_JOBS"))
+        flags += "build --jobs=%s --local_resources=cpu=%s\n" % (d.getVar("BAZEL_JOBS"), d.getVar("BAZEL_JOBS"))
 
     if d.getVar("BAZEL_MEM"):
         flags += "# From BAZEL_MEM\n"
-        flags += "build --local_ram_resources=%s\n" % (d.getVar("BAZEL_MEM"))
+        flags += "build --local_resources=memory=%s\n" % (d.getVar("BAZEL_MEM"))
 
     return flags
 

@@ -35,8 +35,8 @@ EXTRA_BAZEL_ARGS = " \
     --distdir=${TS_DL_DIR} \
     --color=no \
     ${@oe.utils.conditional("BAZEL_JOBS", "", "", "--jobs=${BAZEL_JOBS}", d )} \
-    ${@oe.utils.conditional("BAZEL_JOBS", "", "", "--local_cpu_resources=${BAZEL_JOBS}", d )} \
-    ${@oe.utils.conditional("BAZEL_MEM", "", "", "--local_ram_resources=${BAZEL_MEM}", d )} \
+    ${@oe.utils.conditional("BAZEL_JOBS", "", "", "--local_resources=cpu=${BAZEL_JOBS}", d )} \
+    ${@oe.utils.conditional("BAZEL_MEM", "", "", "--local_resources=memory=${BAZEL_MEM}", d )} \
 "
 
 do_compile[network] = "1"
