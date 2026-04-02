@@ -113,6 +113,8 @@ build --python_path=python3
 fetch --distdir=${TS_DL_DIR}
 build --distdir=${TS_DL_DIR}
 
+build --color=no
+
 ${@bazel_get_flags(d)}
 
 EOF

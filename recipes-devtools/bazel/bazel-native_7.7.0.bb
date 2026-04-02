@@ -33,6 +33,7 @@ EXTRA_BAZEL_ARGS = " \
     --tool_java_runtime_version=local_jdk \
     --python_path=python3 \
     --distdir=${TS_DL_DIR} \
+    --color=no \
     ${@oe.utils.conditional("BAZEL_JOBS", "", "", "--jobs=${BAZEL_JOBS}", d )} \
     ${@oe.utils.conditional("BAZEL_JOBS", "", "", "--local_cpu_resources=${BAZEL_JOBS}", d )} \
     ${@oe.utils.conditional("BAZEL_MEM", "", "", "--local_ram_resources=${BAZEL_MEM}", d )} \
