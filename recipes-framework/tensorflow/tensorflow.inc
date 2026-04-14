@@ -26,6 +26,7 @@ SRC_URI = "git://github.com/tensorflow/tensorflow.git;branch=r2.21;protocol=http
     file://0001-fix-pypi_keras-is-not-defined.patch \
     file://0001-set-x83_64-to-arch-of-whl.patch \
     file://0001-fix-compile-failed-with-clang-21.patch \
+    file://0001-fix-clang-22.patch \
 "
 
 DEPENDS += " \

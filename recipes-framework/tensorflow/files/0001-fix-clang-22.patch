@@ -1,0 +1,529 @@
+From 2b75edafb4f720c22b9fdca3dfe5fbf1f0c5515b Mon Sep 17 00:00:00 2001
+From: Hongxu Jia <hongxu.jia@windriver.com>
+Date: Tue, 14 Apr 2026 12:09:14 +0800
+Subject: [PATCH] third_party/com_google_highway: fix compile failure on clang
+ 22
+
+Backport 5 patches from upstream https://github.com/google/highway
+to fix the issue
+
+ 4201022d Detect clang 19/20/21, also allow user override
+ 6c595a1b Increase the clang version number to check for to disable `SVE/SVE2` tests.
+ 16bbb825 Update target attributes for changed clang AVX10.2 policy. Fixes #2697
+ ad48f2bf workaround for inadvertent SVE codegen on GCC<14. Fixes #2689, thanks @kleisauke
+ bd28820d mark avx10.2 broken prior to gcc 15.2, clang 20. Fixes #2671
+
+Upstream-Status: Backport [https://github.com/google/highway]
+
+Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+---
+ ...ken-prior-to-gcc-15.2-clang-20.-Fixe.patch |  63 ++++
+ ...nadvertent-SVE-codegen-on-GCC-14.-Fi.patch |  31 ++
+ ...tributes-for-changed-clang-AVX10.2-p.patch |  41 +++
+ ...ng-version-number-to-check-for-to-di.patch |  36 +++
+ ...ng-19-20-21-also-allow-user-override.patch | 276 ++++++++++++++++++
+ third_party/com_google_highway/workspace.bzl  |   8 +-
+ 6 files changed, 454 insertions(+), 1 deletion(-)
+ create mode 100644 third_party/com_google_highway/0001-mark-avx10.2-broken-prior-to-gcc-15.2-clang-20.-Fixe.patch
+ create mode 100644 third_party/com_google_highway/0002-workaround-for-inadvertent-SVE-codegen-on-GCC-14.-Fi.patch
+ create mode 100644 third_party/com_google_highway/0003-Update-target-attributes-for-changed-clang-AVX10.2-p.patch
+ create mode 100644 third_party/com_google_highway/0004-Increase-the-clang-version-number-to-check-for-to-di.patch
+ create mode 100644 third_party/com_google_highway/0005-Detect-clang-19-20-21-also-allow-user-override.patch
+
+diff --git a/third_party/com_google_highway/0001-mark-avx10.2-broken-prior-to-gcc-15.2-clang-20.-Fixe.patch b/third_party/com_google_highway/0001-mark-avx10.2-broken-prior-to-gcc-15.2-clang-20.-Fixe.patch
+new file mode 100644
+index 00000000..57c425e4
+--- /dev/null
++++ b/third_party/com_google_highway/0001-mark-avx10.2-broken-prior-to-gcc-15.2-clang-20.-Fixe.patch
+@@ -0,0 +1,63 @@
++From 4c79f6bf7db9eb2d194108e107010396e249e43a Mon Sep 17 00:00:00 2001
++From: Jan Wassenberg <janwas@google.com>
++Date: Fri, 15 Aug 2025 02:54:08 -0700
++Subject: [PATCH 1/5] mark avx10.2 broken prior to gcc 15.2, clang 20. Fixes
++ #2671
++
++PiperOrigin-RevId: 795407750
++---
++ hwy/detect_targets.h | 24 ++++++++++++++++--------
++ 1 file changed, 16 insertions(+), 8 deletions(-)
++
++diff --git a/hwy/detect_targets.h b/hwy/detect_targets.h
++index 3fe21acf..5671253e 100644
++--- a/hwy/detect_targets.h
+++++ b/hwy/detect_targets.h
++@@ -194,6 +194,15 @@
++ #endif
++ #endif  // HWY_BROKEN_MSVC
++ 
+++#ifndef HWY_BROKEN_AVX10_2  // allow override
+++// AVX10_2 requires clang >= 20.1 or gcc >= 15.2 with binutils 2.44.
+++#if (HWY_COMPILER_CLANG < 2001) && (HWY_COMPILER_GCC_ACTUAL < 1502)
+++#define HWY_BROKEN_AVX10_2 HWY_AVX10_2
+++#else
+++#define HWY_BROKEN_AVX10_2 0
+++#endif
+++#endif  // HWY_BROKEN_AVX10_2
+++
++ #ifndef HWY_BROKEN_AVX3_DL_ZEN4  // allow override
++ // AVX3_DL and AVX3_ZEN4 require clang >= 7 (ensured above), gcc >= 8.1 or ICC
++ // 2021.
++@@ -360,12 +369,12 @@
++ // Allow the user to override this without any guarantee of success.
++ #ifndef HWY_BROKEN_TARGETS
++ 
++-#define HWY_BROKEN_TARGETS                                     \
++-  (HWY_BROKEN_CLANG6 | HWY_BROKEN_32BIT | HWY_BROKEN_MSVC |    \
++-   HWY_BROKEN_AVX3_DL_ZEN4 | HWY_BROKEN_AVX3_SPR |             \
++-   HWY_BROKEN_ARM7_BIG_ENDIAN | HWY_BROKEN_ARM7_WITHOUT_VFP4 | \
++-   HWY_BROKEN_NEON_BF16 | HWY_BROKEN_SVE | HWY_BROKEN_SVE2 |   \
++-   HWY_BROKEN_PPC10 | HWY_BROKEN_PPC_32BIT | HWY_BROKEN_RVV |  \
+++#define HWY_BROKEN_TARGETS                                              \
+++  (HWY_BROKEN_CLANG6 | HWY_BROKEN_32BIT | HWY_BROKEN_MSVC |             \
+++   HWY_BROKEN_AVX10_2 | HWY_BROKEN_AVX3_DL_ZEN4 | HWY_BROKEN_AVX3_SPR | \
+++   HWY_BROKEN_ARM7_BIG_ENDIAN | HWY_BROKEN_ARM7_WITHOUT_VFP4 |          \
+++   HWY_BROKEN_NEON_BF16 | HWY_BROKEN_SVE | HWY_BROKEN_SVE2 |            \
+++   HWY_BROKEN_PPC10 | HWY_BROKEN_PPC_32BIT | HWY_BROKEN_RVV |           \
++    HWY_BROKEN_LOONGARCH | HWY_BROKEN_Z14)
++ 
++ #endif  // HWY_BROKEN_TARGETS
++@@ -642,8 +651,7 @@
++ #define HWY_BASELINE_AVX3_SPR 0
++ #endif
++ 
++-#if HWY_BASELINE_AVX3_SPR != 0 && defined(__AVX10_2__) && \
++-    (HWY_COMPILER_GCC_ACTUAL >= 1500 || HWY_COMPILER_CLANG >= 2001)
+++#if HWY_BASELINE_AVX3_SPR != 0 && defined(__AVX10_2__)
++ #define HWY_BASELINE_AVX10_2 HWY_AVX10_2
++ #else
++ #define HWY_BASELINE_AVX10_2 0
++-- 
++2.49.0
++
+diff --git a/third_party/com_google_highway/0002-workaround-for-inadvertent-SVE-codegen-on-GCC-14.-Fi.patch b/third_party/com_google_highway/0002-workaround-for-inadvertent-SVE-codegen-on-GCC-14.-Fi.patch
+new file mode 100644
+index 00000000..8e1da210
+--- /dev/null
++++ b/third_party/com_google_highway/0002-workaround-for-inadvertent-SVE-codegen-on-GCC-14.-Fi.patch
+@@ -0,0 +1,31 @@
++From 2a4673417aec32e109b773afb225d75aa3a64051 Mon Sep 17 00:00:00 2001
++From: Jan Wassenberg <janwas@google.com>
++Date: Fri, 29 Aug 2025 00:25:36 -0700
++Subject: [PATCH 2/5] workaround for inadvertent SVE codegen on GCC<14. Fixes
++ #2689, thanks @kleisauke
++
++PiperOrigin-RevId: 800778928
++---
++ hwy/ops/set_macros-inl.h | 5 +++++
++ 1 file changed, 5 insertions(+)
++
++diff --git a/hwy/ops/set_macros-inl.h b/hwy/ops/set_macros-inl.h
++index 852aa13c..17d26418 100644
++--- a/hwy/ops/set_macros-inl.h
+++++ b/hwy/ops/set_macros-inl.h
++@@ -554,7 +554,12 @@
++ #endif
++ 
++ #if HWY_TARGET == HWY_NEON_WITHOUT_AES
+++#if HWY_COMPILER_GCC_ACTUAL && HWY_COMPILER_GCC_ACTUAL < 1400
+++// Prevents inadvertent use of SVE by GCC 13.4 and earlier, see #2689.
+++#define HWY_TARGET_STR "+nosve"
+++#else
++ // Do not define HWY_TARGET_STR (no pragma).
+++#endif  // HWY_COMPILER_GCC_ACTUAL
++ #elif HWY_TARGET == HWY_NEON
++ #define HWY_TARGET_STR HWY_TARGET_STR_NEON
++ #elif HWY_TARGET == HWY_NEON_BF16
++-- 
++2.49.0
++
+diff --git a/third_party/com_google_highway/0003-Update-target-attributes-for-changed-clang-AVX10.2-p.patch b/third_party/com_google_highway/0003-Update-target-attributes-for-changed-clang-AVX10.2-p.patch
+new file mode 100644
+index 00000000..89bde4cc
+--- /dev/null
++++ b/third_party/com_google_highway/0003-Update-target-attributes-for-changed-clang-AVX10.2-p.patch
+@@ -0,0 +1,41 @@
++From 62f35f12de25e28227531ae2697c05d237ec6997 Mon Sep 17 00:00:00 2001
++From: Jan Wassenberg <janwas@google.com>
++Date: Mon, 8 Sep 2025 09:26:40 -0700
++Subject: [PATCH 3/5] Update target attributes for changed clang AVX10.2
++ policy. Fixes #2697
++
++PiperOrigin-RevId: 804463801
++---
++ hwy/ops/set_macros-inl.h | 8 +++-----
++ 1 file changed, 3 insertions(+), 5 deletions(-)
++
++diff --git a/hwy/ops/set_macros-inl.h b/hwy/ops/set_macros-inl.h
++index 17d26418..cf917967 100644
++--- a/hwy/ops/set_macros-inl.h
+++++ b/hwy/ops/set_macros-inl.h
++@@ -141,8 +141,8 @@
++ #define HWY_TARGET_STR_AVX2 \
++   HWY_TARGET_STR_SSE4 ",avx,avx2" HWY_TARGET_STR_BMI2_FMA HWY_TARGET_STR_F16C
++ 
++-#if (HWY_COMPILER_GCC_ACTUAL >= 1400 && HWY_COMPILER_GCC_ACTUAL < 1600) || \
++-    HWY_COMPILER_CLANG >= 1800
+++#if (1400 <= HWY_COMPILER_GCC_ACTUAL && HWY_COMPILER_GCC_ACTUAL < 1600) || \
+++    (1800 <= HWY_COMPILER_CLANG && HWY_COMPILER_CLANG < 2000)
++ #define HWY_TARGET_STR_AVX3_VL512 ",evex512"
++ #else
++ #define HWY_TARGET_STR_AVX3_VL512
++@@ -188,10 +188,8 @@
++ #define HWY_TARGET_STR_AVX3_SPR \
++   HWY_TARGET_STR_AVX3_SPR_256 HWY_TARGET_STR_AVX3_VL512
++ 
++-#if HWY_COMPILER_GCC_ACTUAL >= 1500
+++#if HWY_COMPILER_GCC_ACTUAL >= 1500 || HWY_COMPILER_CLANG >= 2000
++ #define HWY_TARGET_STR_AVX10_2 HWY_TARGET_STR_AVX3_SPR ",avx10.2"
++-#elif HWY_COMPILER_CLANG >= 2000
++-#define HWY_TARGET_STR_AVX10_2 HWY_TARGET_STR_AVX3_SPR ",avx10.2-512"
++ #else
++ #define HWY_TARGET_STR_AVX10_2 HWY_TARGET_STR_AVX3_SPR
++ #endif
++-- 
++2.49.0
++
+diff --git a/third_party/com_google_highway/0004-Increase-the-clang-version-number-to-check-for-to-di.patch b/third_party/com_google_highway/0004-Increase-the-clang-version-number-to-check-for-to-di.patch
+new file mode 100644
+index 00000000..ef0756ff
+--- /dev/null
++++ b/third_party/com_google_highway/0004-Increase-the-clang-version-number-to-check-for-to-di.patch
+@@ -0,0 +1,36 @@
++From 0d9e1f16ed8e68f3cb5c978441ceeb858c37214e Mon Sep 17 00:00:00 2001
++From: Highway <no-reply@google.com>
++Date: Tue, 9 Sep 2025 11:20:13 -0700
++Subject: [PATCH 4/5] Increase the clang version number to check for to disable
++ `SVE/SVE2` tests.
++
++PiperOrigin-RevId: 804989718
++---
++ hwy/detect_targets.h | 4 ++--
++ 1 file changed, 2 insertions(+), 2 deletions(-)
++
++diff --git a/hwy/detect_targets.h b/hwy/detect_targets.h
++index 5671253e..e6ea6364 100644
++--- a/hwy/detect_targets.h
+++++ b/hwy/detect_targets.h
++@@ -268,7 +268,7 @@
++ #ifndef HWY_BROKEN_SVE  // allow override
++ // GCC 10+. Clang 19 still has many test failures for SVE. No Apple CPU (at
++ // least up to and including M4 and A18) has SVE.
++-#if (HWY_COMPILER_CLANG && HWY_COMPILER_CLANG < 2000) ||           \
+++#if (HWY_COMPILER_CLANG && HWY_COMPILER_CLANG < 2100) ||           \
++     (HWY_COMPILER_GCC_ACTUAL && HWY_COMPILER_GCC_ACTUAL < 1000) || \
++     HWY_OS_APPLE
++ #define HWY_BROKEN_SVE (HWY_SVE | HWY_SVE_256)
++@@ -279,7 +279,7 @@
++ 
++ #ifndef HWY_BROKEN_SVE2  // allow override
++ // Clang 19 still has many test failures for SVE2.
++-#if (HWY_COMPILER_CLANG && HWY_COMPILER_CLANG < 2000) ||           \
+++#if (HWY_COMPILER_CLANG && HWY_COMPILER_CLANG < 2100) ||           \
++     (HWY_COMPILER_GCC_ACTUAL && HWY_COMPILER_GCC_ACTUAL < 1000) || \
++     HWY_OS_APPLE
++ #define HWY_BROKEN_SVE2 (HWY_SVE2 | HWY_SVE2_128)
++-- 
++2.49.0
++
+diff --git a/third_party/com_google_highway/0005-Detect-clang-19-20-21-also-allow-user-override.patch b/third_party/com_google_highway/0005-Detect-clang-19-20-21-also-allow-user-override.patch
+new file mode 100644
+index 00000000..7c15eeb9
+--- /dev/null
++++ b/third_party/com_google_highway/0005-Detect-clang-19-20-21-also-allow-user-override.patch
+@@ -0,0 +1,276 @@
++From 254c22dd45707b58d5cc6539baf499a67fc6b355 Mon Sep 17 00:00:00 2001
++From: Jan Wassenberg <janwas@google.com>
++Date: Mon, 15 Sep 2025 05:18:23 -0700
++Subject: [PATCH 5/5] Detect clang 19/20/21, also allow user override
++
++The version governs HWY_BROKEN_AVX10_2 and HWY_TARGET_STR_AVX3_VL512
++
++Also print HWY_TARGETS_STR in list_targets.cc,
++update set_macros to remove _256 and prevent duplicate evex512 attribute,
++Delay AVX10.2 until Clang 22 due to attribute mismatch.
++
++PiperOrigin-RevId: 807197401
++---
++ hwy/contrib/sort/shared-inl.h |  8 +++----
++ hwy/detect_compiler_arch.h    | 19 ++++++++++++----
++ hwy/detect_targets.h          | 14 +++++++-----
++ hwy/ops/arm_sve-inl.h         |  2 +-
++ hwy/ops/set_macros-inl.h      | 41 +++++++++++++----------------------
++ hwy/print-inl.h               |  2 ++
++ hwy/tests/list_targets.cc     | 12 ++++++++--
++ 7 files changed, 55 insertions(+), 43 deletions(-)
++
++diff --git a/hwy/contrib/sort/shared-inl.h b/hwy/contrib/sort/shared-inl.h
++index da4143db..7918c4f5 100644
++--- a/hwy/contrib/sort/shared-inl.h
+++++ b/hwy/contrib/sort/shared-inl.h
++@@ -146,10 +146,10 @@ static_assert(SortConstants::MaxBufBytes<2>(64) <= 1664, "Unexpectedly high");
++ #undef VQSORT_ENABLED
++ #undef VQSORT_COMPILER_COMPATIBLE
++ 
++-#if (HWY_COMPILER_MSVC && !HWY_IS_DEBUG_BUILD) ||                   \
++-    (HWY_ARCH_ARM_V7 && HWY_IS_DEBUG_BUILD) ||                      \
++-    (HWY_ARCH_ARM_A64 && HWY_COMPILER_GCC_ACTUAL && HWY_IS_ASAN) || \
++-    (HWY_ARCH_RISCV)
+++#if (HWY_COMPILER_MSVC && !HWY_IS_DEBUG_BUILD) || \
+++    (HWY_ARCH_ARM_V7 && HWY_IS_DEBUG_BUILD) ||    \
+++    (HWY_ARCH_ARM_A64 && HWY_IS_ASAN) ||          \
+++    (HWY_ARCH_RISCV && HWY_COMPILER_GCC_ACTUAL < 1400)
++ #define VQSORT_COMPILER_COMPATIBLE 0
++ #else
++ #define VQSORT_COMPILER_COMPATIBLE 1
++diff --git a/hwy/detect_compiler_arch.h b/hwy/detect_compiler_arch.h
++index 58b2b692..9735e2db 100644
++--- a/hwy/detect_compiler_arch.h
+++++ b/hwy/detect_compiler_arch.h
++@@ -65,15 +65,21 @@
++ #define HWY_COMPILER_GCC 0
++ #endif
++ 
++-// Clang or clang-cl, not GCC.
++-#ifdef __clang__
+++#ifndef HWY_COMPILER_CLANG  // Allow user override.
+++#ifdef __clang__            // Clang or clang-cl, not GCC.
++ // In case of Apple LLVM (whose version number is unrelated to that of LLVM) or
++ // an invalid version number, deduce it from the presence of warnings.
++ // Originally based on
++ // https://github.com/simd-everywhere/simde/blob/47d6e603de9d04ee05cdfbc57cf282a02be1bf2a/simde/simde-detect-clang.h#L59.
++ // Please send updates below to them as well, thanks!
++ #if defined(__apple_build_version__) || __clang_major__ >= 999
++-#if __has_warning("-Woverriding-option")
+++#if __has_builtin(__builtin_structured_binding_size)
+++#define HWY_COMPILER_CLANG 2101
+++#elif __has_builtin(__builtin_common_type)
+++#define HWY_COMPILER_CLANG 2001
+++#elif __has_warning("-Wreturn-mismatch")
+++#define HWY_COMPILER_CLANG 1901
+++#elif __has_warning("-Woverriding-option")
++ #define HWY_COMPILER_CLANG 1801
++ // No new warnings in 17.0, and Apple LLVM 15.3, which should be 1600, already
++ // has the unsafe_buffer_usage attribute, so we instead check for new builtins.
++@@ -108,7 +114,6 @@
++ #else  // Anything older than 7.0 is not recommended for Highway.
++ #define HWY_COMPILER_CLANG 600
++ #endif  // __has_warning chain
++-#define HWY_COMPILER3_CLANG (HWY_COMPILER_CLANG * 100)
++ #else  // use normal version
++ #define HWY_COMPILER_CLANG (__clang_major__ * 100 + __clang_minor__)
++ #define HWY_COMPILER3_CLANG \
++@@ -117,6 +122,12 @@
++ #else  // Not clang
++ #define HWY_COMPILER_CLANG 0
++ #define HWY_COMPILER3_CLANG 0
+++#endif  // __clang__
+++#endif  // HWY_COMPILER_CLANG
+++
+++// User-defined or deduced HWY_COMPILER_CLANG: derive HWY_COMPILER3_CLANG.
+++#ifndef HWY_COMPILER3_CLANG
+++#define HWY_COMPILER3_CLANG (HWY_COMPILER_CLANG * 100)
++ #endif
++ 
++ #if HWY_COMPILER_GCC && !HWY_COMPILER_CLANG && !HWY_COMPILER_ICC && \
++diff --git a/hwy/detect_targets.h b/hwy/detect_targets.h
++index e6ea6364..58ed33fc 100644
++--- a/hwy/detect_targets.h
+++++ b/hwy/detect_targets.h
++@@ -195,8 +195,10 @@
++ #endif  // HWY_BROKEN_MSVC
++ 
++ #ifndef HWY_BROKEN_AVX10_2  // allow override
++-// AVX10_2 requires clang >= 20.1 or gcc >= 15.2 with binutils 2.44.
++-#if (HWY_COMPILER_CLANG < 2001) && (HWY_COMPILER_GCC_ACTUAL < 1502)
+++// AVX10_2 requires clang >= 20.1 (postpone to 22 due to "avx10.2-512" remnant,
+++// only removed in https://github.com/llvm/llvm-project/pull/157034) or
+++// gcc >= 15.2 with binutils 2.44.
+++#if (HWY_COMPILER_CLANG < 2200) && (HWY_COMPILER_GCC_ACTUAL < 1502)
++ #define HWY_BROKEN_AVX10_2 HWY_AVX10_2
++ #else
++ #define HWY_BROKEN_AVX10_2 0
++@@ -266,9 +268,9 @@
++ // SVE[2] require recent clang or gcc versions.
++ 
++ #ifndef HWY_BROKEN_SVE  // allow override
++-// GCC 10+. Clang 19 still has many test failures for SVE. No Apple CPU (at
+++// GCC 10+. Clang 21 still has many test failures for SVE. No Apple CPU (at
++ // least up to and including M4 and A18) has SVE.
++-#if (HWY_COMPILER_CLANG && HWY_COMPILER_CLANG < 2100) ||           \
+++#if (HWY_COMPILER_CLANG && HWY_COMPILER_CLANG < 2200) ||           \
++     (HWY_COMPILER_GCC_ACTUAL && HWY_COMPILER_GCC_ACTUAL < 1000) || \
++     HWY_OS_APPLE
++ #define HWY_BROKEN_SVE (HWY_SVE | HWY_SVE_256)
++@@ -278,8 +280,8 @@
++ #endif  // HWY_BROKEN_SVE
++ 
++ #ifndef HWY_BROKEN_SVE2  // allow override
++-// Clang 19 still has many test failures for SVE2.
++-#if (HWY_COMPILER_CLANG && HWY_COMPILER_CLANG < 2100) ||           \
+++// Clang 21 still has many test failures for SVE2.
+++#if (HWY_COMPILER_CLANG && HWY_COMPILER_CLANG < 2200) ||           \
++     (HWY_COMPILER_GCC_ACTUAL && HWY_COMPILER_GCC_ACTUAL < 1000) || \
++     HWY_OS_APPLE
++ #define HWY_BROKEN_SVE2 (HWY_SVE2 | HWY_SVE2_128)
++diff --git a/hwy/ops/arm_sve-inl.h b/hwy/ops/arm_sve-inl.h
++index f9206f94..18058406 100644
++--- a/hwy/ops/arm_sve-inl.h
+++++ b/hwy/ops/arm_sve-inl.h
++@@ -5304,7 +5304,7 @@ HWY_API V AverageRound(const V a, const V b) {
++ // `p` points to at least 8 readable bytes, not all of which need be valid.
++ template <class D, HWY_IF_T_SIZE_D(D, 1)>
++ HWY_INLINE svbool_t LoadMaskBits(D d, const uint8_t* HWY_RESTRICT bits) {
++-#if HWY_COMPILER_CLANG >= 1901 || HWY_COMPILER_GCC_ACTUAL >= 1200
+++#if HWY_COMPILER_CLANG >= 2200 || HWY_COMPILER_GCC_ACTUAL >= 1200
++   typedef svbool_t UnalignedSveMaskT
++       __attribute__((__aligned__(1), __may_alias__));
++   (void)d;
++diff --git a/hwy/ops/set_macros-inl.h b/hwy/ops/set_macros-inl.h
++index cf917967..2c005370 100644
++--- a/hwy/ops/set_macros-inl.h
+++++ b/hwy/ops/set_macros-inl.h
++@@ -141,27 +141,24 @@
++ #define HWY_TARGET_STR_AVX2 \
++   HWY_TARGET_STR_SSE4 ",avx,avx2" HWY_TARGET_STR_BMI2_FMA HWY_TARGET_STR_F16C
++ 
+++// evex512 has been removed from clang 22, see
+++// https://github.com/llvm/llvm-project/pull/157034
++ #if (1400 <= HWY_COMPILER_GCC_ACTUAL && HWY_COMPILER_GCC_ACTUAL < 1600) || \
++-    (1800 <= HWY_COMPILER_CLANG && HWY_COMPILER_CLANG < 2000)
+++    (1800 <= HWY_COMPILER_CLANG && HWY_COMPILER_CLANG < 2200)
++ #define HWY_TARGET_STR_AVX3_VL512 ",evex512"
++ #else
++ #define HWY_TARGET_STR_AVX3_VL512
++ #endif
++ 
++-#define HWY_TARGET_STR_AVX3_256 \
++-  HWY_TARGET_STR_AVX2           \
+++#define HWY_TARGET_STR_AVX3 \
+++  HWY_TARGET_STR_AVX2       \
++   ",avx512f,avx512cd,avx512vl,avx512dq,avx512bw" HWY_TARGET_STR_AVX3_VL512
++ 
++-#define HWY_TARGET_STR_AVX3 HWY_TARGET_STR_AVX3_256 HWY_TARGET_STR_AVX3_VL512
++-
++-#define HWY_TARGET_STR_AVX3_DL_256                                   \
++-  HWY_TARGET_STR_AVX3_256                                            \
+++#define HWY_TARGET_STR_AVX3_DL                                       \
+++  HWY_TARGET_STR_AVX3                                                \
++   ",vpclmulqdq,avx512vbmi,avx512vbmi2,vaes,avx512vnni,avx512bitalg," \
++   "avx512vpopcntdq,gfni"
++ 
++-#define HWY_TARGET_STR_AVX3_DL \
++-  HWY_TARGET_STR_AVX3_DL_256 HWY_TARGET_STR_AVX3_VL512
++-
++ // Force-disable for compilers that do not properly support avx512bf16.
++ #if !defined(HWY_AVX3_DISABLE_AVX512BF16) &&                        \
++     (HWY_COMPILER_CLANGCL ||                                        \
++@@ -171,24 +168,18 @@
++ #endif
++ 
++ #if !defined(HWY_AVX3_DISABLE_AVX512BF16)
++-#define HWY_TARGET_STR_AVX3_ZEN4_256 HWY_TARGET_STR_AVX3_DL ",avx512bf16"
+++#define HWY_TARGET_STR_AVX3_ZEN4 HWY_TARGET_STR_AVX3_DL ",avx512bf16"
++ #else
++-#define HWY_TARGET_STR_AVX3_ZEN4_256 HWY_TARGET_STR_AVX3_DL
+++#define HWY_TARGET_STR_AVX3_ZEN4 HWY_TARGET_STR_AVX3_DL
++ #endif
++ 
++-#define HWY_TARGET_STR_AVX3_ZEN4 \
++-  HWY_TARGET_STR_AVX3_ZEN4_256 HWY_TARGET_STR_AVX3_VL512
++-
++ #if HWY_COMPILER_GCC_ACTUAL >= 1200 || HWY_COMPILER_CLANG >= 1400
++-#define HWY_TARGET_STR_AVX3_SPR_256 HWY_TARGET_STR_AVX3_ZEN4_256 ",avx512fp16"
+++#define HWY_TARGET_STR_AVX3_SPR HWY_TARGET_STR_AVX3_ZEN4 ",avx512fp16"
++ #else
++-#define HWY_TARGET_STR_AVX3_SPR_256 HWY_TARGET_STR_AVX3_ZEN4_256
+++#define HWY_TARGET_STR_AVX3_SPR HWY_TARGET_STR_AVX3_ZEN4
++ #endif
++ 
++-#define HWY_TARGET_STR_AVX3_SPR \
++-  HWY_TARGET_STR_AVX3_SPR_256 HWY_TARGET_STR_AVX3_VL512
++-
++-#if HWY_COMPILER_GCC_ACTUAL >= 1500 || HWY_COMPILER_CLANG >= 2000
+++#if HWY_COMPILER_GCC_ACTUAL >= 1500 || HWY_COMPILER_CLANG >= 2200
++ #define HWY_TARGET_STR_AVX10_2 HWY_TARGET_STR_AVX3_SPR ",avx10.2"
++ #else
++ #define HWY_TARGET_STR_AVX10_2 HWY_TARGET_STR_AVX3_SPR
++@@ -315,10 +306,8 @@
++ #define HWY_TARGET_STR HWY_TARGET_STR_AVX2
++ 
++ //-----------------------------------------------------------------------------
++-// AVX3[_DL]/AVX10
++-#elif HWY_TARGET == HWY_AVX3 || HWY_TARGET == HWY_AVX3_DL ||     \
++-    HWY_TARGET == HWY_AVX3_ZEN4 || HWY_TARGET == HWY_AVX3_SPR || \
++-    HWY_TARGET == HWY_AVX10_2
+++// AVX3[_DL/ZEN4/SPR]/AVX10
+++#elif HWY_TARGET <= HWY_AVX3
++ 
++ #define HWY_ALIGN alignas(64)
++ #define HWY_MAX_BYTES 64
++@@ -327,7 +316,7 @@
++ #define HWY_HAVE_SCALABLE 0
++ #define HWY_HAVE_INTEGER64 1
++ #if HWY_TARGET <= HWY_AVX3_SPR &&                              \
++-    (HWY_COMPILER_GCC_ACTUAL || HWY_COMPILER_CLANG >= 1901) && \
+++    (HWY_COMPILER_GCC_ACTUAL || HWY_COMPILER_CLANG >= 2200) && \
++     HWY_HAVE_SCALAR_F16_TYPE
++ #define HWY_HAVE_FLOAT16 1
++ #else
++diff --git a/hwy/print-inl.h b/hwy/print-inl.h
++index 46881a29..48a9cce3 100644
++--- a/hwy/print-inl.h
+++++ b/hwy/print-inl.h
++@@ -15,6 +15,8 @@
++ 
++ // Print() function
++ 
+++#include <stddef.h>
+++
++ #include "hwy/highway.h"
++ #include "hwy/print.h"
++ 
++diff --git a/hwy/tests/list_targets.cc b/hwy/tests/list_targets.cc
++index 3a574b1f..0334ca8d 100644
++--- a/hwy/tests/list_targets.cc
+++++ b/hwy/tests/list_targets.cc
++@@ -73,10 +73,18 @@ void PrintConfig() {
++   const int is_test = 1;
++ #else
++   const int is_test = 0;
+++#endif
+++#ifdef HWY_TARGET_STR
+++  const char* target_str = HWY_TARGET_STR;
+++#else
+++  const char* target_str = "";
++ #endif
++   fprintf(stderr,
++-          "Config: emu128:%d scalar:%d static:%d all_attain:%d is_test:%d\n",
++-          only_emu128, only_scalar, only_static, all_attain, is_test);
+++          "Target attributes: %s\nConfig: emu128:%d scalar:%d static:%d "
+++          "all_attain:%d "
+++          "is_test:%d\n",
+++          target_str, only_emu128, only_scalar, only_static, all_attain,
+++          is_test);
++ }
++ 
++ void PrintHave() {
++-- 
++2.49.0
++
+diff --git a/third_party/com_google_highway/workspace.bzl b/third_party/com_google_highway/workspace.bzl
+index 36624550..7c2e974b 100644
+--- a/third_party/com_google_highway/workspace.bzl
++++ b/third_party/com_google_highway/workspace.bzl
+@@ -8,5 +8,11 @@ def repo():
+         strip_prefix = "highway-1.3.0",
+         sha256 = "07b3c1ba2c1096878a85a31a5b9b3757427af963b1141ca904db2f9f4afe0bc2",
+         urls = tf_mirror_urls("https://github.com/google/highway/archive/refs/tags/1.3.0.tar.gz"),
+-        patch_file = ["//third_party/com_google_highway:build.patch"],
++        patch_file = ["//third_party/com_google_highway:build.patch",
++                      "//third_party/com_google_highway:0001-mark-avx10.2-broken-prior-to-gcc-15.2-clang-20.-Fixe.patch",
++                      "//third_party/com_google_highway:0002-workaround-for-inadvertent-SVE-codegen-on-GCC-14.-Fi.patch",
++                      "//third_party/com_google_highway:0003-Update-target-attributes-for-changed-clang-AVX10.2-p.patch",
++                      "//third_party/com_google_highway:0004-Increase-the-clang-version-number-to-check-for-to-di.patch",
++                      "//third_party/com_google_highway:0005-Detect-clang-19-20-21-also-allow-user-override.patch"
++                      ],
+     )
+-- 
+2.34.1
+
