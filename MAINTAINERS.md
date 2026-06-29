@@ -7,7 +7,7 @@ git://git.yoctoproject.org/meta-tensorflow
 ```
 
 ## Maintenance
-Maintainers: Hongxu Jia <jiahongxujia@163.com>
+Maintainers: Hongxu Jia <jiahongxujia@163.com> |  <hongxujia83@gmail.com>
              Chen Qi <Qi.Chen@windriver.com>
 
 ## Contributing
